@@ -1,2 +1,2 @@
-# Ranger-Go-SDL
-A variation of the Ranger game engine in Go
+# RangerGo
+A variation of the Ranger game engine in Go and SDL.
