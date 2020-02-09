@@ -10,13 +10,13 @@ type point struct {
 	x, y float64
 }
 
-// NewPoint constructs a new point
+// NewPoint constructs a new IPoint
 func NewPoint() api.IPoint {
 	o := new(point)
 	return o
 }
 
-// NewPointUsing constructs a new point using components
+// NewPointUsing constructs a new IPoint using components
 func NewPointUsing(x, y float64) api.IPoint {
 	o := new(point)
 	o.x = x
@@ -47,5 +47,5 @@ func (p *point) SetByPoint(ip api.IPoint) {
 }
 
 func (p point) String() string {
-	return fmt.Sprintf("(%0.8f,%0.8f)", p.x, p.y)
+	return fmt.Sprintf("(%0.3f,%0.3f)", p.x, p.y)
 }

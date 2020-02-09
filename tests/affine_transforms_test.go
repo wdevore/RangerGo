@@ -35,9 +35,10 @@ func runAFs(t *testing.T) {
 	p := geometry.NewPointUsing(1.0, 2.0)
 
 	af.TransformPoint(p)
-	fmt.Println(p)
+	// fmt.Println(p)
 	if p.X() != 6.0 && p.Y() == 12.0 {
-		t.Fatal("Expected (6.0, 12.0)")
+		msg := fmt.Sprintf("Expected (6.0, 12.0) Got: %0.8f,%0.8f", p.X(), p.Y())
+		t.Fatal(msg)
 	}
 
 	// SDL 2D coordinate space is:

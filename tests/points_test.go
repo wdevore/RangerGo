@@ -17,7 +17,7 @@ func runPoints(t *testing.T) {
 
 	p.SetByComp(1.0, 2.0)
 	fmt.Println(p)
-	if p.X() != 1.0 && p.Y() == 2.0 {
+	if p.X() != 1.0 && p.Y() != 2.0 {
 		t.Fatal("Expected (1.0, 2.0)")
 	}
 
