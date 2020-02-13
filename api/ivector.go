@@ -32,4 +32,13 @@ type IVector interface {
 	// Normalize normalizes this vector, if the vector is zero
 	// then nothing happens
 	Normalize()
+
+	// SetDirection set the direction of the vector, however,
+	// it will erase the magnitude
+	SetDirection(radians float64)
+
+	// CrossCW computes the cross-product faster in the CW direction
+	CrossCW()
+	// CrossCCW computes the cross-product faster in the CCW direction
+	CrossCCW()
 }

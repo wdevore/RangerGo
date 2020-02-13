@@ -104,6 +104,10 @@ func (v *vector) Normalize() {
 	}
 }
 
+func (v *vector) SetDirection(radians float64) {
+	v.SetByComp(math.Cos(radians), math.Sin(radians))
+}
+
 // Dot computes the dot-product between the vectors
 func Dot(v1, v2 api.IVector) float64 {
 	return v1.X()*v2.X() + v1.Y()*v2.Y()
@@ -112,6 +116,14 @@ func Dot(v1, v2 api.IVector) float64 {
 // Cross computes the cross-product of two vectors
 func Cross(v1, v2 api.IVector) float64 {
 	return v1.X()*v2.Y() - v1.Y()*v2.X()
+}
+
+func (v *vector) CrossCW() {
+	v.SetByComp(v.Y(), -v.X())
+}
+
+func (v *vector) CrossCCW() {
+	v.SetByComp(-v.Y(), v.X())
 }
 
 var tmp2 = NewVector()
