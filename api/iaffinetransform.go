@@ -41,6 +41,10 @@ type IAffineTransform interface {
 	// Scale mutates "this" matrix using sx, sy
 	Scale(sx, sy float64)
 
+	// GetPsuedoScale returns the transform's "a" component, however,
+	// this is only valid if the transform doesn't have a rotation or zoom applied.
+	GetPsuedoScale() float64
+
 	// MakeRotate sets the transform to a Rotate matrix
 	MakeRotate(radians float64)
 	// Rotate mutates "this" matrix using radian angle

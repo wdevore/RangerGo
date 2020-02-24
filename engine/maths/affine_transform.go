@@ -96,6 +96,10 @@ func (at *affineTransform) MakeScale(sx, sy float64) {
 	at.SetByComp(sx, 0.0, 0.0, sy, 0.0, 0.0)
 }
 
+func (at *affineTransform) GetPsuedoScale() float64 {
+	return at.a
+}
+
 // Concatinate a rotation (radians) onto this transform.
 //
 // Rotation is just a matter of perspective. A CW rotation can be seen as

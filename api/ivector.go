@@ -23,6 +23,9 @@ type IVector interface {
 	// Scale vector by s
 	Scale(s float64)
 
+	// Add offsets a this vector
+	Add(x, y float64)
+
 	// Div vector by d
 	Div(d float64)
 

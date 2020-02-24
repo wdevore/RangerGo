@@ -60,6 +60,11 @@ func (v *vector) LengthSqr() float64 {
 	return v.x*v.x + v.y*v.y
 }
 
+func (v *vector) Add(x, y float64) {
+	v.x += x
+	v.y += y
+}
+
 // Add performs: out = v1 + v2
 func Add(v1, v2, out api.IVector) {
 	out.SetByComp(v1.X()+v2.X(), v1.Y()+v2.Y())
