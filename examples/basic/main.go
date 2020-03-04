@@ -10,13 +10,16 @@ import (
 var ranger api.IEngine
 
 func init() {
-	ranger = engine.New(1024, 600, "RangeGo")
+	world := engine.NewWorld("RangerGo")
+
+	ranger = engine.New(world)
 }
 
 func main() {
 	fmt.Println("Bare minimum")
-	w, h := ranger.DisplaySize()
-	fmt.Printf("Display size: %d x %d\n", w, h)
+
+	// w, h := ranger.DisplaySize()
+	// fmt.Printf("Display size: %d x %d\n", w, h)
 
 	ranger.Configure()
 

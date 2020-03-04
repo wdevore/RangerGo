@@ -33,7 +33,10 @@ type IAffineTransform interface {
 
 	// MakeTranslate sets the transform to a Translate matrix
 	MakeTranslate(x, y float64)
-	// Translate mutates "this" matrix using tx,ty
+	// MakeTranslateUsingPoint sets the transform to a Translate matrix
+	MakeTranslateUsingPoint(p IPoint)
+
+	// Translate mutates/concat "this" matrix using tx,ty
 	Translate(tx, ty float64)
 
 	// MakeScale sets the transform to a Scale matrix

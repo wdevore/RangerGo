@@ -21,6 +21,10 @@ func (p *polygon) AddVertex(x, y float64) {
 	p.mesh.AddVertex(x, y)
 }
 
+func (p *polygon) Mesh() api.IMesh {
+	return p.mesh
+}
+
 func (p *polygon) Build() {
 	p.mesh.Build()
 }

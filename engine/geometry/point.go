@@ -28,6 +28,10 @@ func (p *point) Components() (x, y float64) {
 	return p.x, p.y
 }
 
+func (p *point) ComponentsAsInt32() (x, y int32) {
+	return int32(p.x), int32(p.y)
+}
+
 func (p *point) X() float64 {
 	return p.x
 }

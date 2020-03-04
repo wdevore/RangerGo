@@ -24,6 +24,10 @@ func (m *mesh) Vertices() []api.IPoint {
 	return m.vertices
 }
 
+func (m *mesh) Bucket() []api.IPoint {
+	return m.bucket
+}
+
 func (m *mesh) AddVertex(x, y float64) {
 	m.vertices = append(m.vertices, NewPointUsing(x, y))
 }

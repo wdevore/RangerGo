@@ -85,6 +85,10 @@ func (at *affineTransform) MakeTranslate(x, y float64) {
 	at.SetByComp(1.0, 0.0, 0.0, 1.0, x, y)
 }
 
+func (at *affineTransform) MakeTranslateUsingPoint(p api.IPoint) {
+	at.SetByComp(1.0, 0.0, 0.0, 1.0, p.X(), p.Y())
+}
+
 func (at *affineTransform) Scale(sx, sy float64) {
 	at.a *= sx
 	at.b *= sx

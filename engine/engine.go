@@ -10,6 +10,7 @@ import (
 	"github.com/veandco/go-sdl2/sdl"
 
 	"github.com/wdevore/RangerGo/api"
+	"github.com/wdevore/RangerGo/engine/rendering"
 )
 
 const (
@@ -22,17 +23,14 @@ type engine struct {
 	// Application properties
 	// -----------------------------------------
 	// App window size
-	width  int
-	height int
-	title  string
+	world api.IWorld
 
 	// -----------------------------------------
 	// SDL properties
 	// -----------------------------------------
-	window   *sdl.Window
-	surface  *sdl.Surface
-	renderer *sdl.Renderer
-	texture  *sdl.Texture
+	window  *sdl.Window
+	surface *sdl.Surface
+	texture *sdl.Texture
 
 	// -----------------------------------------
 	// Input properties
@@ -56,13 +54,11 @@ type engine struct {
 
 // New constructs a Engine object.
 // The Engine runs the main loop.
-func New(width, height int, title string) api.IEngine {
+func New(world api.IWorld) api.IEngine {
 	o := new(engine)
-	o.width = width
-	o.height = height
-	o.title = title
+	o.world = world
 	o.running = false
-	o.clearColor = color.RGBA{255, 127, 0, 255} // Orange
+	o.clearColor = rendering.NewPaletteInt64(rendering.Orange).Color()
 	return o
 }
 
@@ -77,9 +73,9 @@ func (e *engine) Configure() {
 
 	fmt.Println("Creating window...")
 	e.window, err = sdl.CreateWindow(
-		e.title,
+		e.world.Title(),
 		100, 100,
-		int32(e.width), int32(e.height),
+		int32(e.world.WindowSize().X()), int32(e.world.WindowSize().Y()),
 		sdl.WINDOW_SHOWN)
 
 	if err != nil {
@@ -93,29 +89,35 @@ func (e *engine) Configure() {
 	// }
 	// v.renderer, err = sdl.CreateSoftwareRenderer(v.surface)
 	// OR create renderer manually
+
 	fmt.Println("Creating renderer...")
-	e.renderer, err = sdl.CreateRenderer(
+	renderer, errR := sdl.CreateRenderer(
 		e.window, -1, sdl.RENDERER_SOFTWARE)
-	if err != nil {
+	if errR != nil {
 		panic(err)
 	}
+
+	e.world.SetRenderer(renderer)
 
 	fmt.Println("Creating renderer texture...")
-	e.texture, err = e.renderer.CreateTexture(
+	e.texture, err = renderer.CreateTexture(
 		sdl.PIXELFORMAT_ABGR8888,
 		sdl.TEXTUREACCESS_STREAMING,
-		int32(e.width), int32(e.height))
+		int32(e.world.WindowSize().X()), int32(e.world.WindowSize().Y()))
 	if err != nil {
 		panic(err)
 	}
 
-	e.bounds = image.Rect(0, 0, int(e.width), int(e.height))
+	e.bounds = image.Rect(0, 0, int(e.world.WindowSize().X()), int(e.world.WindowSize().Y()))
 	e.pixels = image.NewRGBA(e.bounds)
 
+	renderer.SetDrawBlendMode(sdl.BLENDMODE_BLEND)
+	fmt.Println("Configure complete.")
 }
 
 // Start see api.go for docs
 func (e *engine) Start() {
+	fmt.Println(("Engine starting..."))
 	e.running = true
 	var frameStart time.Time
 	// var elapsedTime float64
@@ -128,6 +130,8 @@ func (e *engine) Start() {
 	// keyState := sdl.GetKeyboardState()
 
 	sdl.SetEventFilterFunc(e.filterEvent, nil)
+
+	renderer := e.world.Renderer()
 
 	for e.running {
 		frameStart = time.Now()
@@ -155,7 +159,7 @@ func (e *engine) Start() {
 		// e.window.UpdateSurface()
 
 		// Finally update screen
-		e.renderer.Present()
+		renderer.Present()
 
 		loopTime = float64(time.Since(frameStart).Nanoseconds() / 1000000.0)
 
@@ -177,7 +181,7 @@ func (e *engine) End() {
 	fmt.Println("Disposing texture...")
 	e.texture.Destroy()
 	fmt.Println("Disposing renderer...")
-	e.renderer.Destroy()
+	e.world.Renderer().Destroy()
 	fmt.Println("Disposing window...")
 	e.window.Destroy()
 	fmt.Println("Quitting SDL...")
@@ -188,7 +192,7 @@ func (e *engine) End() {
 
 // DisplaySize see api.go for docs
 func (e *engine) DisplaySize() (w, h int) {
-	return e.width, e.height
+	return int(e.world.WindowSize().X()), int(e.world.WindowSize().Y())
 }
 
 // SetClearColor see api.go for docs
@@ -241,7 +245,9 @@ func (e *engine) clearDisplay() {
 	// 	}
 	// }
 	c := e.clearColor
-	e.renderer.SetDrawColor(c.R, c.G, c.B, c.A)
-	e.renderer.Clear()
+	renderer := e.world.Renderer()
+
+	renderer.SetDrawColor(c.R, c.G, c.B, c.A)
+	renderer.Clear()
 	// e.renderer.Present()
 }

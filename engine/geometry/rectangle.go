@@ -51,6 +51,10 @@ func (r *rectangle) Dimesions() (w, h float64) {
 	return r.width, r.height
 }
 
+func (r *rectangle) DimesionsAsInt32() (w, h int32) {
+	return int32(r.width), int32(r.height)
+}
+
 func (r *rectangle) Min() api.IPoint {
 	return r.min
 }
@@ -64,6 +68,26 @@ func (r *rectangle) Set(minx, miny, maxx, maxy float64) {
 	r.max.SetByComp(maxx, maxy)
 	r.width = maxx - minx
 	r.height = maxy - miny
+}
+
+func (r *rectangle) SetBounds(vertices []api.IPoint) {
+	setBounds(r, vertices, math.MaxFloat64, math.MaxFloat64, -math.MaxFloat64, -math.MaxFloat64)
+}
+
+func (r *rectangle) Expand(vertices []api.IPoint) {
+	setBounds(r, vertices, r.min.X(), r.min.Y(), r.max.X(), r.max.Y())
+}
+
+func setBounds(r *rectangle, vertices []api.IPoint, minx, miny, maxx, maxy float64) {
+	for i := 0; i < len(vertices); i++ {
+		minx = math.Min(minx, vertices[i].X())
+		maxx = math.Max(maxx, vertices[i].X())
+		miny = math.Min(miny, vertices[i].Y())
+		maxy = math.Max(maxy, vertices[i].Y())
+	}
+
+	r.min.SetByComp(minx, miny)
+	r.max.SetByComp(maxx, maxy)
 }
 
 // Intersect computes the intersection of rect A and B
@@ -124,10 +148,10 @@ func Bounds(bounds, rectA, rectB api.IRectangle) {
 }
 
 func (r *rectangle) ContainsPoint(p api.IPoint) bool {
-	return p.X() >= r.Min().X() &&
-		p.X() <= r.Max().X() &&
-		p.Y() >= r.Min().Y() &&
-		p.Y() <= r.Max().Y()
+	return p.X() >= r.min.X() &&
+		p.X() <= r.max.X() &&
+		p.Y() >= r.min.Y() &&
+		p.Y() <= r.max.Y()
 }
 
 // ContainsPointOther determines if point is within the rectangle
