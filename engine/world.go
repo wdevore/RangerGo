@@ -22,8 +22,6 @@ type world struct {
 	viewSpace    api.IAffineTransform
 	invViewSpace api.IAffineTransform
 
-	ids int
-
 	renderer *sdl.Renderer
 }
 
@@ -31,7 +29,6 @@ type world struct {
 func NewWorld(title string) api.IWorld {
 	o := new(world)
 	o.title = title
-	o.ids = 0
 
 	o.windowPosition = geometry.NewPointUsing(api.WindowPositionX, api.WindowPositionY)
 	o.windowSize = geometry.NewPointUsing(api.Width, api.Width/api.DisplayRatio)
@@ -49,11 +46,6 @@ func NewWorld(title string) api.IWorld {
 	fmt.Println("View Dimensions: ", o.viewSize)
 
 	return o
-}
-
-func (w *world) GenID() int {
-	w.ids++
-	return w.ids
 }
 
 func (w *world) SetRenderer(rend *sdl.Renderer) {

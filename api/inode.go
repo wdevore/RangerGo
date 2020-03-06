@@ -2,11 +2,19 @@ package api
 
 // INode is an abstract object that represents SceneGraph nodes
 type INode interface {
+	ID() int
+
 	// Initialize configures default properties.
-	Initialize(id int, name string)
+	Initialize(name string)
+
+	// InitializeWithID configures default properties.
+	InitializeWithID(id int, name string)
 
 	// Visit traverses "down" the heirarchy while space-mappings traverses upward.
 	Visit(context IRenderContext, interpolation float64)
+
+	SetParent(INode)
+	Parent() INode
 
 	CalcTransform() IAffineTransform
 
@@ -14,19 +22,22 @@ type INode interface {
 
 	Draw(context IRenderContext)
 
-	EnterNode()
-	ExitNode()
+	EnterNode(INodeManager)
+	ExitNode(INodeManager)
 
-	IOEvent()
+	// IOEvent()
+
 	IsVisible() bool
+
 	IsDirty() bool
 	SetDirty(dirty bool)
+	// RippleDirty passes the dirty flag downward to children.
 	RippleDirty(dirty bool)
 
 	ITransform
+	IGroup
 
-	INodeGroup
+	GetBucket() []IPoint
 
-	GetBucket()
-	Update()
+	Update(dt float64)
 }

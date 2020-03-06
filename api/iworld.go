@@ -19,9 +19,6 @@ const (
 
 // IWorld represents app window properties
 type IWorld interface {
-	// GenID generates a globally unique id.
-	GenID() int
-
 	SetRenderer(*sdl.Renderer)
 	Renderer() *sdl.Renderer
 
