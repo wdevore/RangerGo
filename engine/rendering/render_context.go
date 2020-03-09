@@ -59,7 +59,7 @@ func NewRenderContext(world api.IWorld) api.IRenderContext {
 	return o
 }
 
-func (rc *renderContext) Initialize(world api.IWorld) {
+func (rc *renderContext) Initialize() {
 	rc.stack = make([]*renderState, stackDepth)
 
 	for i := 0; i < stackDepth; i++ {
@@ -67,7 +67,7 @@ func (rc *renderContext) Initialize(world api.IWorld) {
 	}
 
 	// Apply centered view-space matrix
-	rc.Apply(world.ViewSpace())
+	rc.Apply(rc.world.ViewSpace())
 }
 
 func (rc *renderContext) Apply(aft api.IAffineTransform) {

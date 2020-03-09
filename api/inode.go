@@ -25,8 +25,6 @@ type INode interface {
 	EnterNode(INodeManager)
 	ExitNode(INodeManager)
 
-	// IOEvent()
-
 	IsVisible() bool
 
 	IsDirty() bool
@@ -34,6 +32,8 @@ type INode interface {
 	// RippleDirty passes the dirty flag downward to children.
 	RippleDirty(dirty bool)
 
+	IScene
+	IEvent
 	ITransform
 	IGroup
 

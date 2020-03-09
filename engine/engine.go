@@ -10,6 +10,7 @@ import (
 	"github.com/veandco/go-sdl2/sdl"
 
 	"github.com/wdevore/RangerGo/api"
+	"github.com/wdevore/RangerGo/engine/nodes"
 	"github.com/wdevore/RangerGo/engine/rendering"
 )
 
@@ -50,6 +51,11 @@ type engine struct {
 	// Engine properties
 	// -----------------------------------------
 	running bool
+
+	// -----------------------------------------
+	// Scene graph root node.
+	// -----------------------------------------
+	root api.INode
 }
 
 // New constructs a Engine object.
@@ -59,6 +65,9 @@ func New(world api.IWorld) api.IEngine {
 	o.world = world
 	o.running = false
 	o.clearColor = rendering.NewPaletteInt64(rendering.Orange).Color()
+
+	o.root = nodes.NewNode()
+	o.root.Initialize("Root")
 	return o
 }
 
@@ -112,7 +121,12 @@ func (e *engine) Configure() {
 	e.pixels = image.NewRGBA(e.bounds)
 
 	renderer.SetDrawBlendMode(sdl.BLENDMODE_BLEND)
+
 	fmt.Println("Configure complete.")
+}
+
+func (e *engine) Root() api.INode {
+	return e.root
 }
 
 // Start see api.go for docs
@@ -120,7 +134,7 @@ func (e *engine) Start() {
 	fmt.Println(("Engine starting..."))
 	e.running = true
 	var frameStart time.Time
-	// var elapsedTime float64
+	var elapsedTime float64
 	var loopTime float64
 
 	sleepDelay := 0.0
@@ -136,23 +150,30 @@ func (e *engine) Start() {
 	for e.running {
 		frameStart = time.Now()
 
+		// ~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--
+		// Handle Events
+		// ~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--
 		sdl.PumpEvents()
 
-		// dt := elapsedTime / 1000.0
+		// Any nodes that registered for events will
+		e.root.Handle()
+
+		dt := elapsedTime / 1000.0
+
+		// ~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--
+		// Update
+		// ~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--
 
 		// Update the scene graph
-		// v.root.Update(dt)
+		e.root.Update(dt)
 
-		// Notify external clients of an update, perhaps for key events
-		// e.game.Update(dt, keyState)
-
+		// ~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--
+		// Render
+		// ~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--
 		e.clearDisplay()
 
 		// Render scene graph
-		// e.root.Render(v.context)
-
-		// Notify external clients for any additional rendering
-		// e.game.Render(v.pixels)
+		// e.root.Draw(e.context)
 
 		// e.renderRawOverlay(elapsedTime, loopTime)
 

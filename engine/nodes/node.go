@@ -18,8 +18,16 @@ type Node struct {
 
 	parent api.INode
 
+	Event
 	Transform
 	Group
+}
+
+// NewNode constructs a raw base node. Only the Engine should
+// construct this base node.
+func NewNode() api.INode {
+	o := new(Node)
+	return o
 }
 
 // ID returns the internally generated Id.
@@ -123,6 +131,7 @@ func (n *Node) Update(dt float64) {
 
 // Draw renders a node
 func (n *Node) Draw(context api.IRenderContext) {
+	// fmt.Println("Node Draw")
 }
 
 // GetBucket returns a buffer for capturing transformed vertices
@@ -133,6 +142,17 @@ func (n *Node) GetBucket() []api.IPoint {
 // -----------------------------------------------------
 // Scene lifecycles
 // -----------------------------------------------------
+
+// Transition specifies what action should happen when transitioning.
+// The default is no action.
+func (n *Node) Transition() int {
+	return api.SceneNoAction
+}
+
+// GetReplacement returns the scene that will replace the current scene.
+func (n *Node) GetReplacement() api.INode {
+	return nil
+}
 
 // EnterNode called when a node is entering the stage
 func (n *Node) EnterNode(api.INodeManager) {
@@ -149,46 +169,46 @@ func (n *Node) ExitNode(api.INodeManager) {
 // CalcTransform calculates a matrix based on the
 // current transform properties
 func (n *Node) CalcTransform() api.IAffineTransform {
-	// aft := n.transform.aft
+	aft := n.aft
 
 	if n.IsDirty() {
 		pos := n.position
-		n.aft.MakeTranslate(pos.X(), pos.Y())
+		aft.MakeTranslate(pos.X(), pos.Y())
 
 		rot := n.rotation
 		if rot != 0.0 {
-			n.aft.Rotate(rot)
+			aft.Rotate(rot)
 		}
 
 		s := n.Scale()
 		if s != 1.0 {
-			n.aft.Scale(s, s)
+			aft.Scale(s, s)
 		}
 
 		// Invert...
-		n.aft.InvertTo(n.inverse)
+		aft.InvertTo(n.inverse)
 	}
 
-	return n.aft
+	return aft
 }
 
 var p = geometry.NewPoint()
 
 // SetPosition overrides transform's method
 func (n *Node) SetPosition(x, y float64) {
-	n.SetPosition(x, y)
+	n.Transform.SetPosition(x, y)
 	n.RippleDirty(true)
 }
 
 // SetRotation overrides transform's method
 func (n *Node) SetRotation(radians float64) {
-	n.SetRotation(radians)
+	n.Transform.SetRotation(radians)
 	n.RippleDirty(true)
 }
 
 // SetScale overrides transform's method
 func (n *Node) SetScale(scale float64) {
-	n.SetScale(scale)
+	n.Transform.SetScale(scale)
 	n.RippleDirty(true)
 }
 

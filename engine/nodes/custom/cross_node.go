@@ -1,6 +1,8 @@
 package custom
 
 import (
+	"fmt"
+
 	"github.com/wdevore/RangerGo/api"
 	"github.com/wdevore/RangerGo/engine/nodes"
 )
@@ -18,18 +20,6 @@ func NewCrossNode() *CrossNode {
 
 // Draw renders shape
 func (n *CrossNode) Draw(context api.IRenderContext) {
+	fmt.Println("cross draw")
+	n.Node.Draw(context)
 }
-
-// // AffineTransform see ITransform
-// func (n *CrossNode) AffineTransform() api.IAffineTransform {
-// 	return nil
-// }
-
-// // InverseTransform see ITransform
-// func (n *CrossNode) InverseTransform() api.IAffineTransform {
-// 	return nil
-// }
-
-// // CalcFilteredTransform see ITransform
-// func (n *CrossNode) CalcFilteredTransform() {
-// }

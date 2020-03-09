@@ -36,4 +36,9 @@ func runBasic(t *testing.T) {
 	crn.AddChild(crn3)
 
 	nodes.PrintTree(crn)
+
+	crn.SetPosition(1.0, 2.0)
+
+	crn.Draw(nil)
+
 }

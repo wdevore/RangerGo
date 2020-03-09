@@ -12,7 +12,7 @@ const (
 // IRenderContext represents visual rendering context
 type IRenderContext interface {
 	// Initialize render context
-	Initialize(IWorld)
+	Initialize()
 
 	// Apply transform to current context transform
 	Apply(IAffineTransform)
