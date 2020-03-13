@@ -32,8 +32,9 @@ type INode interface {
 	// RippleDirty passes the dirty flag downward to children.
 	RippleDirty(dirty bool)
 
+	Handle(IEvent) bool
+
 	IScene
-	IEvent
 	ITransform
 	IGroup
 

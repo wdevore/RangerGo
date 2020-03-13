@@ -18,7 +18,7 @@ type Node struct {
 
 	parent api.INode
 
-	Event
+	// Event
 	Transform
 	Group
 }
@@ -137,6 +137,11 @@ func (n *Node) Draw(context api.IRenderContext) {
 // GetBucket returns a buffer for capturing transformed vertices
 func (n *Node) GetBucket() []api.IPoint {
 	return nil
+}
+
+// Handle may handle an IO event
+func (n *Node) Handle(event api.IEvent) bool {
+	return false
 }
 
 // -----------------------------------------------------

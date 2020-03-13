@@ -11,6 +11,8 @@ type INodeManager interface {
 	PushNode(INode)
 	PopNode()
 
+	RouteEvents(IEvent)
+
 	RegisterTarget(target INode)
 	UnRegisterTarget(target INode)
 

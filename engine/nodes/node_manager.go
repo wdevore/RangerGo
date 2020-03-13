@@ -14,6 +14,9 @@ type nodeManager struct {
 
 	// Stack of node
 	stack *nodeStack
+
+	timingTargets []api.INode
+	eventTargets  []api.INode
 }
 
 // NewNodeManager constructs a manager for node.
@@ -26,6 +29,9 @@ func NewNodeManager(world api.IWorld) api.INodeManager {
 	o.context.Initialize()
 
 	o.stack = newNodeStack()
+
+	o.timingTargets = []api.INode{}
+	o.eventTargets = []api.INode{}
 
 	return o
 }
@@ -42,7 +48,7 @@ func (m *nodeManager) PreVisit() {
 
 func (m *nodeManager) Visit(interpolation float64) bool {
 	if m.stack.isEmpty() {
-		fmt.Println("NodeManager: no more nodes to visit.")
+		// fmt.Println("NodeManager: no more nodes to visit.")
 		return false
 	}
 
@@ -50,7 +56,7 @@ func (m *nodeManager) Visit(interpolation float64) bool {
 		m.setNextNode()
 	}
 
-	// This will save view-space matrix
+	// This saves view-space matrix
 	m.context.Save()
 
 	// DEBUG
@@ -78,45 +84,119 @@ func (m *nodeManager) Visit(interpolation float64) bool {
 }
 
 func (m *nodeManager) PostVisit() {
-
-}
-
-func (m *nodeManager) Update(dt float64) {
-
-}
-
-func (m *nodeManager) PushNode(node api.INode) {
-
+	m.context.Post()
 }
 
 func (m *nodeManager) PopNode() {
+	m.stack.pop()
+}
 
+func (m *nodeManager) PushNode(node api.INode) {
+	m.stack.nextNode = node
+	fmt.Println("NodeManager: pushing ", node)
+	m.stack.push(node)
+}
+
+// --------------------------------------------------------------------------
+// Timing
+// --------------------------------------------------------------------------
+
+func (m *nodeManager) Update(dt float64) {
+	for _, target := range m.timingTargets {
+		target.Update(dt)
+	}
 }
 
 func (m *nodeManager) RegisterTarget(target api.INode) {
-
+	fmt.Println("NodeManager registering ", target)
+	m.timingTargets = append(m.timingTargets, target)
 }
 
 func (m *nodeManager) UnRegisterTarget(target api.INode) {
+	idx := findFirstElement(target, m.timingTargets)
 
+	if idx >= 0 {
+		fmt.Println("UnRegistering idx:(", idx, ") ", m.timingTargets[idx], " target")
+		deleteAt(idx, m.timingTargets)
+	} else {
+		fmt.Println("Unable to UnRegister ", target, " target")
+	}
 }
 
-func (m *nodeManager) RegisterEventTarget(target api.INode) {
+// --------------------------------------------------------------------------
+// IO events
+// --------------------------------------------------------------------------
 
+func (m *nodeManager) RegisterEventTarget(target api.INode) {
+	fmt.Println("Register ", target, " event target")
+	m.eventTargets = append(m.eventTargets, target)
 }
 
 func (m *nodeManager) UnRegisterEventTarget(target api.INode) {
+	idx := findFirstElement(target, m.eventTargets)
 
+	if idx >= 0 {
+		fmt.Println("UnRegistering event idx:(", idx, ") ", m.eventTargets[idx], " target")
+		deleteAt(idx, m.eventTargets)
+	} else {
+		fmt.Println("Unable to UnRegister event ", target, " target")
+	}
+}
+
+func findFirstElement(node api.INode, slice []api.INode) int {
+	for idx, item := range slice {
+		if item.ID() == node.ID() {
+			return idx
+		}
+	}
+
+	return -1
+}
+
+func (m *nodeManager) RouteEvents(event api.IEvent) {
+	for _, target := range m.eventTargets {
+		handled := target.Handle(event)
+
+		if handled {
+			break
+		}
+	}
+}
+
+func deleteAt(i int, slice []api.INode) {
+	// Remove the element at index i from a.
+	copy(slice[i:], slice[i+1:]) // Shift a[i+1:] left one index.
+	slice[len(slice)-1] = nil    // Erase last element (write zero value).
+	slice = slice[:len(slice)-1] // Truncate slice.
 }
 
 func (m *nodeManager) setNextNode() {
+	if m.stack.hasRunningNode() {
+		m.exitNodes(m.stack.runningNode)
+	}
 
+	m.stack.runningNode = m.stack.nextNode
+	m.stack.clearNextNode()
+
+	fmt.Println("NodeManager: running node ", m.stack.runningNode)
+
+	m.enterNodes(m.stack.runningNode)
 }
 
-func (m *nodeManager) enterNodes() {
+func (m *nodeManager) enterNodes(node api.INode) {
+	node.EnterNode(m)
 
+	children := node.Children()
+	for _, child := range children {
+		m.enterNodes(child)
+	}
 }
 
-func (m *nodeManager) exitNodes() {
+func (m *nodeManager) exitNodes(node api.INode) {
+	node.ExitNode(m)
 
+	children := node.Children()
+	for _, child := range children {
+		m.exitNodes(child)
+	}
 }
