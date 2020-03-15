@@ -41,7 +41,7 @@ func (n *nodeStack) clearRunningNode() {
 
 func (n *nodeStack) push(node api.INode) {
 	n.nextNode = node
-	fmt.Println("NodeStack: pushing ", n.nextNode)
+	// fmt.Println("NodeStack: pushing ", n.nextNode)
 	n.nodes = append(n.nodes, node)
 }
 
@@ -50,7 +50,7 @@ func (n *nodeStack) pop() {
 		topI := len(n.nodes) - 1 // Top element index
 		n.nextNode = n.nodes[topI]
 		n.nodes = n.nodes[:topI] // Pop
-		fmt.Println("NodeStack: popped ", n.nextNode)
+		// fmt.Println("NodeStack: popped ", n.nextNode)
 	} else {
 		fmt.Println("NodeStack -- no nodes to pop")
 	}
@@ -62,13 +62,24 @@ func (n *nodeStack) replace(replacement api.INode) {
 	// Replacement is the act of popping and pushing. i.e. replacing
 	// the stack top with the new node.
 	if !n.isEmpty() {
+		// fmt.Println("Stack before: ", n)
 		topI := len(n.nodes) - 1
 		top := n.nodes[topI]     // Top element
 		n.nodes = n.nodes[:topI] // Pop
-		fmt.Println("NodeStack: popped ", top, " for replacement with ", replacement)
+		fmt.Println("NodeStack: popped ", top, " to be replaced with ", replacement)
+		// fmt.Println("Stack after: ", n)
+		n.nodes = append(n.nodes, replacement)
+		// fmt.Println("Stack final: ", n)
 	} else {
-		fmt.Println("NodeStack: replace WARNING, nothing popped")
+		fmt.Println("NodeStack: WARNING, nothing replaced")
+	}
+}
+
+func (n nodeStack) String() string {
+	s := "Stack:\n"
+	for _, node := range n.nodes {
+		s += fmt.Sprintf("%s", node)
 	}
 
-	n.nodes = append(n.nodes, replacement)
+	return s
 }

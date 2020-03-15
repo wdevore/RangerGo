@@ -18,7 +18,6 @@ type Node struct {
 
 	parent api.INode
 
-	// Event
 	Transform
 	Group
 }
@@ -57,6 +56,7 @@ func (n *Node) InitializeWithID(id int, name string) {
 
 // Visit traverses "down" the heirarchy while space-mappings traverses upward.
 func (n *Node) Visit(context api.IRenderContext, interpolation float64) {
+	// fmt.Println("Node: visiting ", n)
 	if !n.IsVisible() {
 		return
 	}
@@ -103,7 +103,7 @@ func (n *Node) IsVisible() bool {
 
 // Interpolate is used for blending time based properties.
 func (n *Node) Interpolate(interpolation float64) {
-	fmt.Println("Node Interpolate")
+	// fmt.Println("Node Interpolate on: ", n)
 }
 
 // IsDirty indicates if the node has been modified.
@@ -152,11 +152,6 @@ func (n *Node) Handle(event api.IEvent) bool {
 // The default is no action.
 func (n *Node) Transition() int {
 	return api.SceneNoAction
-}
-
-// GetReplacement returns the scene that will replace the current scene.
-func (n *Node) GetReplacement() api.INode {
-	return nil
 }
 
 // EnterNode called when a node is entering the stage
@@ -258,5 +253,5 @@ func printBranch(level int, node api.INode) {
 }
 
 func (n Node) String() string {
-	return fmt.Sprintf("|'%s' (%d)", n.name, n.id)
+	return fmt.Sprintf("|'%s' (%d)|", n.name, n.id)
 }

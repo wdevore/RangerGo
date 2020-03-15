@@ -15,5 +15,6 @@ const (
 type IScene interface {
 	Transition() int
 
+	SetReplacement(INode)
 	GetReplacement() INode
 }

@@ -34,7 +34,7 @@ type INode interface {
 
 	Handle(IEvent) bool
 
-	IScene
+	// IScene
 	ITransform
 	IGroup
 

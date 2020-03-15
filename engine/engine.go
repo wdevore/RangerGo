@@ -15,9 +15,9 @@ import (
 )
 
 const (
-	second = 1000000000
-	// fps             = 60.0
-	// framePeriod     = 1.0 / fps * 1000.0
+	second          = 1000000000
+	framesPerSec    = 60.0
+	framePeriod     = 1.0 / framesPerSec * 1000.0
 	updatePerSecond = 30
 	updatePeriod    = float64(second) / float64(updatePerSecond)
 )
@@ -49,25 +49,28 @@ type engine struct {
 	running bool
 
 	// -----------------------------------------
-	// Scene graph root node.
+	// Scene graph is a node manager
 	// -----------------------------------------
-	// root api.INode // deprecate
+	sceneGraph api.INodeManager
 
-	nodeMan api.INodeManager
+	// -----------------------------------------
+	// Debug
+	// -----------------------------------------
+	stepEnabled bool
 }
 
 // New constructs a Engine object.
 // The Engine runs the main loop.
 func New(world api.IWorld) api.IEngine {
 	o := new(engine)
+
 	o.world = world
 	o.running = false
 	o.clearColor = rendering.NewPaletteInt64(rendering.Orange).Color()
+	o.stepEnabled = false
 
-	// o.root = nodes.NewNode()
-	// o.root.Initialize("Root")
+	o.sceneGraph = nodes.NewNodeManager(world)
 
-	o.nodeMan = nodes.NewNodeManager(world)
 	return o
 }
 
@@ -125,10 +128,6 @@ func (e *engine) Configure() {
 	fmt.Println("Configure complete.")
 }
 
-// func (e *engine) Root() api.INode {
-// 	return e.root
-// }
-
 // Start see api.go for docs
 func (e *engine) Start() {
 	fmt.Println(("Engine starting..."))
@@ -138,7 +137,6 @@ func (e *engine) Start() {
 	// ***************************
 	// Debugging only
 	// ***************************
-	stepEnabled := false
 	lag := int64(0)
 	nsPerUpdate := int64(math.Round(updatePeriod))
 	frameDt := float64(nsPerUpdate) / 1000000.0
@@ -151,14 +149,11 @@ func (e *engine) Start() {
 	renderElapsedCnt := int64(0)
 	// ***************************
 
-	// var frameStart time.Time
-	// var elapsedTime float64
-	// var loopTime float64
-
 	// Get a reference to SDL's internal keyboard state. It is updated
 	// during sdl.PollEvent()
 	// keyState := sdl.GetKeyboardState()
 
+	// Setup a callback called during PumpEvents
 	sdl.SetEventFilterFunc(e.filterEvent, nil)
 
 	for e.running {
@@ -167,6 +162,8 @@ func (e *engine) Start() {
 		// ~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--
 		// Handle Events
 		// ~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--
+		// In order for filterFunc to trigger we need to repeatedly call
+		// PumpEvents.
 		sdl.PumpEvents()
 
 		// ~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--
@@ -179,12 +176,12 @@ func (e *engine) Start() {
 		// Note: This update loop is based on:
 		// https://gameprogrammingpatterns.com/game-loop.html
 
-		if !stepEnabled {
+		if !e.stepEnabled {
 			lag += elapsedNano
 			lagging := true
 			for lagging {
 				if lag >= nsPerUpdate {
-					e.nodeMan.Update(frameDt)
+					e.sceneGraph.Update(frameDt)
 					lag -= nsPerUpdate
 					upsCnt++
 				} else {
@@ -194,9 +191,9 @@ func (e *engine) Start() {
 		}
 
 		// ~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--
-		// Render
+		// Render Scenegraph by visiting the nodes
 		// ~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--
-		e.nodeMan.PreVisit()
+		e.sceneGraph.PreVisit()
 		// **** Any rendering must occur AFTER this point ****
 
 		// Capture time AFTER pre_visit otherwise if vsync is enabled
@@ -205,14 +202,14 @@ func (e *engine) Start() {
 
 		interpolation := float64(lag) / float64(nsPerUpdate)
 
-		moreScenes := e.nodeMan.Visit(interpolation)
+		moreScenes := e.sceneGraph.Visit(interpolation)
 
 		// time.Sleep(time.Millisecond * 1)
 
 		if !moreScenes {
 			// fmt.Println("No more scenes!")
-			// e.running = false
-			// continue
+			e.running = false
+			continue
 		}
 
 		renderElapsedCnt += (time.Now().Sub(renderT)).Nanoseconds()
@@ -239,9 +236,9 @@ func (e *engine) Start() {
 		fpsCnt++
 
 		// ~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--
-		// Present
+		// Finish rendering
 		// ~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--
-		e.nodeMan.PostVisit()
+		e.sceneGraph.PostVisit()
 	}
 }
 
@@ -257,6 +254,14 @@ func (e *engine) End() {
 	sdl.Quit()
 
 	fmt.Println("Done. Goodbye.")
+}
+
+func (e *engine) EnableStepping(enable bool) {
+	e.stepEnabled = enable
+}
+
+func (e *engine) PushStart(node api.INode) {
+	e.sceneGraph.PushNode(node)
 }
 
 // DisplaySize see api.go for docs
@@ -287,7 +292,7 @@ func (e *engine) filterEvent(ev sdl.Event, userdata interface{}) bool {
 		event.SetWhich(t.Which)
 		event.SetMousePosition(t.X, t.Y)
 		event.SetMouseRelMovement(t.XRel, t.YRel)
-		e.nodeMan.RouteEvents(event)
+		e.sceneGraph.RouteEvents(event)
 
 		// fmt.Printf("[%d ms] MouseMotion\ttype:%d\tid:%d\tx:%d\ty:%d\txrel:%d\tyrel:%d\n",
 		// 	t.Timestamp, t.Type, t.Which, t.X, t.Y, t.XRel, t.YRel)
@@ -298,7 +303,7 @@ func (e *engine) filterEvent(ev sdl.Event, userdata interface{}) bool {
 		event.SetClicks(t.Clicks)
 		event.SetButton(t.Button)
 		event.SetMousePosition(t.X, t.Y)
-		e.nodeMan.RouteEvents(event)
+		e.sceneGraph.RouteEvents(event)
 		return false
 		// fmt.Printf("[%d ms] MouseButton\ttype:%d\tid:%d\tx:%d\ty:%d\tbutton:%d\tstate:%d\n",
 		// 	t.Timestamp, t.Type, t.Which, t.X, t.Y, t.Button, t.State)
@@ -307,7 +312,7 @@ func (e *engine) filterEvent(ev sdl.Event, userdata interface{}) bool {
 		event.SetWhich(t.Which)
 		event.SetMouseRelMovement(t.X, t.Y)
 		event.SetDirection(t.Direction)
-		e.nodeMan.RouteEvents(event)
+		e.sceneGraph.RouteEvents(event)
 		return false
 		// fmt.Printf("[%d ms] MouseWheel\ttype:%d\tid:%d\tx:%d\ty:%d\n",
 		// 	t.Timestamp, t.Type, t.Which, t.X, t.Y)
@@ -324,7 +329,7 @@ func (e *engine) filterEvent(ev sdl.Event, userdata interface{}) bool {
 		event.SetRepeat(t.Repeat)
 		event.SetKeyScan(uint32(t.Keysym.Scancode))
 		event.SetKeyCode(uint32(t.Keysym.Sym))
-		e.nodeMan.RouteEvents(event)
+		e.sceneGraph.RouteEvents(event)
 		// fmt.Printf("[%d ms] Keyboard\ttype:%d\tsym:%c\tmodifiers:%d\tstate:%d\trepeat:%d\n",
 		// 	t.Timestamp, t.Type, t.Keysym.Sym, t.Keysym.Mod, t.State, t.Repeat)
 		return false
@@ -332,19 +337,4 @@ func (e *engine) filterEvent(ev sdl.Event, userdata interface{}) bool {
 
 	// True means we didn't handled it. Allow it to be queued.
 	return true
-}
-
-// deprecated
-func (e *engine) clearDisplay() {
-	// for y := 0; y < int(e.height); y++ {
-	// 	for x := 0; x < int(e.width); x++ {
-	// 		e.pixels.SetRGBA(x, y, e.clearColor)
-	// 	}
-	// }
-	c := e.clearColor
-	renderer := e.world.Renderer()
-
-	renderer.SetDrawColor(c.R, c.G, c.B, c.A)
-	renderer.Clear()
-	// e.renderer.Present()
 }

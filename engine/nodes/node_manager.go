@@ -48,9 +48,11 @@ func (m *nodeManager) PreVisit() {
 
 func (m *nodeManager) Visit(interpolation float64) bool {
 	if m.stack.isEmpty() {
-		// fmt.Println("NodeManager: no more nodes to visit.")
+		fmt.Println("NodeManager: no more nodes to visit.")
 		return false
 	}
+
+	fmt.Println("NodeManager: visiting ", m.stack.runningNode)
 
 	if m.stack.hasNextNode() {
 		m.setNextNode()
@@ -62,17 +64,23 @@ func (m *nodeManager) Visit(interpolation float64) bool {
 	// DEBUG
 	// If mouse coords changed then update view coords.
 	// self.global_data.update_view_coords(&mut self.context);
+	runningScene := m.stack.runningNode.(api.IScene)
 
-	action := m.stack.runningNode.Transition()
+	action := runningScene.Transition()
 
 	if action == api.SceneReplaceTake {
-		repl := m.stack.runningNode.GetReplacement()
-		m.stack.replace(repl)
-	}
-
-	// Immediately switch to the new runner
-	if m.stack.hasNextNode() {
-		m.setNextNode()
+		repl := runningScene.GetReplacement()
+		fmt.Println("NodeManager: SceneReplaceTake with ", repl)
+		if repl != nil {
+			m.stack.replace(repl)
+			// Immediately switch to the new replacement node
+			if m.stack.hasNextNode() {
+				m.setNextNode()
+			}
+		} else {
+			m.exitNodes(m.stack.runningNode)
+			m.stack.pop()
+		}
 	}
 
 	// Visit the running node
@@ -80,6 +88,7 @@ func (m *nodeManager) Visit(interpolation float64) bool {
 
 	m.context.Restore()
 
+	// fmt.Println("NodeManager: done visiting ", m.stack.runningNode)
 	return true // continue to draw.
 }
 
@@ -93,8 +102,12 @@ func (m *nodeManager) PopNode() {
 
 func (m *nodeManager) PushNode(node api.INode) {
 	m.stack.nextNode = node
-	fmt.Println("NodeManager: pushing ", node)
+	// fmt.Println("NodeManager: pushing ", node)
 	m.stack.push(node)
+}
+
+func (m *nodeManager) ReplaceNode(node api.INode) {
+	m.stack.replace(node)
 }
 
 // --------------------------------------------------------------------------
@@ -178,12 +191,13 @@ func (m *nodeManager) setNextNode() {
 	m.stack.runningNode = m.stack.nextNode
 	m.stack.clearNextNode()
 
-	fmt.Println("NodeManager: running node ", m.stack.runningNode)
+	fmt.Println("NodeManager: new running node ", m.stack.runningNode)
 
 	m.enterNodes(m.stack.runningNode)
 }
 
 func (m *nodeManager) enterNodes(node api.INode) {
+	fmt.Println("NodeManager: enter-node ", node)
 	node.EnterNode(m)
 
 	children := node.Children()
@@ -193,10 +207,15 @@ func (m *nodeManager) enterNodes(node api.INode) {
 }
 
 func (m *nodeManager) exitNodes(node api.INode) {
+	fmt.Println("NodeManager: exit-node ", node)
 	node.ExitNode(m)
 
 	children := node.Children()
 	for _, child := range children {
 		m.exitNodes(child)
 	}
+}
+
+func (m nodeManager) String() string {
+	return fmt.Sprintf("%s", m.stack)
 }

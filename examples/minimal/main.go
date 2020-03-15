@@ -1,0 +1,34 @@
+package main
+
+import (
+	"fmt"
+
+	"github.com/wdevore/RangerGo/api"
+	"github.com/wdevore/RangerGo/engine"
+)
+
+var ranger api.IEngine
+
+// This example just runs to basic scenes and then exits.
+// Each scene pauses for a few seconds.
+
+func init() {
+	world := engine.NewWorld("RangerGo")
+
+	ranger = engine.New(world)
+
+	splash := NewBasicSplashScene("Splash", nil)
+	boot := NewBasicBootScene("Boot", splash)
+
+	ranger.PushStart(boot)
+}
+
+func main() {
+	fmt.Println("Minimal")
+
+	ranger.Configure()
+
+	ranger.Start()
+
+	ranger.End()
+}

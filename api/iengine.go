@@ -18,4 +18,8 @@ type IEngine interface {
 
 	// SetClearColor sets the background clear color
 	SetClearColor(color color.RGBA)
+
+	// PushStart pushes the given node onto the stack as the
+	// first scene to start once the engine's configuration in complete.
+	PushStart(INode)
 }

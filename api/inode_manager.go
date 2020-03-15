@@ -10,6 +10,7 @@ type INodeManager interface {
 
 	PushNode(INode)
 	PopNode()
+	ReplaceNode(INode)
 
 	RouteEvents(IEvent)
 
