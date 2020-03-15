@@ -155,11 +155,11 @@ func (n *Node) Transition() int {
 }
 
 // EnterNode called when a node is entering the stage
-func (n *Node) EnterNode(api.INodeManager) {
+func (n *Node) EnterNode(man api.INodeManager) {
 }
 
 // ExitNode called when a node is exiting stage
-func (n *Node) ExitNode(api.INodeManager) {
+func (n *Node) ExitNode(man api.INodeManager) {
 }
 
 // -----------------------------------------------------

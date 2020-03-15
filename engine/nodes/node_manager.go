@@ -52,7 +52,7 @@ func (m *nodeManager) Visit(interpolation float64) bool {
 		return false
 	}
 
-	fmt.Println("NodeManager: visiting ", m.stack.runningNode)
+	// fmt.Println("NodeManager: visiting ", m.stack.runningNode)
 
 	if m.stack.hasNextNode() {
 		m.setNextNode()
@@ -64,9 +64,10 @@ func (m *nodeManager) Visit(interpolation float64) bool {
 	// DEBUG
 	// If mouse coords changed then update view coords.
 	// self.global_data.update_view_coords(&mut self.context);
+
 	runningScene := m.stack.runningNode.(api.IScene)
 
-	action := runningScene.Transition()
+	action := runningScene.TransitionAction()
 
 	if action == api.SceneReplaceTake {
 		repl := runningScene.GetReplacement()

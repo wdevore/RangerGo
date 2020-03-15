@@ -13,7 +13,7 @@ const (
 
 // IScene scene management
 type IScene interface {
-	Transition() int
+	TransitionAction() int
 
 	SetReplacement(INode)
 	GetReplacement() INode

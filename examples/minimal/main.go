@@ -17,8 +17,8 @@ func init() {
 
 	ranger = engine.New(world)
 
-	splash := NewBasicSplashScene("Splash", nil)
-	boot := NewBasicBootScene("Boot", splash)
+	splash := newBasicSplashScene("Splash", nil)
+	boot := newBasicBootScene("Boot", splash)
 
 	ranger.PushStart(boot)
 }

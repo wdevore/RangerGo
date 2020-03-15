@@ -11,9 +11,10 @@ import (
 type sceneBoot struct {
 	nodes.Node
 	nodes.Scene
+	nodes.Transition
 }
 
-func NewBasicBootScene(name string, replacement api.INode) api.INode {
+func newBasicBootScene(name string, replacement api.INode) api.INode {
 	o := new(sceneBoot)
 	o.Initialize(name)
 	o.SetReplacement(replacement)
@@ -24,6 +25,6 @@ func NewBasicBootScene(name string, replacement api.INode) api.INode {
 // Transitioning
 // --------------------------------------------------------
 
-func (s *sceneBoot) Transition() int {
+func (s *sceneBoot) TransitionAction() int {
 	return api.SceneReplaceTake
 }
