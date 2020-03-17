@@ -60,6 +60,10 @@ func (w *world) WindowSize() api.IPoint {
 	return w.windowSize
 }
 
+func (w *world) ViewSize() api.IPoint {
+	return w.viewSize
+}
+
 func (w *world) Title() string {
 	return w.title
 }

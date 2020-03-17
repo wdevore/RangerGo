@@ -18,7 +18,7 @@ type Transform struct {
 
 func (t *Transform) initializeTransform() {
 	t.position = geometry.NewPoint()
-	t.scale = geometry.NewPoint()
+	t.scale = geometry.NewPointUsing(1.0, 1.0)
 
 	t.aft = maths.NewTransform()
 	t.inverse = maths.NewTransform()

@@ -19,4 +19,6 @@ type INodeManager interface {
 
 	RegisterEventTarget(target INode)
 	UnRegisterEventTarget(target INode)
+
+	Debug()
 }

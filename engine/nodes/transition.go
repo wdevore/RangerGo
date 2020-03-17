@@ -1,7 +1,5 @@
 package nodes
 
-import "fmt"
-
 // Transition holds properties for scene transitions.
 type Transition struct {
 	pauseTime     float64
@@ -27,7 +25,6 @@ func (t *Transition) Inc(dt float64) {
 
 // UpdateTransition the internal timer
 func (t *Transition) UpdateTransition(dt float64) {
-	fmt.Println(t.pauseTime)
 	t.pauseCnt += dt
 	if t.pauseCnt >= t.pauseTime {
 		t.canTransition = true

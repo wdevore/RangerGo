@@ -73,8 +73,11 @@ func (rc *renderContext) Initialize() {
 func (rc *renderContext) Apply(aft api.IAffineTransform) {
 	// Concat this transform onto the current transform but don't push it.
 	// Use post multiply
+	// fmt.Println("Apply A: \n", rc.current)
+	// fmt.Println("aft: \n", aft)
 	maths.Multiply(aft, rc.current, rc.post)
 	rc.current.SetByTransform(rc.post)
+	// fmt.Println("Apply B: \n", rc.current)
 }
 
 func (rc *renderContext) Pre() {
@@ -104,7 +107,8 @@ func (rc *renderContext) Restore() {
 	rc.clearColor = top.clearColor
 	rc.drawColor = top.drawColor
 	rc.current.SetByTransform(top.current)
-
+	// fmt.Println("restore")
+	// fmt.Println(rc.current)
 	c := rc.clearColor
 	renderer := rc.world.Renderer()
 	renderer.SetDrawColor(c.R, c.G, c.B, c.A)
@@ -148,6 +152,12 @@ func (rc *renderContext) TransformPolygon(poly api.IPolygon) {
 	for i := 0; i < len(vertices); i++ {
 		rc.current.TransformToPoint(vertices[i], bucket[i])
 	}
+}
+
+func (rc *renderContext) SetDrawColor(color api.IPalette) {
+	rc.drawColor = color.Color()
+	renderer := rc.world.Renderer()
+	renderer.SetDrawColor(rc.drawColor.R, rc.drawColor.G, rc.drawColor.B, rc.drawColor.A)
 }
 
 func (rc *renderContext) DrawPoint(x, y int32) {
@@ -246,5 +256,46 @@ func (rc *renderContext) RenderAARectangle(min, max api.IPoint, fillStyle int) {
 	} else {
 		rc.DrawFilledRectangle(irect)
 		rc.DrawRectangle(irect)
+	}
+}
+
+func (rc *renderContext) RenderCheckerBoard(mesh api.IMesh, oddColor api.IPalette, evenColor api.IPalette) {
+	flip := false
+	vertices := mesh.Bucket()
+	build := true
+	renderer := rc.world.Renderer()
+
+	for _, vertex := range vertices {
+		if build {
+			v1.SetByPoint(vertex)
+			build = false
+			continue
+		} else {
+			v2.SetByPoint(vertex)
+			build = true
+		}
+
+		if flip {
+			renderer.SetDrawColor(oddColor.R(), oddColor.G(), oddColor.B(), oddColor.A())
+		} else {
+			renderer.SetDrawColor(evenColor.R(), evenColor.G(), evenColor.B(), evenColor.A())
+		}
+
+		// upper-left
+		minx := int32(math.Round(v1.X()))
+		miny := int32(math.Round(v1.Y()))
+
+		// bottom-right
+		maxx := int32(math.Round(v2.X()))
+		maxy := int32(math.Round(v2.Y()))
+
+		sdlRect.X = minx
+		sdlRect.Y = miny
+		sdlRect.W = maxx - minx
+		sdlRect.H = maxy - miny
+
+		renderer.FillRect(sdlRect)
+
+		flip = !flip
 	}
 }

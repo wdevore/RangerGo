@@ -24,6 +24,7 @@ type IWorld interface {
 
 	// WindowSize is the device window dimensions.
 	WindowSize() IPoint
+	ViewSize() IPoint
 
 	// Title is the window title
 	Title() string

@@ -85,7 +85,7 @@ func (m *nodeManager) Visit(interpolation float64) bool {
 	}
 
 	// Visit the running node
-	m.stack.runningNode.Visit(m.context, interpolation)
+	Visit(m.stack.runningNode, m.context, interpolation)
 
 	m.context.Restore()
 
@@ -197,6 +197,10 @@ func (m *nodeManager) setNextNode() {
 	m.enterNodes(m.stack.runningNode)
 }
 
+// -----------------------------------------------------
+// Scene lifecycles
+// -----------------------------------------------------
+
 func (m *nodeManager) enterNodes(node api.INode) {
 	fmt.Println("NodeManager: enter-node ", node)
 	node.EnterNode(m)
@@ -215,6 +219,14 @@ func (m *nodeManager) exitNodes(node api.INode) {
 	for _, child := range children {
 		m.exitNodes(child)
 	}
+}
+
+func (m *nodeManager) Debug() {
+	black := rendering.NewPaletteInt64(rendering.Black)
+	m.context.SetDrawColor(black)
+	// renderer.SetDrawColor(0, 0, 0, 255)
+
+	m.context.DrawLine(500, 500, 800, 850)
 }
 
 func (m nodeManager) String() string {

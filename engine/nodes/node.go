@@ -46,6 +46,10 @@ func (n *Node) Initialize(name string) {
 	n.initializeGroup()
 }
 
+// Build builds this nodes internal geometry
+func (n *Node) Build(world api.IWorld) {
+}
+
 // InitializeWithID called by base objects from their Initialize
 func (n *Node) InitializeWithID(id int, name string) {
 	n.id = id
@@ -55,9 +59,9 @@ func (n *Node) InitializeWithID(id int, name string) {
 }
 
 // Visit traverses "down" the heirarchy while space-mappings traverses upward.
-func (n *Node) Visit(context api.IRenderContext, interpolation float64) {
+func Visit(node api.INode, context api.IRenderContext, interpolation float64) {
 	// fmt.Println("Node: visiting ", n)
-	if !n.IsVisible() {
+	if !node.IsVisible() {
 		return
 	}
 
@@ -65,22 +69,22 @@ func (n *Node) Visit(context api.IRenderContext, interpolation float64) {
 
 	// Because position and angles are dependent
 	// on lerping we perform interpolation first.
-	n.Interpolate(interpolation)
+	node.Interpolate(interpolation)
 
-	aft := n.CalcTransform()
+	aft := node.CalcTransform()
 
 	context.Apply(aft)
 
-	children := n.Children()
+	children := node.Children()
 
-	if children != nil {
-		n.Draw(context)
+	if len(children) > 0 {
+		node.(api.IRender).Draw(context)
 
 		for _, child := range children {
-			child.Visit(context, interpolation)
+			Visit(child, context, interpolation)
 		}
 	} else {
-		n.Draw(context)
+		node.(api.IRender).Draw(context)
 	}
 
 	context.Restore()
@@ -131,7 +135,7 @@ func (n *Node) Update(dt float64) {
 
 // Draw renders a node
 func (n *Node) Draw(context api.IRenderContext) {
-	// fmt.Println("Node Draw")
+	// fmt.Println("Node: Draw")
 }
 
 // GetBucket returns a buffer for capturing transformed vertices
@@ -156,6 +160,7 @@ func (n *Node) Transition() int {
 
 // EnterNode called when a node is entering the stage
 func (n *Node) EnterNode(man api.INodeManager) {
+	fmt.Println("Node: node enter")
 }
 
 // ExitNode called when a node is exiting stage

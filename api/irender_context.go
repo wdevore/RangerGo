@@ -46,6 +46,7 @@ type IRenderContext interface {
 	// ,--.,--.,--.,--.,--.,--.,--.,--.,--.,--.,--.,--.,--.,--.,--.,--.,--.
 	// Draw functions render directly to the device.
 	// ,__.,__.,__.,__.,__.,__.,__.,__.,__.,__.,__.,__.,__.,__.,__.,__.,__.
+	SetDrawColor(color IPalette)
 
 	DrawPoint(x, y int32)
 
@@ -69,4 +70,6 @@ type IRenderContext interface {
 	// Render an axis aligned rectangle. Rotating any of the vertices
 	// will cause strange rendering behaviours
 	RenderAARectangle(min, max IPoint, fill int)
+
+	RenderCheckerBoard(mesh IMesh, oddColor IPalette, evenColor IPalette)
 }

@@ -11,7 +11,6 @@ import (
 type sceneBoot struct {
 	nodes.Node
 	nodes.Scene
-	nodes.Transition
 }
 
 func newBasicBootScene(name string, replacement api.INode) api.INode {

@@ -2,7 +2,6 @@ package engine
 
 import (
 	"fmt"
-	"image"
 	"image/color"
 	"math"
 	"time"
@@ -34,13 +33,13 @@ type engine struct {
 	// -----------------------------------------
 	window  *sdl.Window
 	surface *sdl.Surface
-	texture *sdl.Texture
+	// texture *sdl.Texture
 
 	// -----------------------------------------
 	// Graphic properties
 	// -----------------------------------------
-	pixels     *image.RGBA // Drawing buffer
-	bounds     image.Rectangle
+	// pixels     *image.RGBA // Drawing buffer
+	// bounds     image.Rectangle
 	clearColor color.RGBA
 
 	// -----------------------------------------
@@ -111,19 +110,19 @@ func (e *engine) Configure() {
 
 	e.world.SetRenderer(renderer)
 
-	fmt.Println("Creating renderer texture...")
-	e.texture, err = renderer.CreateTexture(
-		sdl.PIXELFORMAT_ABGR8888,
-		sdl.TEXTUREACCESS_STREAMING,
-		int32(e.world.WindowSize().X()), int32(e.world.WindowSize().Y()))
-	if err != nil {
-		panic(err)
-	}
+	// fmt.Println("Creating renderer texture...")
+	// e.texture, err = renderer.CreateTexture(
+	// 	sdl.PIXELFORMAT_ABGR8888,
+	// 	sdl.TEXTUREACCESS_STREAMING,
+	// 	int32(e.world.WindowSize().X()), int32(e.world.WindowSize().Y()))
+	// if err != nil {
+	// 	panic(err)
+	// }
 
-	e.bounds = image.Rect(0, 0, int(e.world.WindowSize().X()), int(e.world.WindowSize().Y()))
-	e.pixels = image.NewRGBA(e.bounds)
+	// e.bounds = image.Rect(0, 0, int(e.world.WindowSize().X()), int(e.world.WindowSize().Y()))
+	// e.pixels = image.NewRGBA(e.bounds)
 
-	renderer.SetDrawBlendMode(sdl.BLENDMODE_BLEND)
+	// renderer.SetDrawBlendMode(sdl.BLENDMODE_BLEND)
 
 	fmt.Println("Configure complete.")
 }
@@ -204,10 +203,10 @@ func (e *engine) Start() {
 
 		moreScenes := e.sceneGraph.Visit(interpolation)
 
+		// e.sceneGraph.Debug()
 		// time.Sleep(time.Millisecond * 1)
 
 		if !moreScenes {
-			// fmt.Println("No more scenes!")
 			e.running = false
 			continue
 		}
@@ -226,7 +225,7 @@ func (e *engine) Start() {
 			renderElapsedCnt = 0
 		}
 
-		// time.Sleep(time.Millisecond * 10)
+		time.Sleep(time.Millisecond * 10)
 
 		// Render scene graph
 		// e.root.Draw(e.context)
@@ -244,8 +243,8 @@ func (e *engine) Start() {
 
 func (e *engine) End() {
 	fmt.Println("Engine shutting down...")
-	fmt.Println("Disposing texture...")
-	e.texture.Destroy()
+	// fmt.Println("Disposing texture...")
+	// e.texture.Destroy()
 	fmt.Println("Disposing renderer...")
 	e.world.Renderer().Destroy()
 	fmt.Println("Disposing window...")

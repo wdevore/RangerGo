@@ -10,8 +10,7 @@ type INode interface {
 	// InitializeWithID configures default properties.
 	InitializeWithID(id int, name string)
 
-	// Visit traverses "down" the heirarchy while space-mappings traverses upward.
-	Visit(context IRenderContext, interpolation float64)
+	Build(IWorld)
 
 	SetParent(INode)
 	Parent() INode
@@ -19,8 +18,6 @@ type INode interface {
 	CalcTransform() IAffineTransform
 
 	Interpolate(interpolation float64)
-
-	Draw(context IRenderContext)
 
 	EnterNode(INodeManager)
 	ExitNode(INodeManager)
