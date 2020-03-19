@@ -48,8 +48,6 @@ func NewVectorFont() api.IVectorFont {
 	o := new(vectorFont)
 	o.vectors = []*vectorGlyph{}
 	o.glyphs = make(map[byte]int)
-	o.horizontalOffset = 1.2
-	o.verticalOffset = 1.2
 	o.scale = 3.0
 	return o
 }
@@ -73,8 +71,22 @@ func (v *vectorFont) Initialize(dataFile string, relativePath string) {
 	var glyph *vectorGlyph
 	idx := 0
 
+	scanner.Scan()
+	line := scanner.Text()
+	ele := strings.Split(line, " ")
+	v.horizontalOffset, _ = strconv.ParseFloat(ele[1], 64)
+
+	scanner.Scan()
+	line = scanner.Text()
+	ele = strings.Split(line, " ")
+	v.verticalOffset, _ = strconv.ParseFloat(ele[1], 64)
+
 	for scanner.Scan() {
-		line := scanner.Text()
+		line = scanner.Text()
+
+		if len(line) == 0 {
+			continue
+		}
 
 		if len(line) == 1 {
 			// Add character to glyph dictionary
@@ -94,7 +106,7 @@ func (v *vectorFont) Initialize(dataFile string, relativePath string) {
 
 		// readlines until end of pixel marker: "||"
 		if line != "||" {
-			ele := strings.Split(line, " ")
+			ele = strings.Split(line, " ")
 			v1, _ := strconv.ParseFloat(ele[0], 64)
 			v2, _ := strconv.ParseFloat(ele[1], 64)
 			v3, _ := strconv.ParseFloat(ele[2], 64)
