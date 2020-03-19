@@ -73,11 +73,8 @@ func (rc *renderContext) Initialize() {
 func (rc *renderContext) Apply(aft api.IAffineTransform) {
 	// Concat this transform onto the current transform but don't push it.
 	// Use post multiply
-	// fmt.Println("Apply A: \n", rc.current)
-	// fmt.Println("aft: \n", aft)
 	maths.Multiply(aft, rc.current, rc.post)
 	rc.current.SetByTransform(rc.post)
-	// fmt.Println("Apply B: \n", rc.current)
 }
 
 func (rc *renderContext) Pre() {
@@ -107,8 +104,6 @@ func (rc *renderContext) Restore() {
 	rc.clearColor = top.clearColor
 	rc.drawColor = top.drawColor
 	rc.current.SetByTransform(top.current)
-	// fmt.Println("restore")
-	// fmt.Println(rc.current)
 	c := rc.clearColor
 	renderer := rc.world.Renderer()
 	renderer.SetDrawColor(c.R, c.G, c.B, c.A)
@@ -224,23 +219,18 @@ func (rc *renderContext) RenderLine(x1, y1, x2, y2 float64) {
 	rc.DrawLine(int32(x1), int32(y1), int32(x2), int32(y2))
 }
 
-func (rc *renderContext) RenderMesh(mesh api.IMesh) {
+func (rc *renderContext) RenderLines(mesh api.IMesh) {
 	first := true
-	bucket := mesh.Bucket()
-
-	for i := 0; i < len(bucket); i++ {
+	for _, v := range mesh.Bucket() {
 		if first {
-			v1.SetByPoint(bucket[i])
+			v1.SetByPoint(v)
 			first = false
 			continue
 		} else {
-			v2.SetByPoint(bucket[i])
+			v2.SetByPoint(v)
 			first = true
 		}
-
-		rc.DrawLine(
-			int32(v1.X()), int32(v1.Y()),
-			int32(v2.X()), int32(v2.Y()))
+		rc.DrawLine(int32(v1.X()), int32(v1.Y()), int32(v2.X()), int32(v2.Y()))
 	}
 }
 

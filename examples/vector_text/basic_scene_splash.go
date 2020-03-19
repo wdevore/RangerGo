@@ -3,7 +3,9 @@ package main
 import (
 	"github.com/wdevore/RangerGo/api"
 	"github.com/wdevore/RangerGo/engine/geometry"
+	"github.com/wdevore/RangerGo/engine/maths"
 	"github.com/wdevore/RangerGo/engine/nodes"
+	"github.com/wdevore/RangerGo/engine/nodes/custom"
 	"github.com/wdevore/RangerGo/engine/rendering"
 )
 
@@ -14,44 +16,39 @@ type sceneSplash struct {
 
 	api.IRender
 
-	// mesh api.IMesh
-	mesh *geometry.Mesh
+	backgroundColor api.IPalette
+	backgroundMin   api.IPoint
+	backgroundMax   api.IPoint
 
-	oddColor  api.IPalette
-	evenColor api.IPalette
+	text *custom.VectorTextNode
 }
 
 func newBasicSplashScene(name string, replacement api.INode) api.INode {
 	o := new(sceneSplash)
 	o.Initialize(name)
 	o.SetReplacement(replacement)
-
-	o.mesh = geometry.NewMesh()
 	return o
 }
 
 func (s *sceneSplash) Build(world api.IWorld) {
 	vw, vh := world.ViewSize().Components()
+	x := -vw / 2.0
 	y := -vh / 2.0
-	w := 320.0
 
-	// Construct grid of rectangles
-	for y <= vh {
-		x := -vw / 2.0
-		for x <= vw {
-			s.mesh.AddVertex(x, y) // top-left
-			s.mesh.AddVertex(x+w, y+w)
-			x += w
-		}
-		y += w
-	}
-
-	s.mesh.Build()
+	s.backgroundMin = geometry.NewPointUsing(x, y)
+	s.backgroundMax = geometry.NewPointUsing(x+vw, y+vh)
 
 	s.SetPauseTime(30000.0)
 
-	s.oddColor = rendering.NewPaletteInt64(rendering.DarkGray)
-	s.evenColor = rendering.NewPaletteInt64(rendering.LightGray)
+	s.backgroundColor = rendering.NewPaletteInt64(rendering.LightGray)
+
+	s.text = custom.NewVectorTextNode(world)
+	s.text.Initialize("VectorTextNode")
+	s.text.SetText("RANGER IS A GO!")
+	s.text.SetScale(25.0)
+	s.text.SetRotation(maths.DegreeToRadians * 45.0)
+	s.AddChild(s.text)
+
 }
 
 // --------------------------------------------------------
@@ -80,7 +77,6 @@ func (s *sceneSplash) TransitionAction() int {
 
 // EnterNode called when a node is entering the stage
 func (s *sceneSplash) EnterNode(man api.INodeManager) {
-	// fmt.Println("sceneSplash enter")
 	s.Transition.Reset()
 	man.RegisterTarget(s)
 }
@@ -94,28 +90,21 @@ func (s *sceneSplash) ExitNode(man api.INodeManager) {
 // Visuals
 // -----------------------------------------------------
 
-func (s *sceneSplash) Draw(context api.IRenderContext) {
-	s.Node.Draw(context)
+var o1 = geometry.NewPoint()
+var o2 = geometry.NewPoint()
 
+func (s *sceneSplash) Draw(context api.IRenderContext) {
 	// Transform vertices if anything has changed.
 	if s.IsDirty() {
 		// Transform this node's vertices using the context
-		context.TransformMesh(s.mesh)
-		s.SetDirty(false) // Node's bucket is no longer dirty
+		context.TransformPoint(s.backgroundMin, o1)
+		context.TransformPoint(s.backgroundMax, o2)
+		s.SetDirty(false) // Node is no longer dirty
 	}
 
-	// Draw background first. The background is a grid of squares.
-	context.RenderCheckerBoard(s.mesh, s.oddColor, s.evenColor)
+	// Draw background first.
+	context.SetDrawColor(s.backgroundColor)
+	context.RenderAARectangle(o1, o2, api.FILLED)
 
-	// Manually building and rendering a line. This isn't the idiomatic Ranger way!
-	// This is just a simple demo scene.
-	black := rendering.NewPaletteInt64(rendering.Black)
-	context.SetDrawColor(black)
-
-	p1 := geometry.NewPoint()
-	p2 := geometry.NewPointUsing(100.0, 100.0)
-	o1 := geometry.NewPoint()
-	o2 := geometry.NewPoint()
-	context.TransformLine(p1, p2, o1, o2)
-	context.RenderLine(o1.X(), o1.Y(), o2.X(), o2.Y())
+	s.Node.Draw(context)
 }

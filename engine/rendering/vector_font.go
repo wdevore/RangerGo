@@ -54,8 +54,8 @@ func NewVectorFont() api.IVectorFont {
 	return o
 }
 
-func (v *vectorFont) Initialize(dataFile string) {
-	dataPath, err := filepath.Abs("..")
+func (v *vectorFont) Initialize(dataFile string, relativePath string) {
+	dataPath, err := filepath.Abs(relativePath)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -71,14 +71,15 @@ func (v *vectorFont) Initialize(dataFile string) {
 	fmt.Println("Opened vector font file")
 
 	var glyph *vectorGlyph
+	idx := 0
 
 	for scanner.Scan() {
 		line := scanner.Text()
-		idx := 0
 
 		if len(line) == 1 {
 			// Add character to glyph dictionary
-			v.glyphs[line[0]] = idx
+			gIdx := byte(line[0])
+			v.glyphs[gIdx] = idx
 			// Start new glyph for character
 			glyph = newVectorGlyph()
 			idx++
@@ -88,6 +89,7 @@ func (v *vectorFont) Initialize(dataFile string) {
 		if line == "||" {
 			// Finished glyph vector
 			v.vectors = append(v.vectors, glyph)
+			continue
 		}
 
 		// readlines until end of pixel marker: "||"
@@ -100,6 +102,18 @@ func (v *vectorFont) Initialize(dataFile string) {
 			glyph.addVector(v1, v2, v3, v4)
 		}
 	}
+}
+
+func (v *vectorFont) HorizontalOffset() float64 {
+	return v.horizontalOffset
+}
+
+func (v *vectorFont) VerticalOffset() float64 {
+	return v.verticalOffset
+}
+
+func (v *vectorFont) Scale() float64 {
+	return v.scale
 }
 
 func (v *vectorFont) Glyph(char byte) []float64 {

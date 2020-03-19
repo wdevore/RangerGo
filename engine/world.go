@@ -7,6 +7,7 @@ import (
 	"github.com/wdevore/RangerGo/api"
 	"github.com/wdevore/RangerGo/engine/geometry"
 	"github.com/wdevore/RangerGo/engine/maths"
+	"github.com/wdevore/RangerGo/engine/rendering"
 )
 
 type world struct {
@@ -23,6 +24,8 @@ type world struct {
 	invViewSpace api.IAffineTransform
 
 	renderer *sdl.Renderer
+
+	vectorFont api.IVectorFont
 }
 
 // NewWorld constructs an IWorld object
@@ -45,6 +48,10 @@ func NewWorld(title string) api.IWorld {
 	fmt.Println("Display dimensions: ", o.windowSize)
 	fmt.Println("View Dimensions: ", o.viewSize)
 
+	fmt.Println("Loading Vector font...")
+	o.vectorFont = rendering.NewVectorFont()
+	o.vectorFont.Initialize("vector_font.data", "../..")
+
 	return o
 }
 
@@ -66,6 +73,10 @@ func (w *world) ViewSize() api.IPoint {
 
 func (w *world) Title() string {
 	return w.title
+}
+
+func (w *world) VectorFont() api.IVectorFont {
+	return w.vectorFont
 }
 
 func (w *world) SetViewSpace() {

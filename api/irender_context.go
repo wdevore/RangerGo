@@ -65,7 +65,7 @@ type IRenderContext interface {
 
 	RenderLine(x1, y1, x2, y2 float64)
 
-	RenderMesh(mesh IMesh)
+	RenderLines(mesh IMesh)
 
 	// Render an axis aligned rectangle. Rotating any of the vertices
 	// will cause strange rendering behaviours

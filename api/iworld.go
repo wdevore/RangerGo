@@ -34,4 +34,6 @@ type IWorld interface {
 
 	// ViewSpace returns the view-space matrix
 	ViewSpace() IAffineTransform
+
+	VectorFont() IVectorFont
 }

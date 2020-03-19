@@ -19,6 +19,9 @@ const (
 	framePeriod     = 1.0 / framesPerSec * 1000.0
 	updatePerSecond = 30
 	updatePeriod    = float64(second) / float64(updatePerSecond)
+
+	// This changes the Present time (17380233 - 256590)
+	enabledVSync = true
 )
 
 type engine struct {
@@ -102,8 +105,12 @@ func (e *engine) Configure() {
 	// OR create renderer manually
 
 	fmt.Println("Creating renderer...")
+	flags := uint32(sdl.RENDERER_ACCELERATED)
+	if enabledVSync {
+		flags |= sdl.RENDERER_PRESENTVSYNC
+	}
 	renderer, errR := sdl.CreateRenderer(
-		e.window, -1, sdl.RENDERER_SOFTWARE)
+		e.window, -1, flags)
 	if errR != nil {
 		panic(err)
 	}
@@ -145,7 +152,12 @@ func (e *engine) Start() {
 	fps := 0
 	previousT := time.Now()
 	secondCnt := int64(0)
-	renderElapsedCnt := int64(0)
+	renderElapsedTime := int64(0)
+
+	// presentElapsedCnt := int64(0)
+	renderCnt := int64(0)
+	renderMaxCnt := int64(100)
+	avgRender := 0.0
 	// ***************************
 
 	// Get a reference to SDL's internal keyboard state. It is updated
@@ -169,7 +181,7 @@ func (e *engine) Start() {
 		// Update
 		// ~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--
 		elapsedT := currentT.Sub(previousT)
-		previousT = currentT
+
 		elapsedNano := elapsedT.Nanoseconds()
 
 		// Note: This update loop is based on:
@@ -203,7 +215,6 @@ func (e *engine) Start() {
 
 		moreScenes := e.sceneGraph.Visit(interpolation)
 
-		// e.sceneGraph.Debug()
 		// time.Sleep(time.Millisecond * 1)
 
 		if !moreScenes {
@@ -211,33 +222,39 @@ func (e *engine) Start() {
 			continue
 		}
 
-		renderElapsedCnt += (time.Now().Sub(renderT)).Nanoseconds()
+		if renderCnt >= renderMaxCnt {
+			avgRender = float64(renderElapsedTime) / float64(renderMaxCnt) / 1000000.0
+			renderCnt = 0
+			renderElapsedTime = 0
+		} else {
+			renderElapsedTime += (time.Now().Sub(renderT)).Nanoseconds()
+			renderCnt++
+		}
 
 		secondCnt += elapsedNano
 		if secondCnt >= second {
-			avgRender := (float64(renderElapsedCnt) / float64(fpsCnt)) / 1000000.0
-			fmt.Printf("fps (%2d), ups (%2d) rend (%2.4f)\n", fps, ups, avgRender)
+			fmt.Printf("fps (%2d), ups (%2d), rend (%2.4f)\n", fps, ups, avgRender)
+			// fmt.Printf("secCnt %d, fpsCnt %d, presC %d\n", secondCnt, fpsCnt, presentElapsedCnt)
+
 			fps = fpsCnt
 			ups = upsCnt
 			upsCnt = 0
 			fpsCnt = 0
 			secondCnt = 0
-			renderElapsedCnt = 0
 		}
 
-		time.Sleep(time.Millisecond * 10)
-
-		// Render scene graph
-		// e.root.Draw(e.context)
-		// e.renderRawOverlay(elapsedTime, loopTime)
-		// e.window.UpdateSurface()
-
-		fpsCnt++
+		// time.Sleep(time.Millisecond * 10)
 
 		// ~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--
 		// Finish rendering
 		// ~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--
+		// presentT := time.Now()
+		// SDL present's elapsed time is different if vsync is on or off.
 		e.sceneGraph.PostVisit()
+		// presentElapsedCnt = (time.Now().Sub(presentT)).Nanoseconds()
+
+		fpsCnt++
+		previousT = currentT
 	}
 }
 

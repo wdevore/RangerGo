@@ -26,6 +26,6 @@ func NewBasicBootScene(name string, replacement api.INode) api.INode {
 // --------------------------------------------------------
 
 // Transition indicates what to transition to next
-func (s *sceneBoot) Transition() int {
+func (s *sceneBoot) TransitionAction() int {
 	return api.SceneReplaceTake
 }

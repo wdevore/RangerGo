@@ -60,7 +60,7 @@ func (n *Node) InitializeWithID(id int, name string) {
 
 // Visit traverses "down" the heirarchy while space-mappings traverses upward.
 func Visit(node api.INode, context api.IRenderContext, interpolation float64) {
-	// fmt.Println("Node: visiting ", n)
+	// fmt.Println("Node: visiting ", node)
 	if !node.IsVisible() {
 		return
 	}
@@ -160,7 +160,7 @@ func (n *Node) Transition() int {
 
 // EnterNode called when a node is entering the stage
 func (n *Node) EnterNode(man api.INodeManager) {
-	fmt.Println("Node: node enter")
+	// fmt.Println("Node: node enter")
 }
 
 // ExitNode called when a node is exiting stage
