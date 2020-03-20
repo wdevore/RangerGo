@@ -26,6 +26,7 @@ type world struct {
 	renderer *sdl.Renderer
 
 	vectorFont api.IVectorFont
+	rasterFont api.IRasterFont
 }
 
 // NewWorld constructs an IWorld object
@@ -52,6 +53,10 @@ func NewWorld(title string) api.IWorld {
 	o.vectorFont = rendering.NewVectorFont()
 	o.vectorFont.Initialize("vector_font.data", "../..")
 
+	fmt.Println("Loading Raster font...")
+	o.rasterFont = rendering.NewRasterFont()
+	o.rasterFont.Initialize("raster_font.data", "../..")
+
 	return o
 }
 
@@ -77,6 +82,10 @@ func (w *world) Title() string {
 
 func (w *world) VectorFont() api.IVectorFont {
 	return w.vectorFont
+}
+
+func (w *world) RasterFont() api.IRasterFont {
+	return w.rasterFont
 }
 
 func (w *world) SetViewSpace() {

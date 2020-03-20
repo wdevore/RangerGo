@@ -6,5 +6,10 @@ package api
 
 // IRasterFont is the bitmap raster font defined in assets/raster_font.data
 type IRasterFont interface {
-	Initialize(IWorld)
+	Initialize(dataFile string, relativePath string)
+
+	// Glyph returns an array of vertices that matches the character
+	Glyph(char byte) []uint8
+
+	GlyphWidth() int
 }

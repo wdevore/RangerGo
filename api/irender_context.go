@@ -58,6 +58,8 @@ type IRenderContext interface {
 
 	DrawCheckerBoard(size int)
 
+	DrawText(x, y float64, text string, scale int, fill int, invert bool)
+
 	// ,--.,--.,--.,--.,--.,--.,--.,--.,--.,--.,--.,--.,--.,--.,--.,--.,--.
 	// Render functions render based on transformed vertices
 	// The Render functions use the Draw functions above.

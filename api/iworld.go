@@ -36,4 +36,5 @@ type IWorld interface {
 	ViewSpace() IAffineTransform
 
 	VectorFont() IVectorFont
+	RasterFont() IRasterFont
 }

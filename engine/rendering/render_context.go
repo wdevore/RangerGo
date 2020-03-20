@@ -289,3 +289,54 @@ func (rc *renderContext) RenderCheckerBoard(mesh api.IMesh, oddColor api.IPalett
 		flip = !flip
 	}
 }
+
+var shifts = []int{0, 1, 2, 3, 4, 5, 6, 7}
+
+func (rc *renderContext) DrawText(x, y float64, text string, scale int, fill int, invert bool) {
+	rasterFont := rc.world.RasterFont()
+	cx := int32(x)
+	s := int32(scale)
+	rowWidth := int32(rasterFont.GlyphWidth())
+
+	// Is the text colored or the space around it (aka inverted)
+	bitInvert := uint8(1)
+	if invert {
+		bitInvert = 0
+	}
+
+	renderer := rc.world.Renderer()
+	for _, c := range text {
+		if c == ' ' {
+			cx += rowWidth * s // move to next column/char/glyph
+			continue
+		}
+
+		gy := int32(y) // move y back to the "top" for each char
+		glyph := rasterFont.Glyph(byte(c))
+
+		for _, g := range glyph {
+			gx := cx // set to current column
+			for _, shift := range shifts {
+				bit := (g >> shift) & 1
+				if bit == bitInvert {
+					if scale == 1 {
+						renderer.DrawPoint(gx, gy)
+					} else {
+						fillet := fill
+						if fill > scale {
+							fillet = 0
+						}
+						for xl := int32(0); xl < int32(scale-fillet); xl++ {
+							for yl := int32(0); yl < int32(scale-fillet); yl++ {
+								renderer.DrawPoint(gx+xl, gy+yl)
+							}
+						}
+					}
+				}
+				gx += s
+			}
+			gy += s // move to next pixel-row in char
+		}
+		cx += rowWidth * s // move to next column/char/glyph
+	}
+}
