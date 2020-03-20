@@ -24,6 +24,7 @@ type world struct {
 	invViewSpace api.IAffineTransform
 
 	renderer *sdl.Renderer
+	context  api.IRenderContext
 
 	vectorFont api.IVectorFont
 	rasterFont api.IRasterFont
@@ -46,6 +47,9 @@ func NewWorld(title string) api.IWorld {
 
 	o.SetViewSpace()
 
+	o.context = rendering.NewRenderContext(o)
+	o.context.Initialize()
+
 	fmt.Println("Display dimensions: ", o.windowSize)
 	fmt.Println("View Dimensions: ", o.viewSize)
 
@@ -66,6 +70,10 @@ func (w *world) SetRenderer(rend *sdl.Renderer) {
 
 func (w *world) Renderer() *sdl.Renderer {
 	return w.renderer
+}
+
+func (w *world) Context() api.IRenderContext {
+	return w.context
 }
 
 func (w *world) WindowSize() api.IPoint {

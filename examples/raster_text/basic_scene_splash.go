@@ -39,7 +39,7 @@ func (s *sceneSplash) Build(world api.IWorld) {
 	s.SetPauseTime(30000.0)
 
 	s.backgroundColor = rendering.NewPaletteInt64(rendering.LightGray)
-	s.textColor = rendering.NewPaletteInt64(rendering.Orange)
+	s.textColor = rendering.NewPaletteInt64(rendering.LightNavyBlue)
 }
 
 // --------------------------------------------------------
@@ -98,7 +98,7 @@ func (s *sceneSplash) Draw(context api.IRenderContext) {
 	context.RenderAARectangle(o1, o2, api.FILLED)
 
 	context.SetDrawColor(s.textColor)
-	context.DrawText(10.0, 10.0, "Ranger", 1, 1, false)
+	context.DrawText(450.0, 250.0, "Splash Scene", 6, 1, false)
 
 	s.Node.Draw(context)
 }

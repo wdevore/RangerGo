@@ -4,13 +4,12 @@ import (
 	"fmt"
 
 	"github.com/wdevore/RangerGo/api"
-	"github.com/wdevore/RangerGo/engine/rendering"
 )
 
 type nodeManager struct {
-	clearBackground bool
+	world api.IWorld
 
-	context api.IRenderContext
+	clearBackground bool
 
 	// Stack of node
 	stack *nodeStack
@@ -23,10 +22,9 @@ type nodeManager struct {
 // It manages the lifecycle and events
 func NewNodeManager(world api.IWorld) api.INodeManager {
 	o := new(nodeManager)
-	o.clearBackground = true
+	o.world = world
 
-	o.context = rendering.NewRenderContext(world)
-	o.context.Initialize()
+	o.clearBackground = true
 
 	o.stack = newNodeStack()
 
@@ -42,7 +40,7 @@ func (m *nodeManager) PreVisit() {
 	if m.clearBackground {
 		// If vsync is enabled then this takes nearly 1/fps milliseconds.
 		// For example, 60fps -> 1/60 = ~16.666ms
-		m.context.Pre()
+		m.world.Context().Pre()
 	}
 }
 
@@ -58,8 +56,10 @@ func (m *nodeManager) Visit(interpolation float64) bool {
 		m.setNextNode()
 	}
 
+	context := m.world.Context()
+
 	// This saves view-space matrix
-	m.context.Save()
+	context.Save()
 
 	// DEBUG
 	// If mouse coords changed then update view coords.
@@ -85,16 +85,16 @@ func (m *nodeManager) Visit(interpolation float64) bool {
 	}
 
 	// Visit the running node
-	Visit(m.stack.runningNode, m.context, interpolation)
+	Visit(m.stack.runningNode, context, interpolation)
 
-	m.context.Restore()
+	context.Restore()
 
 	// fmt.Println("NodeManager: done visiting ", m.stack.runningNode)
 	return true // continue to draw.
 }
 
 func (m *nodeManager) PostVisit() {
-	m.context.Post()
+	m.world.Context().Post()
 }
 
 func (m *nodeManager) PopNode() {
@@ -222,11 +222,6 @@ func (m *nodeManager) exitNodes(node api.INode) {
 }
 
 func (m *nodeManager) Debug() {
-	black := rendering.NewPaletteInt64(rendering.Black)
-	m.context.SetDrawColor(black)
-	// renderer.SetDrawColor(0, 0, 0, 255)
-
-	m.context.DrawLine(500, 500, 800, 850)
 }
 
 func (m nodeManager) String() string {

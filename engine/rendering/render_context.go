@@ -323,7 +323,7 @@ func (rc *renderContext) DrawText(x, y float64, text string, scale int, fill int
 						renderer.DrawPoint(gx, gy)
 					} else {
 						fillet := fill
-						if fill > scale {
+						if fill >= scale {
 							fillet = 0
 						}
 						for xl := int32(0); xl < int32(scale-fillet); xl++ {

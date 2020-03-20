@@ -21,6 +21,7 @@ const (
 type IWorld interface {
 	SetRenderer(*sdl.Renderer)
 	Renderer() *sdl.Renderer
+	Context() IRenderContext
 
 	// WindowSize is the device window dimensions.
 	WindowSize() IPoint

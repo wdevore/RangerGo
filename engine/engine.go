@@ -59,6 +59,7 @@ type engine struct {
 	// Debug
 	// -----------------------------------------
 	stepEnabled bool
+	statsColor  api.IPalette
 }
 
 // New constructs a Engine object.
@@ -72,6 +73,8 @@ func New(world api.IWorld) api.IEngine {
 	o.stepEnabled = false
 
 	o.sceneGraph = nodes.NewNodeManager(world)
+
+	o.statsColor = rendering.NewPaletteInt64(rendering.Orange)
 
 	return o
 }
@@ -233,7 +236,7 @@ func (e *engine) Start() {
 
 		secondCnt += elapsedNano
 		if secondCnt >= second {
-			fmt.Printf("fps (%2d), ups (%2d), rend (%2.4f)\n", fps, ups, avgRender)
+			// fmt.Printf("fps (%2d), ups (%2d), rend (%2.4f)\n", fps, ups, avgRender)
 			// fmt.Printf("secCnt %d, fpsCnt %d, presC %d\n", secondCnt, fpsCnt, presentElapsedCnt)
 
 			fps = fpsCnt
@@ -242,6 +245,8 @@ func (e *engine) Start() {
 			fpsCnt = 0
 			secondCnt = 0
 		}
+
+		e.drawStats(fps, ups, avgRender)
 
 		// time.Sleep(time.Millisecond * 10)
 
@@ -353,4 +358,14 @@ func (e *engine) filterEvent(ev sdl.Event, userdata interface{}) bool {
 
 	// True means we didn't handled it. Allow it to be queued.
 	return true
+}
+
+func (e *engine) drawStats(fps, ups int, avgRend float64) {
+	world := e.world
+	text := fmt.Sprintf("%2d, %2d, %2.4f", fps, ups, avgRend)
+	x := 15.0
+	y := world.WindowSize().Y() - 15.0
+
+	world.Context().SetDrawColor(e.statsColor)
+	world.Context().DrawText(x, y, text, 1, 1, false)
 }
