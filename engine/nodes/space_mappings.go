@@ -14,7 +14,7 @@ var out = maths.NewTransform()
 
 // MapDeviceToView maps mouse-space device coordinates to view-space
 func MapDeviceToView(world api.IWorld, dvx, dvy int32, viewPoint api.IPoint) {
-	maths.NewTransform().TransformCompToPoint(float64(dvx), float64(dvy), viewPoint)
+	world.InvViewSpace().TransformCompToPoint(float64(dvx), float64(dvy), viewPoint)
 }
 
 // MapDeviceToNode maps mouse-space device coordinates to local node-space

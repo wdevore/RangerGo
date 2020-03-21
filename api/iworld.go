@@ -35,6 +35,7 @@ type IWorld interface {
 
 	// ViewSpace returns the view-space matrix
 	ViewSpace() IAffineTransform
+	InvViewSpace() IAffineTransform
 
 	VectorFont() IVectorFont
 	RasterFont() IRasterFont

@@ -112,9 +112,14 @@ func (w *world) SetViewSpace() {
 
 	w.viewSpace.SetByTransform(center)
 
-	w.invViewSpace.SetByTransform(w.invViewSpace)
+	w.invViewSpace.SetByTransform(center)
+	w.InvViewSpace().Invert()
 }
 
 func (w *world) ViewSpace() api.IAffineTransform {
 	return w.viewSpace
+}
+
+func (w *world) InvViewSpace() api.IAffineTransform {
+	return w.invViewSpace
 }

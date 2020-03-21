@@ -8,8 +8,6 @@ import (
 
 var ranger api.IEngine
 
-// This example shows Vector text on the splash screen
-
 func init() {
 	world := engine.NewWorld("Vector Text")
 

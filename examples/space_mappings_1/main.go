@@ -9,8 +9,16 @@ import (
 
 var ranger api.IEngine
 
+// ##################################################################
+// README
+// This example shows basic mapping of mouse coordinates to view-space.
+// View-space is 1 level below device-space.
+// Note: scene-space, layer-space (aka node-spaces) are different than
+// view-space.
+// ##################################################################
+
 func init() {
-	world := engine.NewWorld("Game Layer Example")
+	world := engine.NewWorld("Space mappings #1")
 
 	ranger = engine.New(world)
 
