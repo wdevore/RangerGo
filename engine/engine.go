@@ -20,8 +20,12 @@ const (
 	updatePerSecond = 30
 	updatePeriod    = float64(second) / float64(updatePerSecond)
 
-	// This changes the Present time (17380233 - 256590)
+	// The "present" call is impacted by this flag, by an order of magnitude.
 	enabledVSync = true
+
+	displayStatsVisibility = true
+
+	renderMaxCnt = int64(50)
 )
 
 type engine struct {
@@ -120,6 +124,9 @@ func (e *engine) Configure() {
 
 	e.world.SetRenderer(renderer)
 
+	// Setup a callback called during PumpEvents
+	sdl.SetEventFilterFunc(e.filterEvent, nil)
+
 	// fmt.Println("Creating renderer texture...")
 	// e.texture, err = renderer.CreateTexture(
 	// 	sdl.PIXELFORMAT_ABGR8888,
@@ -159,16 +166,8 @@ func (e *engine) Start() {
 
 	// presentElapsedCnt := int64(0)
 	renderCnt := int64(0)
-	renderMaxCnt := int64(100)
 	avgRender := 0.0
 	// ***************************
-
-	// Get a reference to SDL's internal keyboard state. It is updated
-	// during sdl.PollEvent()
-	// keyState := sdl.GetKeyboardState()
-
-	// Setup a callback called during PumpEvents
-	sdl.SetEventFilterFunc(e.filterEvent, nil)
 
 	for e.running {
 		currentT := time.Now()
@@ -183,9 +182,7 @@ func (e *engine) Start() {
 		// ~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--
 		// Update
 		// ~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--
-		elapsedT := currentT.Sub(previousT)
-
-		elapsedNano := elapsedT.Nanoseconds()
+		elapsedNano := (currentT.Sub(previousT)).Nanoseconds()
 
 		// Note: This update loop is based on:
 		// https://gameprogrammingpatterns.com/game-loop.html
@@ -207,18 +204,16 @@ func (e *engine) Start() {
 		// ~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--
 		// Render Scenegraph by visiting the nodes
 		// ~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--
+		renderT := time.Now()
+
 		e.sceneGraph.PreVisit()
 		// **** Any rendering must occur AFTER this point ****
 
-		// Capture time AFTER pre_visit otherwise if vsync is enabled
-		// then time includes the vertical refresh which ~16.667ms
-		renderT := time.Now()
-
+		// Calc interpolation for nodes that need it.
 		interpolation := float64(lag) / float64(nsPerUpdate)
 
+		// Once the last scene has exited the stage we stop running.
 		moreScenes := e.sceneGraph.Visit(interpolation)
-
-		// time.Sleep(time.Millisecond * 1)
 
 		if !moreScenes {
 			e.running = false
@@ -226,11 +221,11 @@ func (e *engine) Start() {
 		}
 
 		if renderCnt >= renderMaxCnt {
-			avgRender = float64(renderElapsedTime) / float64(renderMaxCnt) / 1000000.0
+			avgRender = float64(renderElapsedTime) / float64(renderMaxCnt) / 1000.0
 			renderCnt = 0
 			renderElapsedTime = 0
 		} else {
-			renderElapsedTime += (time.Now().Sub(renderT)).Nanoseconds()
+			renderElapsedTime += (time.Now().Sub(renderT)).Microseconds()
 			renderCnt++
 		}
 
@@ -246,9 +241,11 @@ func (e *engine) Start() {
 			secondCnt = 0
 		}
 
-		e.drawStats(fps, ups, avgRender)
+		if displayStatsVisibility {
+			e.drawStats(fps, ups, avgRender)
+		}
 
-		// time.Sleep(time.Millisecond * 10)
+		// time.Sleep(time.Millisecond * 1)
 
 		// ~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--~--
 		// Finish rendering
@@ -265,6 +262,7 @@ func (e *engine) Start() {
 
 func (e *engine) End() {
 	fmt.Println("Engine shutting down...")
+
 	// fmt.Println("Disposing texture...")
 	// e.texture.Destroy()
 	fmt.Println("Disposing renderer...")
@@ -363,6 +361,7 @@ func (e *engine) filterEvent(ev sdl.Event, userdata interface{}) bool {
 func (e *engine) drawStats(fps, ups int, avgRend float64) {
 	world := e.world
 	text := fmt.Sprintf("%2d, %2d, %2.4f", fps, ups, avgRend)
+
 	x := 15.0
 	y := world.WindowSize().Y() - 15.0
 

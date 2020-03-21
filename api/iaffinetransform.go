@@ -25,6 +25,7 @@ type IAffineTransform interface {
 	TransformToPoint(in IPoint, out IPoint)
 	// TransformToComps applys transform and returns results, "in" is not modified
 	TransformToComps(in IPoint) (x, y float64)
+	TransformCompToPoint(x, y float64, out IPoint)
 	// TransformPolygon
 
 	// --------------------------------------------

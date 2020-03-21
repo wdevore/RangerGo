@@ -122,7 +122,7 @@ func (m *nodeManager) Update(dt float64) {
 }
 
 func (m *nodeManager) RegisterTarget(target api.INode) {
-	fmt.Println("NodeManager registering ", target)
+	fmt.Println("NodeManager: registering ", target)
 	m.timingTargets = append(m.timingTargets, target)
 }
 
@@ -130,10 +130,10 @@ func (m *nodeManager) UnRegisterTarget(target api.INode) {
 	idx := findFirstElement(target, m.timingTargets)
 
 	if idx >= 0 {
-		fmt.Println("UnRegistering idx:(", idx, ") ", m.timingTargets[idx], " target")
+		fmt.Println("NodeManager: UnRegistering idx:(", idx, ") ", m.timingTargets[idx], " target")
 		deleteAt(idx, m.timingTargets)
 	} else {
-		fmt.Println("Unable to UnRegister ", target, " target")
+		fmt.Println("NodeManager: Unable to UnRegister ", target, " target")
 	}
 }
 
@@ -142,7 +142,7 @@ func (m *nodeManager) UnRegisterTarget(target api.INode) {
 // --------------------------------------------------------------------------
 
 func (m *nodeManager) RegisterEventTarget(target api.INode) {
-	fmt.Println("Register ", target, " event target")
+	fmt.Println("NodeManager: Register ", target, " event target")
 	m.eventTargets = append(m.eventTargets, target)
 }
 
@@ -150,10 +150,10 @@ func (m *nodeManager) UnRegisterEventTarget(target api.INode) {
 	idx := findFirstElement(target, m.eventTargets)
 
 	if idx >= 0 {
-		fmt.Println("UnRegistering event idx:(", idx, ") ", m.eventTargets[idx], " target")
+		fmt.Println("NodeManager: UnRegistering event idx:(", idx, ") ", m.eventTargets[idx], " target")
 		deleteAt(idx, m.eventTargets)
 	} else {
-		fmt.Println("Unable to UnRegister event ", target, " target")
+		fmt.Println("NodeManager: Unable to UnRegister event ", target, " target")
 	}
 }
 

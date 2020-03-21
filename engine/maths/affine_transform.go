@@ -72,6 +72,12 @@ func (at *affineTransform) TransformToPoint(in api.IPoint, out api.IPoint) {
 		(at.b*in.X())+(at.d*in.Y())+at.ty)
 }
 
+func (at *affineTransform) TransformCompToPoint(x, y float64, out api.IPoint) {
+	out.SetByComp(
+		(at.a*x)+(at.c*y)+at.tx,
+		(at.b*x)+(at.d*y)+at.ty)
+}
+
 func (at *affineTransform) TransformToComps(in api.IPoint) (x, y float64) {
 	return (at.a * in.X()) + (at.c * in.Y()) + at.tx, (at.b * in.X()) + (at.d * in.Y()) + at.ty
 }
