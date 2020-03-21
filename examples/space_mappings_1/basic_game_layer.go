@@ -6,6 +6,7 @@ import (
 	"github.com/wdevore/RangerGo/api"
 	"github.com/wdevore/RangerGo/engine/geometry"
 	"github.com/wdevore/RangerGo/engine/nodes"
+	"github.com/wdevore/RangerGo/engine/nodes/custom"
 	"github.com/wdevore/RangerGo/engine/rendering"
 )
 
@@ -49,6 +50,16 @@ func (g *gameLayer) Build(world api.IWorld) {
 	g.o1 = geometry.NewPoint()
 	g.o2 = geometry.NewPoint()
 	g.viewPoint = geometry.NewPoint()
+
+	hLine := custom.NewLineNode("HLine")
+	hLine.Build(world)
+	hLine.SetPoints(x, 0.0, -x, 0.0)
+	g.AddChild(hLine)
+
+	vLine := custom.NewLineNode("VLine")
+	vLine.Build(world)
+	vLine.SetPoints(0.0, -y, 0.0, y)
+	g.AddChild(vLine)
 }
 
 // --------------------------------------------------------
@@ -93,7 +104,7 @@ func (g *gameLayer) Draw(context api.IRenderContext) {
 
 	context.SetDrawColor(g.textColor)
 	text := fmt.Sprintf("(%d, %d)", int(g.viewPoint.X()), int(g.viewPoint.Y()))
-	context.DrawText(10.0, 10.0, text, 2, 1, false)
+	context.DrawText(10.0, 10.0, text, 1, 1, false)
 
 	g.Node.Draw(context)
 }
