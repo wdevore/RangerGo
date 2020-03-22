@@ -75,13 +75,11 @@ func (g *gameLayer) Update(dt float64) {
 
 // EnterNode called when a node is entering the stage
 func (g *gameLayer) EnterNode(man api.INodeManager) {
-	man.RegisterTarget(g)
 	man.RegisterEventTarget(g)
 }
 
 // ExitNode called when a node is exiting stage
 func (g *gameLayer) ExitNode(man api.INodeManager) {
-	man.UnRegisterTarget(g)
 	man.UnRegisterEventTarget(g)
 }
 

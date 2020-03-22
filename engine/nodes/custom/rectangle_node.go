@@ -90,7 +90,6 @@ func (r *RectangleNode) Draw(context api.IRenderContext) {
 
 	if r.pointInside {
 		context.SetDrawColor(r.insideColor)
-		// Show AABB indictor rectangle
 	} else {
 		context.SetDrawColor(r.color)
 	}
