@@ -139,7 +139,7 @@ func (e *engine) Configure() {
 	// e.bounds = image.Rect(0, 0, int(e.world.WindowSize().X()), int(e.world.WindowSize().Y()))
 	// e.pixels = image.NewRGBA(e.bounds)
 
-	// renderer.SetDrawBlendMode(sdl.BLENDMODE_BLEND)
+	renderer.SetDrawBlendMode(sdl.BLENDMODE_BLEND)
 
 	fmt.Println("Configure complete.")
 }

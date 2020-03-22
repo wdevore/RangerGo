@@ -122,7 +122,7 @@ func (rc *renderContext) TransformPoint(p, out api.IPoint) {
 	rc.current.TransformToPoint(p, out)
 }
 
-func (rc *renderContext) TransformLine(p1, p2, out1, out2 api.IPoint) {
+func (rc *renderContext) TransformPoints(p1, p2, out1, out2 api.IPoint) {
 	rc.current.TransformToPoint(p1, out1)
 	rc.current.TransformToPoint(p2, out2)
 }
@@ -149,6 +149,10 @@ func (rc *renderContext) TransformPolygon(poly api.IPolygon) {
 	}
 }
 
+// =_.=_.=_.=_.=_.=_.=_.=_.=_.=_.=_.=_.=_.=_.=_.=_.=_.=_.=_.=_.=_.=_.=_.
+// Rendering
+// =_.=_.=_.=_.=_.=_.=_.=_.=_.=_.=_.=_.=_.=_.=_.=_.=_.=_.=_.=_.=_.=_.=_.
+
 func (rc *renderContext) SetDrawColor(color api.IPalette) {
 	rc.drawColor = color.Color()
 	renderer := rc.world.Renderer()
@@ -163,6 +167,11 @@ func (rc *renderContext) DrawPoint(x, y int32) {
 func (rc *renderContext) DrawLine(x1, y1, x2, y2 int32) {
 	renderer := rc.world.Renderer()
 	renderer.DrawLine(x1, y1, x2, y2)
+}
+
+func (rc *renderContext) DrawLineUsing(p1, p2 api.IPoint) {
+	renderer := rc.world.Renderer()
+	renderer.DrawLine(int32(p1.X()), int32(p1.Y()), int32(p2.X()), int32(p2.Y()))
 }
 
 var sdlRect = &sdl.Rect{}
@@ -231,6 +240,19 @@ func (rc *renderContext) RenderLines(mesh api.IMesh) {
 			first = true
 		}
 		rc.DrawLine(int32(v1.X()), int32(v1.Y()), int32(v2.X()), int32(v2.Y()))
+	}
+}
+
+func (rc *renderContext) RenderPolygon(poly api.IPolygon, style int) {
+	bucs := poly.Mesh().Bucket()
+
+	for i := 0; i < len(bucs)-1; i++ {
+		rc.DrawLine(int32(bucs[i].X()), int32(bucs[i].Y()), int32(bucs[i+1].X()), int32(bucs[i+1].Y()))
+	}
+
+	end := len(bucs) - 1
+	if style == api.CLOSED {
+		rc.DrawLine(int32(bucs[end].X()), int32(bucs[end].Y()), int32(bucs[0].X()), int32(bucs[0].Y()))
 	}
 }
 

@@ -2,6 +2,8 @@ package api
 
 // INodeManager manages node on a stack and forms a SceneGraph
 type INodeManager interface {
+	ClearEnabled(bool)
+
 	PreVisit()
 	Visit(interpolation float64) bool
 	PostVisit()
