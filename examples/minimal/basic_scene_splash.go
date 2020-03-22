@@ -116,6 +116,6 @@ func (s *sceneSplash) Draw(context api.IRenderContext) {
 	p2 := geometry.NewPointUsing(100.0, 100.0)
 	o1 := geometry.NewPoint()
 	o2 := geometry.NewPoint()
-	context.TransformLine(p1, p2, o1, o2)
+	context.TransformPoints(p1, p2, o1, o2)
 	context.RenderLine(o1.X(), o1.Y(), o2.X(), o2.Y())
 }
