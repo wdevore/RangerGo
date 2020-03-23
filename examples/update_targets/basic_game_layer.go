@@ -112,17 +112,9 @@ func (g *gameLayer) ExitNode(man api.INodeManager) {
 // -----------------------------------------------------
 
 func (g *gameLayer) Draw(context api.IRenderContext) {
-	// Transform vertices if anything has changed.
-	if g.IsDirty() {
-		// Transform this node's vertices using the context
-		g.SetDirty(false) // Node is no longer dirty
-	}
-
 	context.SetDrawColor(g.textColor)
 	text := fmt.Sprintf("(%d, %d)", int(g.cursorPosition.X()), int(g.cursorPosition.Y()))
 	context.DrawText(10.0, 10.0, text, 1, 1, false)
-
-	g.Node.Draw(context)
 }
 
 // -----------------------------------------------------
