@@ -71,7 +71,7 @@ func (g *gameLayer) Build(world api.IWorld) {
 
 	g.angularMotion = animation.NewAngularMotion()
 	// amgle is measured in angular-velocity or "degrees/second"
-	g.angularMotion.SetRate(maths.DegreeToRadians * -90.0)
+	g.angularMotion.SetRate(maths.DegreeToRadians * 90.0)
 
 	g.crossNode = custom.NewCrossNode("Cross")
 	g.crossNode.Build(world)

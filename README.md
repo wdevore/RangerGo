@@ -6,7 +6,7 @@
 * Zoom Node
 * Particles
 * Animation
-* Interpolation
+* -- **Done** -- Interpolation
 * Filters: transform and translate
 * Enhance raster fonts to allow transforms
 * More custom nodes: Circle, AnchorNode, AABB
@@ -61,13 +61,13 @@ Every **Node** can register for events, either Timming or IO. This example shows
 Space mapping #2 adds to #1 by using the provided custom/RectangleNode. This node uses the *MapDeviceToNode* and *PointInside* methods, and serves as an example for mapping techniques.
 
 ```
-    nodes.MapDeviceToNode(r.world, mx, my, r, r.localPosition)
+	nodes.MapDeviceToNode(r.world, mx, my, r, r.localPosition)
 	r.pointInside = r.polygon.PointInside(r.localPosition)
 ```
 
 This allows the node's *Draw* to change the node's draw color according to the *pointInside* boolean.
 
-```
+```Go
 	if r.pointInside {
 		context.SetDrawColor(r.insideColor)
 	} else {
@@ -77,5 +77,32 @@ This allows the node's *Draw* to change the node's draw color according to the *
 ```
 
 ### Example Image
-<img src="docs/RangerGo_space-mappings-2.png" alt="alt text" width="500" >
+<img src="docs/RangerGo_space-mappings-2.png" alt="Example image" width="500" />
 
+## Update Targets
+Update targets example adds an Angular Motion object to control the rotation of the rectangle:
+
+```Go
+g.angularMotion = animation.NewAngularMotion()
+// amgle is measured in angular-velocity or "degrees/second"
+g.angularMotion.SetRate(maths.DegreeToRadians * -90.0)
+```
+
+We then *Update* the motion object before calculating the next interpolation value:
+
+```Go
+func (g *gameLayer) Update(dt float64) {
+	g.angularMotion.Update(dt)
+}
+```
+
+This is updated on each frame by the *Interpolation* method which is called by the **NodeManager**:
+
+```Go
+func (g *gameLayer) Interpolate(interpolation float64) {
+	value := g.angularMotion.Interpolate(interpolation)
+	g.rectNode.SetRotation(value.(float64))
+}
+````
+
+The rectangle is updated with the return value of the interpolation.
