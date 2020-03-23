@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/wdevore/RangerGo/api"
+	"github.com/wdevore/RangerGo/engine/animation"
 	"github.com/wdevore/RangerGo/engine/geometry"
 	"github.com/wdevore/RangerGo/engine/maths"
 	"github.com/wdevore/RangerGo/engine/nodes"
@@ -26,6 +27,9 @@ type gameLayer struct {
 	crossNode *custom.CrossNode
 
 	rectNode *custom.RectangleNode
+
+	// Motion is for rotating cube
+	angularMotion api.IMotion
 }
 
 func newBasicGameLayer(name string) api.INode {
@@ -61,14 +65,29 @@ func (g *gameLayer) Build(world api.IWorld) {
 	g.rectNode.Build(world)
 	g.rectNode.SetColor(rendering.NewPaletteInt64(rendering.Orange))
 	g.rectNode.SetScale(100.0)
-	g.rectNode.SetRotation(maths.DegreeToRadians * 35.0)
+	// g.rectNode.SetRotation(maths.DegreeToRadians * 35.0)
 	g.rectNode.SetPosition(100.0, -150.0)
 	g.AddChild(g.rectNode)
+
+	g.angularMotion = animation.NewAngularMotion()
+	// amgle is measured in angular-velocity or "degrees/second"
+	g.angularMotion.SetRate(maths.DegreeToRadians * -90.0)
 
 	g.crossNode = custom.NewCrossNode("Cross")
 	g.crossNode.Build(world)
 	g.crossNode.SetScale(30.0)
 	g.AddChild(g.crossNode)
+}
+
+// Update updates the time properties of a node.
+func (g *gameLayer) Update(dt float64) {
+	g.angularMotion.Update(dt)
+}
+
+// Interpolate is used for blending time based properties.
+func (g *gameLayer) Interpolate(interpolation float64) {
+	value := g.angularMotion.Interpolate(interpolation)
+	g.rectNode.SetRotation(value.(float64))
 }
 
 // -----------------------------------------------------
@@ -77,11 +96,14 @@ func (g *gameLayer) Build(world api.IWorld) {
 
 // EnterNode called when a node is entering the stage
 func (g *gameLayer) EnterNode(man api.INodeManager) {
+	man.RegisterTarget(g)
+	// We want the mouse events so the crossnode can track the mouse.
 	man.RegisterEventTarget(g)
 }
 
 // ExitNode called when a node is exiting stage
 func (g *gameLayer) ExitNode(man api.INodeManager) {
+	man.UnRegisterTarget(g)
 	man.UnRegisterEventTarget(g)
 }
 

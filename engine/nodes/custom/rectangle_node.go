@@ -12,7 +12,8 @@ import (
 // RectangleNode is a basic line node
 type RectangleNode struct {
 	nodes.Node
-	world api.IWorld
+	world  api.IWorld
+	mx, my int32
 
 	color       api.IPalette
 	insideColor api.IPalette
@@ -88,6 +89,10 @@ func (r *RectangleNode) Draw(context api.IRenderContext) {
 		r.SetDirty(false) // Node is no longer dirty
 	}
 
+	// This get the local-space coords of the rectangle node.
+	nodes.MapDeviceToNode(r.world, r.mx, r.my, r, r.localPosition)
+	r.pointInside = r.polygon.PointInside(r.localPosition)
+
 	if r.pointInside {
 		context.SetDrawColor(r.insideColor)
 	} else {
@@ -108,11 +113,7 @@ func (r *RectangleNode) Draw(context api.IRenderContext) {
 // Handle events from IO
 func (r *RectangleNode) Handle(event api.IEvent) bool {
 	if event.GetType() == api.IOTypeMouseMotion {
-		mx, my := event.GetMousePosition()
-
-		// This get the local-space coords of the rectangle node.
-		nodes.MapDeviceToNode(r.world, mx, my, r, r.localPosition)
-		r.pointInside = r.polygon.PointInside(r.localPosition)
+		r.mx, r.my = event.GetMousePosition()
 	}
 
 	return false
