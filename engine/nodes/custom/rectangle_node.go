@@ -9,7 +9,9 @@ import (
 	"github.com/wdevore/RangerGo/engine/rendering"
 )
 
-// RectangleNode is a basic line node
+// RectangleNode is a basic rectangle node with hit detection built in.
+// If you don't need detection then consider copying this code and
+// creating your own version.
 type RectangleNode struct {
 	nodes.Node
 	world  api.IWorld
@@ -32,9 +34,17 @@ func NewRectangleNode(name string) *RectangleNode {
 	return o
 }
 
+// NewRectangleNodeWithParent constructs a rectangle shaped node and links to parent
+func NewRectangleNodeWithParent(name string, parent api.INode) *RectangleNode {
+	o := new(RectangleNode)
+	o.Initialize(name)
+	o.SetParent(parent)
+	return o
+}
+
 // Build configures the node
 func (r *RectangleNode) Build(world api.IWorld) {
-	r.world = world
+	r.Node.Build(world)
 
 	r.polygon = geometry.NewPolygon()
 	r.polygon.AddVertex(-0.5, -0.5)
@@ -90,7 +100,7 @@ func (r *RectangleNode) Draw(context api.IRenderContext) {
 	}
 
 	// This get the local-space coords of the rectangle node.
-	nodes.MapDeviceToNode(r.world, r.mx, r.my, r, r.localPosition)
+	nodes.MapDeviceToNode(r.mx, r.my, r, r.localPosition)
 	r.pointInside = r.polygon.PointInside(r.localPosition)
 
 	if r.pointInside {
@@ -106,12 +116,18 @@ func (r *RectangleNode) Draw(context api.IRenderContext) {
 
 }
 
+// PointInside returns status
+func (r *RectangleNode) PointInside() bool {
+	return r.pointInside
+}
+
 // -----------------------------------------------------
 // IO events
 // -----------------------------------------------------
 
 // Handle events from IO
 func (r *RectangleNode) Handle(event api.IEvent) bool {
+	// fmt.Println(event)
 	if event.GetType() == api.IOTypeMouseMotion {
 		r.mx, r.my = event.GetMousePosition()
 	}

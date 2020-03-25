@@ -11,6 +11,7 @@ type INode interface {
 	InitializeWithID(id int, name string)
 
 	Build(IWorld)
+	World() IWorld
 
 	SetParent(INode)
 	Parent() INode

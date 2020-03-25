@@ -24,6 +24,7 @@ type VectorTextNode struct {
 // NewVectorTextNode constructs a text node
 func NewVectorTextNode(world api.IWorld) *VectorTextNode {
 	o := new(VectorTextNode)
+	o.Build(world)
 	o.textColor = rendering.NewPaletteInt64(rendering.White)
 	o.mesh = geometry.NewMesh()
 	o.world = world

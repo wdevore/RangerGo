@@ -1,9 +1,11 @@
 package nodes
 
+import "fmt"
+
 // Event handles IO events
 type Event struct {
 	eTtimeStamp  uint32
-	eType        int
+	eType        uint32
 	eWhich       uint32
 	eState       uint32
 	eClicks      uint8
@@ -22,6 +24,24 @@ type Event struct {
 func NewEvent() *Event {
 	o := new(Event)
 	return o
+}
+
+// Reset clears all properties
+func (e *Event) Reset() {
+	e.eTtimeStamp = 0
+	e.eType = 0
+	e.eWhich = 0
+	e.eState = 0
+	e.eClicks = 0
+	e.eButton = 0
+	e.eDir = 0
+	e.eRepeat = 0
+	e.eKeyScancode = 0
+	e.eKeycode = 0
+	e.eKeyModif = 0
+	e.mx = 0
+	e.my = 0
+	e.handled = false
 }
 
 // Handled marks event as handled to stop event bubbling
@@ -57,12 +77,12 @@ func (e *Event) GetMouseRelMovement() (x, y int32) {
 }
 
 // SetType sets
-func (e *Event) SetType(eType int) {
+func (e *Event) SetType(eType uint32) {
 	e.eType = eType
 }
 
 // GetType gets
-func (e *Event) GetType() int {
+func (e *Event) GetType() uint32 {
 	return e.eType
 }
 
@@ -154,4 +174,18 @@ func (e *Event) SetKeyMotif(code uint32) {
 // GetKeyMotif gets
 func (e *Event) GetKeyMotif() uint32 {
 	return e.eKeyModif
+}
+
+func (e Event) String() string {
+	s := "----------Event---------\n"
+	s += fmt.Sprintf("mx: %d, my: %d\n", e.mx, e.my)
+	s += fmt.Sprintf("mxRel: %d, myRel: %d\n", e.mxRel, e.myRel)
+	s += fmt.Sprintf("Button: %d\n", e.eButton)
+	s += fmt.Sprintf("Dir: %d\n", e.eDir)
+	s += fmt.Sprintf("Which: %d 0x%0x\n", e.eWhich, e.eWhich)
+	s += fmt.Sprintf("State: %d 0x%0x\n", e.eState, e.eState)
+	s += fmt.Sprintf("KeyScan: %d\n", e.eKeyScancode)
+	s += fmt.Sprintf("KeyCode: %d\n", e.eKeycode)
+	s += fmt.Sprintf("Type: (%d) 0x%0x", e.eType, e.eType)
+	return s
 }

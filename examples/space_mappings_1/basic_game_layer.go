@@ -12,7 +12,6 @@ import (
 
 type gameLayer struct {
 	nodes.Node
-	world api.IWorld
 
 	api.IRender
 
@@ -35,7 +34,7 @@ func newBasicGameLayer(name string) api.INode {
 }
 
 func (g *gameLayer) Build(world api.IWorld) {
-	g.world = world
+	g.Node.Build(world)
 
 	vw, vh := world.ViewSize().Components()
 	x := -vw / 2.0
@@ -51,12 +50,12 @@ func (g *gameLayer) Build(world api.IWorld) {
 	g.o2 = geometry.NewPoint()
 	g.viewPoint = geometry.NewPoint()
 
-	hLine := custom.NewLineNode("HLine")
+	hLine := custom.NewLineNode("HLine", g)
 	hLine.Build(world)
 	hLine.SetPoints(x, 0.0, -x, 0.0)
 	g.AddChild(hLine)
 
-	vLine := custom.NewLineNode("VLine")
+	vLine := custom.NewLineNode("VLine", g)
 	vLine.Build(world)
 	vLine.SetPoints(0.0, -y, 0.0, y)
 	g.AddChild(vLine)
@@ -114,7 +113,7 @@ func (g *gameLayer) Draw(context api.IRenderContext) {
 func (g *gameLayer) Handle(event api.IEvent) bool {
 	if event.GetType() == api.IOTypeMouseMotion {
 		mx, my := event.GetMousePosition()
-		nodes.MapDeviceToView(g.world, mx, my, g.viewPoint)
+		nodes.MapDeviceToView(g.World(), mx, my, g.viewPoint)
 	}
 
 	return false

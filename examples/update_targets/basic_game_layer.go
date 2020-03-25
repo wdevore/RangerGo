@@ -14,7 +14,6 @@ import (
 
 type gameLayer struct {
 	nodes.Node
-	world api.IWorld
 
 	api.IRender
 
@@ -32,14 +31,15 @@ type gameLayer struct {
 	angularMotion api.IMotion
 }
 
-func newBasicGameLayer(name string) api.INode {
+func newBasicGameLayer(name string, parent api.INode) api.INode {
 	o := new(gameLayer)
 	o.Initialize(name)
+	o.SetParent(parent)
 	return o
 }
 
 func (g *gameLayer) Build(world api.IWorld) {
-	g.world = world
+	g.Node.Build(world)
 
 	vw, vh := world.ViewSize().Components()
 	x := -vw / 2.0
@@ -51,17 +51,17 @@ func (g *gameLayer) Build(world api.IWorld) {
 	g.o2 = geometry.NewPoint()
 	g.cursorPosition = geometry.NewPoint()
 
-	hLine := custom.NewLineNode("HLine")
+	hLine := custom.NewLineNode("HLine", g)
 	hLine.Build(world)
 	hLine.SetPoints(x, 0.0, -x, 0.0)
 	g.AddChild(hLine)
 
-	vLine := custom.NewLineNode("VLine")
+	vLine := custom.NewLineNode("VLine", g)
 	vLine.Build(world)
 	vLine.SetPoints(0.0, -y, 0.0, y)
 	g.AddChild(vLine)
 
-	g.rectNode = custom.NewRectangleNode("Orange Rect")
+	g.rectNode = custom.NewRectangleNodeWithParent("Orange Rect", g)
 	g.rectNode.Build(world)
 	g.rectNode.SetColor(rendering.NewPaletteInt64(rendering.Orange))
 	g.rectNode.SetScale(100.0)
@@ -73,7 +73,7 @@ func (g *gameLayer) Build(world api.IWorld) {
 	// amgle is measured in angular-velocity or "degrees/second"
 	g.angularMotion.SetRate(maths.DegreeToRadians * 90.0)
 
-	g.crossNode = custom.NewCrossNode("Cross")
+	g.crossNode = custom.NewCrossNode("Cross", g)
 	g.crossNode.Build(world)
 	g.crossNode.SetScale(30.0)
 	g.AddChild(g.crossNode)
@@ -124,7 +124,7 @@ func (g *gameLayer) Draw(context api.IRenderContext) {
 func (g *gameLayer) Handle(event api.IEvent) bool {
 	if event.GetType() == api.IOTypeMouseMotion {
 		mx, my := event.GetMousePosition()
-		nodes.MapDeviceToView(g.world, mx, my, g.cursorPosition)
+		nodes.MapDeviceToView(g.World(), mx, my, g.cursorPosition)
 
 		g.crossNode.SetPosition(g.cursorPosition.X(), g.cursorPosition.Y())
 	}

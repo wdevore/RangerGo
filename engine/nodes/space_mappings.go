@@ -20,12 +20,12 @@ func MapDeviceToView(world api.IWorld, dvx, dvy int32, viewPoint api.IPoint) {
 // MapDeviceToNode maps mouse-space device coordinates to local node-space
 // Optional scaling before returning from function. Extremely rare to use
 // localPoint.SetByComp(localPoint.X() * node.Scale(), localPoint.Y() * node.Scale())
-func MapDeviceToNode(world api.IWorld, dvx, dvy int32, node api.INode, localPoint api.IPoint) {
+func MapDeviceToNode(dvx, dvy int32, node api.INode, localPoint api.IPoint) {
 	// Mapping from device to node requires to transforms from to "directions"
 	// 1st is upwards transform and the 2nd is downwards transform.
 
 	// downwards from device-space to view-space
-	MapDeviceToView(world, dvx, dvy, tViewPoint)
+	MapDeviceToView(node.World(), dvx, dvy, tViewPoint)
 
 	// Upwards from node to world-space (aka view-space)
 	wtn := WorldToNodeTransform(node, nil)

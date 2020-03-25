@@ -301,12 +301,13 @@ var event = nodes.NewEvent()
 // filterEvent returns false if it handled the event. Returning false
 // prevents the event from being added to the queue.
 func (e *engine) filterEvent(ev sdl.Event, userdata interface{}) bool {
+	// fmt.Println("Raw: ", ev)
 	switch t := ev.(type) {
 	case *sdl.QuitEvent:
 		e.running = false
 		return false // We handled it. Don't allow it to be added to the queue.
 	case *sdl.MouseMotionEvent:
-		event.SetType(api.IOTypeMouseMotion)
+		event.SetType(t.GetType())
 		event.SetState(t.State)
 		event.SetWhich(t.Which)
 		event.SetMousePosition(t.X, t.Y)
@@ -317,17 +318,18 @@ func (e *engine) filterEvent(ev sdl.Event, userdata interface{}) bool {
 		// 	t.Timestamp, t.Type, t.Which, t.X, t.Y, t.XRel, t.YRel)
 		return false // We handled it. Don't allow it to be added to the queue.
 	case *sdl.MouseButtonEvent:
-		event.SetType(api.IOTypeMouseButton)
+		event.SetType(t.GetType())
 		event.SetWhich(t.Which)
 		event.SetClicks(t.Clicks)
 		event.SetButton(t.Button)
+		event.SetState(uint32(t.State))
 		event.SetMousePosition(t.X, t.Y)
 		e.sceneGraph.RouteEvents(event)
 		return false
 		// fmt.Printf("[%d ms] MouseButton\ttype:%d\tid:%d\tx:%d\ty:%d\tbutton:%d\tstate:%d\n",
 		// 	t.Timestamp, t.Type, t.Which, t.X, t.Y, t.Button, t.State)
 	case *sdl.MouseWheelEvent:
-		event.SetType(api.IOTypeMouseWheel)
+		event.SetType(t.GetType())
 		event.SetWhich(t.Which)
 		event.SetMouseRelMovement(t.X, t.Y)
 		event.SetDirection(t.Direction)

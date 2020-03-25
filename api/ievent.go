@@ -4,15 +4,19 @@ const (
 	// IOTypeKeyboard is a keyboard event
 	IOTypeKeyboard = 0
 	// IOTypeMouseMotion is a mouse event
-	IOTypeMouseMotion = 1
-	// IOTypeMouseButton is a mouse event
-	IOTypeMouseButton = 2
+	IOTypeMouseMotion = 1024
+	// IOTypeMouseButtonDown is a mouse event
+	IOTypeMouseButtonDown = 1025
+	// IOTypeMouseButtonUp is a mouse event
+	IOTypeMouseButtonUp = 1026
 	// IOTypeMouseWheel is a mouse event
-	IOTypeMouseWheel = 3
+	IOTypeMouseWheel = 1027
 )
 
 // IEvent represents IO event system
 type IEvent interface {
+	Reset()
+
 	BeenHandled() bool
 	Handled(mark bool)
 
@@ -24,8 +28,8 @@ type IEvent interface {
 	SetDirection(uint32)
 	GetDirection() uint32
 
-	SetType(int)
-	GetType() int
+	SetType(uint32)
+	GetType() uint32
 
 	SetClicks(uint8)
 	GetClicks() uint8

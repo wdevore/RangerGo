@@ -21,14 +21,17 @@ type LineNode struct {
 }
 
 // NewLineNode constructs a cross shaped node
-func NewLineNode(name string) *LineNode {
+func NewLineNode(name string, parent api.INode) *LineNode {
 	o := new(LineNode)
 	o.Initialize(name)
+	o.SetParent(parent)
 	return o
 }
 
 // Build configures the node
 func (l *LineNode) Build(world api.IWorld) {
+	l.Node.Build(world)
+
 	l.p1 = geometry.NewPoint()
 	l.p2 = geometry.NewPoint()
 	l.o1 = geometry.NewPoint()

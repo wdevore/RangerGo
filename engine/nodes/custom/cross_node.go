@@ -25,14 +25,17 @@ type CrossNode struct {
 }
 
 // NewCrossNode constructs a cross shaped node
-func NewCrossNode(name string) *CrossNode {
+func NewCrossNode(name string, parent api.INode) *CrossNode {
 	o := new(CrossNode)
 	o.Initialize(name)
+	o.SetParent(parent)
 	return o
 }
 
 // Build configures the node
 func (c *CrossNode) Build(world api.IWorld) {
+	c.Node.Build(world)
+
 	c.h1 = geometry.NewPointUsing(-0.5, 0.0)
 	c.h2 = geometry.NewPointUsing(0.5, 0.0)
 	c.oh1 = geometry.NewPoint()

@@ -19,6 +19,7 @@ func newBasicSplashScene(name string, replacement api.INode) api.INode {
 }
 
 func (s *sceneSplash) Build(world api.IWorld) {
+	s.Node.Build(world)
 	layer := newBasicGameLayer("Game Layer")
 	layer.Build(world)
 	s.AddChild(layer)

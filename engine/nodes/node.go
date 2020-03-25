@@ -17,6 +17,7 @@ type Node struct {
 	dirty   bool
 
 	parent api.INode
+	world  api.IWorld
 
 	Transform
 	Group
@@ -48,6 +49,12 @@ func (n *Node) Initialize(name string) {
 
 // Build builds this nodes internal geometry
 func (n *Node) Build(world api.IWorld) {
+	n.world = world
+}
+
+// World returns cached world object
+func (n *Node) World() api.IWorld {
+	return n.world
 }
 
 // InitializeWithID called by base objects from their Initialize
