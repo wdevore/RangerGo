@@ -34,6 +34,9 @@ type gameLayer struct {
 	// Dragging
 	drag   api.IDragging
 	mx, my int32
+
+	// Zooming
+	zoom api.INode
 }
 
 func newBasicGameLayer(name string, parent api.INode) api.INode {
@@ -47,6 +50,9 @@ func (g *gameLayer) Build(world api.IWorld) {
 	g.Node.Build(world)
 
 	g.drag = misc.NewDragState()
+
+	g.zoom = custom.NewZoomNode("ZoomNode", g)
+	g.zoom.Build(world)
 
 	vw, vh := world.ViewSize().Components()
 	x := -vw / 2.0
@@ -74,7 +80,7 @@ func (g *gameLayer) Build(world api.IWorld) {
 	g.rectNode.SetScale(100.0)
 	// g.rectNode.SetRotation(maths.DegreeToRadians * 35.0)
 	g.rectNode.SetPosition(100.0, -150.0)
-	g.AddChild(g.rectNode)
+	g.zoom.AddChild(g.rectNode)
 
 	g.angularMotion = animation.NewAngularMotion()
 	// amgle is measured in angular-velocity or "degrees/second"
@@ -84,6 +90,8 @@ func (g *gameLayer) Build(world api.IWorld) {
 	g.crossNode.Build(world)
 	g.crossNode.SetScale(30.0)
 	g.AddChild(g.crossNode)
+
+	g.AddChild(g.zoom)
 }
 
 // Update updates the time properties of a node.

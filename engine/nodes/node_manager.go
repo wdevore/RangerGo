@@ -78,7 +78,7 @@ func (m *nodeManager) Visit(interpolation float64) bool {
 
 	if action == api.SceneReplaceTake {
 		repl := runningScene.GetReplacement()
-		fmt.Println("NodeManager: SceneReplaceTake with ", repl)
+		// fmt.Println("NodeManager: SceneReplaceTake with ", repl)
 		if repl != nil {
 			m.stack.replace(repl)
 			// Immediately switch to the new replacement node
@@ -175,6 +175,7 @@ func findFirstElement(node api.INode, slice []api.INode) int {
 }
 
 func (m *nodeManager) RouteEvents(event api.IEvent) {
+	// fmt.Println("NodeManager: RouteEvents ", event)
 	for _, target := range m.eventTargets {
 		handled := target.Handle(event)
 

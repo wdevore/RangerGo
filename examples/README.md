@@ -98,3 +98,32 @@ func (g *gameLayer) Interpolate(interpolation float64) {
 The rectangle is updated with the return value of the interpolation.
 
 -----------------------------------------------------------------
+## Zooming
+The zooming example adds to the *Update Targets* example by adding a **ZoomNode**--as a child--to the **GameLayer**.
+
+Any children added the **ZoomNode** are then subject to zooming via the mouse wheel.
+
+First you construct the **ZoomNode** in the *Build* method:
+
+```Go
+g.zoom = custom.NewZoomNode("ZoomNode", g)
+g.zoom.Build(world)
+```
+
+Then you add any children--in this example just the **RectangleNode** is added:
+
+```Go
+g.zoom.AddChild(g.rectNode)
+```
+
+And finally you add the **ZoomNode**--as a child--to the **GameLayer** "g":
+
+```Go
+g.AddChild(g.zoom)
+```
+
+That's it. If you move the mouse pointer to one edge of the rectangle and zoom you will see the rectangle shrink and grow right at the corner. If you move to another corner it will pickup zooming there.
+
+Note: You don't have to use the mouse. You can programmatically control where zooming occurs, for example, you may have a **Zone** widget defined such that when an object enters the zone the code zooms into the zone, and when it exist it zooms back out. You can even use a **Tweening** animation to smoothly zoom in or out.
+
+-----------------------------------------------------------------

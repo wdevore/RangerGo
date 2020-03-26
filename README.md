@@ -2,7 +2,7 @@
 **RangerGo** A variation of the [Ranger Dart](https://github.com/wdevore/Ranger-Dart) game engine but written in [Go](https://golang.org/) and [SDL](https://www.libsdl.org/download-2.0.php), and possibly [Vulkan](https://www.khronos.org/vulkan/).
 
 # Current Tasks and Goals
-* Node Dragging
+* -- **Done** -- Node Dragging
 * Filters: transform and translate
 * Zoom Node
 * Particles
