@@ -109,7 +109,9 @@ func (z *ZoomNode) CalcTransform() api.IAffineTransform {
 func (z *ZoomNode) Handle(event api.IEvent) bool {
 	if event.GetType() == api.IOTypeMouseMotion {
 		z.mx, z.my = event.GetMousePosition()
+
 		nodes.MapDeviceToNode(z.mx, z.my, z, z.zoomPoint)
+
 		z.SetFocalPoint(z.zoomPoint.X(), z.zoomPoint.Y())
 	} else if event.GetType() == api.IOTypeMouseWheel {
 		_, dir := event.GetMouseRelMovement()
