@@ -101,9 +101,7 @@ The rectangle is updated with the return value of the interpolation.
 
 -----------------------------------------------------------------
 ## Zooming
-The zooming example adds to the *Update Targets* example by adding a **ZoomNode**--as a child--to the **GameLayer**.
-
-Any children added the **ZoomNode** are then subject to zooming via the mouse wheel.
+The zooming example adds to the *Update Targets* example by adding a **ZoomNode**--as a child--to the **GameLayer**. Any children added the **ZoomNode** are then subject to zooming via the mouse wheel.
 
 First you construct the **ZoomNode** in the *Build* method:
 
@@ -112,7 +110,7 @@ g.zoom = custom.NewZoomNode("ZoomNode", g)
 g.zoom.Build(world)
 ```
 
-Next, when you construct your, for example **RectangleNode**, you assign the node's parent as the **ZoomNode**:
+Next when you construct your nodes, for example **RectangleNode**, you assign the node's parent as the **ZoomNode**:
 
 ```Go
 g.rectNode = custom.NewRectangleNodeWithParent("Orange Rect", g.zoom)
@@ -120,7 +118,7 @@ g.rectNode = custom.NewRectangleNodeWithParent("Orange Rect", g.zoom)
 
 It is important that you use the **ZoomNode** as the parent otherwise dragging will not function correctly. This is because dragging a **Node** is based on the node's parent and in this case the rectangle's parent *is* the **ZoomNode**. Hint: you know you assign the wrong parent when you see that dragging a node either lags behind or zips a head or of the mouse.
 
-Now you can add any children. In this example just the **RectangleNode** is added:
+Now you can add your children nodes to the **ZoomNode**. In this example just the **RectangleNode** is added:
 
 ```Go
 g.zoom.AddChild(g.rectNode)
