@@ -4,7 +4,7 @@
 # Current Tasks and Goals
 * -- **Done** -- Node Dragging
 * Filters: transform and translate
-* Zoom Node
+* -- **Done** -- Zoom Node
 * Particles
 * Animation (tweening)
 * -- **Done** -- Interpolation
