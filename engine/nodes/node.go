@@ -82,17 +82,23 @@ func Visit(node api.INode, context api.IRenderContext, interpolation float64) {
 
 	context.Apply(aft)
 
+	node.(api.IRender).Draw(context)
+
 	children := node.Children()
 
 	if len(children) > 0 {
-		node.(api.IRender).Draw(context)
-
 		for _, child := range children {
-			Visit(child, context, interpolation)
+			filter, isFilterType := child.(api.IFilter)
+			if isFilterType {
+				filter.VisitFilter(context, interpolation)
+			} else {
+				Visit(child, context, interpolation)
+			}
 		}
-	} else {
-		node.(api.IRender).Draw(context)
 	}
+	//  else {
+	// 	node.(api.IRender).Draw(context)
+	// }
 
 	context.Restore()
 }
@@ -105,6 +111,11 @@ func (n *Node) SetParent(parent api.INode) {
 // Parent returns any defined parent
 func (n *Node) Parent() api.INode {
 	return n.parent
+}
+
+// HasParent indicates if this node has a parent, which most do except the root.
+func (n *Node) HasParent() bool {
+	return n.parent != nil
 }
 
 // IsVisible indicates visibility, default is "true"

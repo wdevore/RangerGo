@@ -130,8 +130,73 @@ And finally you add the **ZoomNode**--as a child--to the **GameLayer** "g":
 g.AddChild(g.zoom)
 ```
 
+If you where to print the tree of the **Splash** Scene you would see this:
+
+```
+---------- Tree ---------------
+|'Splash' (0)|
+   |'Game Layer' (1)|
+      |'HLine' (3)|
+      |'VLine' (4)|
+      |'Cross' (6)|
+      |'ZoomNode' (2)|
+         |'Orange Rect' (5)|
+-------------------------------
+```
+
 That's it. If you move the mouse pointer to one edge of the rectangle and zoom you will see the rectangle shrink and grow right at the corner. If you move to another corner it will pickup zooming there.
 
 Note: You don't have to use the mouse. You can programmatically control where zooming occurs, for example, you may have a **Zone** widget defined such that when an object enters the zone the code zooms into the zone, and when it exist it zooms back out. You can even use a **Tweening** animation to smoothly zoom in or out.
+
+-----------------------------------------------------------------
+
+## Filters
+
+This example adds to the *Zooming* example by adding a **Filter** between a parent (Orange rectangle) and a child (Green rectangle). If you don't use Filters then any parent transform will *multiply* downward into the child. For example, if you have a scale of 50.0 applied to a parent rectangle and a child rectangle with a scale of 10.0 then the child is visually 50.0*10.0 = 500.0! Filters are designed for you to not need to worry about the parent and focus on the child's properties.
+
+First you create the **Filter** of which there are two: **TransformFilter** and **TranslateFilter**
+
+```Go
+// Add Filter to remove parent's (aka Orange rectangle) Scale effect
+filter := filters.NewTransformFilter("TransformFilter", g.orangeRectNode)
+filter.Build(world)
+g.orangeRectNode.AddChild(filter)
+```
+
+Note the parent of the filter is the orange rectangle and the child of the rectangle is the filter.
+
+Next you create any children of the filter--in this example that is just the green rectangle--being sure to also provide the node's relational parent (which is different that adding it as a child):
+
+```Go
+g.greenRectNode = custom.NewRectangleNodeWithParent("Green Rect", filter)
+```
+
+And finally you add the green rectangle as a child of the filter:
+
+```Go
+filter.AddChild(g.greenRectNode)
+```
+
+If you where to print the tree of the **Splash** Scene you would see this:
+
+```
+---------- Tree ---------------
+|'Splash' (0)|
+   |'Game Layer' (1)|
+      |'HLine' (3)|
+      |'VLine' (4)|
+      |'Cross' (8)|
+      |'ZoomNode' (2)|
+         |'Orange Rect' (5)|
+            |'TransformFilter' (6)|
+               |'Green Rect' (7)|
+-------------------------------
+```
+
+That is it! 
+
+**Warning** 
+
+Filters can interfer with things like dragging which rely on parent transform properties. If you need hierarchial dragging then skip using Filters and just manually manage the child transform properties relative to their parent.
 
 -----------------------------------------------------------------

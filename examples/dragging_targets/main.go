@@ -8,14 +8,8 @@ import (
 
 var ranger api.IEngine
 
-// ##################################################################
-// README
-// This example shows how the Update method can be used to animate
-// a rotating rectangle.
-// ##################################################################
-
 func init() {
-	world := engine.NewWorld("Update Targets")
+	world := engine.NewWorld("Dragging")
 
 	ranger = engine.New(world)
 

@@ -3,13 +3,14 @@ package main
 import (
 	"github.com/wdevore/RangerGo/api"
 	"github.com/wdevore/RangerGo/engine"
+	"github.com/wdevore/RangerGo/engine/nodes"
 	"github.com/wdevore/RangerGo/engine/nodes/custom"
 )
 
 var ranger api.IEngine
 
-func init() {
-	world := engine.NewWorld("Update Targets")
+func main() {
+	world := engine.NewWorld("Filters")
 
 	ranger = engine.New(world)
 
@@ -19,12 +20,10 @@ func init() {
 	// This example uses the super basic Boot scene that does absolutely nothing.
 	boot := custom.NewBasicBootScene("Boot", splash)
 
-	// nodes.PrintTree(splash)
+	nodes.PrintTree(splash)
 
 	ranger.PushStart(boot)
-}
 
-func main() {
 	ranger.Configure()
 
 	ranger.Start()

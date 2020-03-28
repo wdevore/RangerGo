@@ -13,6 +13,7 @@ type INode interface {
 	Build(IWorld)
 	World() IWorld
 
+	HasParent() bool
 	SetParent(INode)
 	Parent() INode
 

@@ -8,14 +8,6 @@ import (
 
 var ranger api.IEngine
 
-// ##################################################################
-// README
-// This example show mapping from mouse-space to node-space where the
-// node is a rotated rectangle.
-// Also, the background has been moved to the scene simply to make
-// the layer less clutter for this example.
-// ##################################################################
-
 func init() {
 	world := engine.NewWorld("Space mappings #2")
 

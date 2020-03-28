@@ -3,17 +3,18 @@
 
 # Current Tasks and Goals
 * -- **Done** -- Node Dragging
-* -- **Working** -- Filters: transform and translate
+* -- **Done** -- Filters: transform and translate
 * -- **Done** -- Zoom Node
+* -- **Done** -- Interpolation
+* -- **Done** -- Simple motion animations
+* **Working** More custom nodes: Circle, AnchorNode, AABB
 * Particles
 * Animation (tweening)
-* -- **Done** -- Interpolation
 * Enhance raster fonts to allow transforms
-* More custom nodes: Circle, AnchorNode, AABB
 * Sprite Textures
 * Box2D physics
 * OpenGL Vulkan
 * Audio (SFXR 8bit sound)
 * Joysticks
-* Complete lower case Vector font characters.
+* Finish lower case Vector font characters.
 
