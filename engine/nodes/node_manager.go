@@ -96,7 +96,6 @@ func (m *nodeManager) Visit(interpolation float64) bool {
 
 	context.Restore()
 
-	// fmt.Println("NodeManager: done visiting ", m.stack.runningNode)
 	return true // continue to draw.
 }
 
@@ -110,7 +109,6 @@ func (m *nodeManager) PopNode() {
 
 func (m *nodeManager) PushNode(node api.INode) {
 	m.stack.nextNode = node
-	// fmt.Println("NodeManager: pushing ", node)
 	m.stack.push(node)
 }
 
@@ -129,7 +127,6 @@ func (m *nodeManager) Update(dt float64) {
 }
 
 func (m *nodeManager) RegisterTarget(target api.INode) {
-	// fmt.Println("NodeManager: registering ", target)
 	m.timingTargets = append(m.timingTargets, target)
 }
 
@@ -137,7 +134,6 @@ func (m *nodeManager) UnRegisterTarget(target api.INode) {
 	idx := findFirstElement(target, m.timingTargets)
 
 	if idx >= 0 {
-		// fmt.Println("NodeManager: UnRegistering idx:(", idx, ") ", m.timingTargets[idx], " target")
 		deleteAt(idx, m.timingTargets)
 	} else {
 		fmt.Println("NodeManager: Unable to UnRegister ", target, " target")
@@ -149,7 +145,6 @@ func (m *nodeManager) UnRegisterTarget(target api.INode) {
 // --------------------------------------------------------------------------
 
 func (m *nodeManager) RegisterEventTarget(target api.INode) {
-	// fmt.Println("NodeManager: Register ", target, " event target")
 	m.eventTargets = append(m.eventTargets, target)
 }
 
@@ -157,7 +152,6 @@ func (m *nodeManager) UnRegisterEventTarget(target api.INode) {
 	idx := findFirstElement(target, m.eventTargets)
 
 	if idx >= 0 {
-		// fmt.Println("NodeManager: UnRegistering event idx:(", idx, ") ", m.eventTargets[idx], " target")
 		deleteAt(idx, m.eventTargets)
 	} else {
 		fmt.Println("NodeManager: Unable to UnRegister event ", target, " target")

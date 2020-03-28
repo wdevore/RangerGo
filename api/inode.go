@@ -35,6 +35,8 @@ type INode interface {
 
 	// IScene
 	ITransform
+
+	// Children
 	IGroup
 
 	GetBucket() []IPoint

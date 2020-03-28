@@ -2,6 +2,7 @@ package nodes
 
 import (
 	"fmt"
+	"log"
 
 	"github.com/wdevore/RangerGo/api"
 	"github.com/wdevore/RangerGo/engine/geometry"
@@ -82,7 +83,12 @@ func Visit(node api.INode, context api.IRenderContext, interpolation float64) {
 
 	context.Apply(aft)
 
-	node.(api.IRender).Draw(context)
+	render, isRenderType := node.(api.IRender)
+	if isRenderType {
+		render.Draw(context)
+	} else {
+		log.Fatalf("Node: oops, %s doesn't implement IRender.Draw method", node)
+	}
 
 	children := node.Children()
 

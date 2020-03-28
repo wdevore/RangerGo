@@ -14,7 +14,6 @@ import (
 // creating your own version.
 type RectangleNode struct {
 	nodes.Node
-	world  api.IWorld
 	mx, my int32
 
 	color       api.IPalette
