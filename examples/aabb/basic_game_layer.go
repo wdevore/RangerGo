@@ -47,13 +47,13 @@ func (g *gameLayer) Build(world api.IWorld) {
 
 	hLine := custom.NewLineNode("HLine", g)
 	hLine.Build(world)
-	hLine.SetPoints(x, 0.0, -x, 0.0)
-	g.AddChild(hLine)
+	n := hLine.(*custom.LineNode)
+	n.SetPoints(x, 0.0, -x, 0.0)
 
 	vLine := custom.NewLineNode("VLine", g)
 	vLine.Build(world)
-	vLine.SetPoints(0.0, -y, 0.0, y)
-	g.AddChild(vLine)
+	n = vLine.(*custom.LineNode)
+	n.SetPoints(0.0, -y, 0.0, y)
 
 	g.triangle = NewTriangleNode("Triangle", g)
 	g.triangle.Build(world)
@@ -85,6 +85,7 @@ func (g *gameLayer) Interpolate(interpolation float64) {
 
 // EnterNode called when a node is entering the stage
 func (g *gameLayer) EnterNode(man api.INodeManager) {
+	// Register this node such that we get Update events above.
 	man.RegisterTarget(g)
 }
 

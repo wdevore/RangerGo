@@ -38,6 +38,7 @@ func NewRectangleNodeWithParent(name string, parent api.INode) *RectangleNode {
 	o := new(RectangleNode)
 	o.Initialize(name)
 	o.SetParent(parent)
+	parent.AddChild(o)
 	return o
 }
 

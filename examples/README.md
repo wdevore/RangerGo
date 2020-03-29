@@ -260,3 +260,26 @@ func (t *TriangleNode) Draw(context api.IRenderContext) {
 ```
 
 -----------------------------------------------------------------
+
+## Anchor
+
+Anchor example shows how an Anchor can be used to cause a Node (Green Triangle) to orbit in the opposite direction as it parent (Triangle).
+
+If you where to print the tree of the **Splash** Scene you would see this:
+
+```
+---------- Tree ---------------
+|'Splash' (0)|
+   |'Game Layer' (1)|
+      |'HLine' (2)|
+      |'VLine' (3)|
+      |'Triangle' (4)|
+         |'Filter' (5)|
+            |'Anchor' (6)|
+               |'Green Rect' (7)|
+-------------------------------
+```
+
+The Anchor has a motion object that is configured to rotate in the opposite direction and twice as fast. If it orbited as the same rate then it would appear to stay in place.
+
+-----------------------------------------------------------------

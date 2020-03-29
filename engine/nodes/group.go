@@ -19,5 +19,7 @@ func (g *Group) Children() []api.INode {
 
 // AddChild adds a node to this node
 func (g *Group) AddChild(child api.INode) {
-	g.children = append(g.children, child)
+	if child != nil {
+		g.children = append(g.children, child)
+	}
 }

@@ -26,6 +26,7 @@ func NewTransformFilter(name string, parent api.INode) api.INode {
 	o.SetParent(parent)
 	o.initializeFilter()
 	o.InheritRotationAndTranslation()
+	parent.AddChild(o)
 	return o
 }
 
