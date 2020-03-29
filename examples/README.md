@@ -27,6 +27,14 @@ GameLayer emphasizes a child *Layer* Node as the background instead of a Scene N
 Note: A lot of the examples have the Scene node drawing the background for simplicity.
 
 -----------------------------------------------------------------
+## Shapes
+This example simply renders the custom **Node** shapes defined in the *nodes/custom* folder.
+
+### Example Image
+<img src="../docs/RangerGo_shapes.png" alt="Example image" width="500" />
+
+-----------------------------------------------------------------
+
 ## Raster text
 Raster text is a simple example of using the raster font. The font is a stripped down port from the [font8x8](https://crates.io/crates/font8x8/0.2.3) [Rust](https://www.rust-lang.org/) crate. At the time of this writing enhancements that allow transformations on the font are planned.
 
@@ -198,5 +206,57 @@ That is it!
 **Warning** 
 
 Filters can interfer with things like dragging which rely on parent transform properties. If you need hierarchial dragging then skip using Filters and just manually manage the child transform properties relative to their parent.
+
+-----------------------------------------------------------------
+
+## AABB
+
+In this example a **TriangleNode** has a rotation applied in order to show how a Axis-Aligned-Bounding-Box functions. As the triangle rotates the *Red* AABB changes shape such that it always encompasses the triangle.
+
+If you where to print the tree of the **Splash** Scene you would see this:
+
+```
+---------- Tree ---------------
+|'Splash' (0)|
+   |'Game Layer' (1)|
+      |'HLine' (2)|
+      |'VLine' (3)|
+      |'Triangle' (4)|
+-------------------------------
+```
+
+The AABB is constantly updated using the *transformed* vertices (aka *Bucket*)
+
+Also, in this example we don't actually need a *Draw* method because 1) The layer has no visual element and 2) each node renders themselves.
+
+The new code is pretty much inside the **TriangleNode**. First we add a AABB object:
+
+```Go
+aabb      *misc.AABB
+```
+
+Then construct it:
+
+```Go
+t.aabb = misc.NewAABB()
+```
+
+Then in the *Draw* method we set the *bounds*--based on the transformed vertices--each time the node is *Dirty*, and finally render it.
+
+```Go
+func (t *TriangleNode) Draw(context api.IRenderContext) {
+	if t.IsDirty() {
+		context.TransformPolygon(t.polygon)
+		t.aabb.SetBounds(t.polygon.Mesh().Bucket())  // <-- Set bounds
+		t.SetDirty(false)
+	}
+
+	context.SetDrawColor(t.color)
+	context.RenderPolygon(t.polygon, api.CLOSED)
+
+	context.SetDrawColor(t.aabbColor)
+	context.RenderAARectangle(t.aabb.Min(), t.aabb.Max(), api.OUTLINED) // <-- render it.
+}
+```
 
 -----------------------------------------------------------------

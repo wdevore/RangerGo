@@ -31,10 +31,10 @@ func (t *TranslateFilter) Build(world api.IWorld) {
 	t.Node.Build(world)
 }
 
-// VisitFilter is special in that it they provide their own implementation.
+// Visit is special in that it they provide their own implementation.
 // Because this is a Translate filter we "filter out" everything
 // but the translation component from the immediate parent.
-func (t *TranslateFilter) VisitFilter(context api.IRenderContext, interpolation float64) {
+func (t *TranslateFilter) Visit(context api.IRenderContext, interpolation float64) {
 	if !t.IsVisible() {
 		return
 	}

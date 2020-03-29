@@ -1,8 +1,6 @@
 package main
 
 import (
-	"fmt"
-
 	"github.com/wdevore/RangerGo/api"
 	"github.com/wdevore/RangerGo/engine/animation"
 	"github.com/wdevore/RangerGo/engine/geometry"
@@ -21,12 +19,10 @@ type gameLayer struct {
 	o1 api.IPoint
 	o2 api.IPoint
 
-	crossNode *custom.CrossNode
-
-	rectNode *custom.RectangleNode
-
-	// Motion is for rotating cube
+	// Motion is for rotating triangle
 	angularMotion api.IMotion
+
+	triangle *TriangleNode
 }
 
 func newBasicGameLayer(name string, parent api.INode) api.INode {
@@ -43,7 +39,7 @@ func (g *gameLayer) Build(world api.IWorld) {
 	x := -vw / 2.0
 	y := -vh / 2.0
 
-	g.textColor = rendering.NewPaletteInt64(rendering.White)
+	g.textColor = rendering.NewPaletteInt64(rendering.Red)
 
 	g.o1 = geometry.NewPoint()
 	g.o2 = geometry.NewPoint()
@@ -59,22 +55,17 @@ func (g *gameLayer) Build(world api.IWorld) {
 	vLine.SetPoints(0.0, -y, 0.0, y)
 	g.AddChild(vLine)
 
-	g.rectNode = custom.NewRectangleNodeWithParent("Orange Rect", g)
-	g.rectNode.Build(world)
-	g.rectNode.SetColor(rendering.NewPaletteInt64(rendering.Orange))
-	g.rectNode.SetScale(100.0)
-	// g.rectNode.SetRotation(maths.DegreeToRadians * 35.0)
-	g.rectNode.SetPosition(100.0, -150.0)
-	g.AddChild(g.rectNode)
+	g.triangle = NewTriangleNode("Triangle", g)
+	g.triangle.Build(world)
+	g.triangle.SetScale(100.0)
+	g.triangle.SetPosition(-100.0, -100.0)
+	g.triangle.SetRotation(maths.DegreeToRadians * 20.0)
+	g.AddChild(g.triangle)
 
 	g.angularMotion = animation.NewAngularMotion()
 	// amgle is measured in angular-velocity or "degrees/second"
-	g.angularMotion.SetRate(maths.DegreeToRadians * 90.0)
+	g.angularMotion.SetRate(maths.DegreeToRadians * 45.0)
 
-	g.crossNode = custom.NewCrossNode("Cross", g)
-	g.crossNode.Build(world)
-	g.crossNode.SetScale(30.0)
-	g.AddChild(g.crossNode)
 }
 
 // Update updates the time properties of a node.
@@ -85,7 +76,7 @@ func (g *gameLayer) Update(dt float64) {
 // Interpolate is used for blending time based properties.
 func (g *gameLayer) Interpolate(interpolation float64) {
 	value := g.angularMotion.Interpolate(interpolation)
-	g.rectNode.SetRotation(value.(float64))
+	g.triangle.SetRotation(value.(float64))
 }
 
 // -----------------------------------------------------
@@ -95,37 +86,9 @@ func (g *gameLayer) Interpolate(interpolation float64) {
 // EnterNode called when a node is entering the stage
 func (g *gameLayer) EnterNode(man api.INodeManager) {
 	man.RegisterTarget(g)
-	// We want the mouse events so the crossnode can track the mouse.
-	man.RegisterEventTarget(g)
 }
 
 // ExitNode called when a node is exiting stage
 func (g *gameLayer) ExitNode(man api.INodeManager) {
 	man.UnRegisterTarget(g)
-	man.UnRegisterEventTarget(g)
-}
-
-// -----------------------------------------------------
-// Visuals
-// -----------------------------------------------------
-
-func (g *gameLayer) Draw(context api.IRenderContext) {
-	context.SetDrawColor(g.textColor)
-	text := fmt.Sprintf("(%d, %d)", int(g.cursorPosition.X()), int(g.cursorPosition.Y()))
-	context.DrawText(10.0, 10.0, text, 1, 1, false)
-}
-
-// -----------------------------------------------------
-// IO events
-// -----------------------------------------------------
-
-func (g *gameLayer) Handle(event api.IEvent) bool {
-	if event.GetType() == api.IOTypeMouseMotion {
-		mx, my := event.GetMousePosition()
-		nodes.MapDeviceToView(g.World(), mx, my, g.cursorPosition)
-
-		g.crossNode.SetPosition(g.cursorPosition.X(), g.cursorPosition.Y())
-	}
-
-	return false
 }

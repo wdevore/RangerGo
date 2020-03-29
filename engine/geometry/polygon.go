@@ -23,6 +23,11 @@ func (p *Polygon) AddVertex(x, y float64) {
 	p.mesh.AddVertex(x, y)
 }
 
+// SetVertex updates a point on the mesh
+func (p *Polygon) SetVertex(x, y float64, index int) {
+	p.mesh.SetVertex(x, y, index)
+}
+
 // Mesh provides access to the underlying mesh
 func (p *Polygon) Mesh() api.IMesh {
 	return p.mesh

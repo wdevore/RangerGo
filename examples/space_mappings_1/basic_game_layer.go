@@ -13,8 +13,6 @@ import (
 type gameLayer struct {
 	nodes.Node
 
-	api.IRender
-
 	backgroundColor api.IPalette
 	backgroundMin   api.IPoint
 	backgroundMax   api.IPoint

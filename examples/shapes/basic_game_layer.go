@@ -11,8 +11,6 @@ import (
 type gameLayer struct {
 	nodes.Node
 
-	api.IRender
-
 	textColor      api.IPalette
 	cursorPosition api.IPoint
 
@@ -53,25 +51,18 @@ func (g *gameLayer) Build(world api.IWorld) {
 	triangle := custom.NewTriangleNode("Triangle", g)
 	triangle.Build(world)
 	triangle.SetScale(100.0)
-	triangle.SetPosition(-500.0, -300.0)
+	triangle.SetPosition(-400.0, -200.0)
 	g.AddChild(triangle)
 
 	cross := custom.NewCrossNode("Cross", g)
 	cross.Build(world)
 	cross.SetScale(100.0)
-	cross.SetPosition(-400.0, -300.0)
+	cross.SetPosition(-200.0, -200.0)
 	g.AddChild(cross)
 
 	circle := custom.NewCircleNode("Circle", g)
 	circle.Build(world)
 	circle.SetScale(50.0)
-	circle.SetPosition(-250.0, -300.0)
+	circle.SetPosition(0.0, -200.0)
 	g.AddChild(circle)
-}
-
-// -----------------------------------------------------
-// Visuals
-// -----------------------------------------------------
-
-func (g *gameLayer) Draw(context api.IRenderContext) {
 }

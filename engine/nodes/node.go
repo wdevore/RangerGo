@@ -96,15 +96,12 @@ func Visit(node api.INode, context api.IRenderContext, interpolation float64) {
 		for _, child := range children {
 			filter, isFilterType := child.(api.IFilter)
 			if isFilterType {
-				filter.VisitFilter(context, interpolation)
+				filter.Visit(context, interpolation)
 			} else {
 				Visit(child, context, interpolation)
 			}
 		}
 	}
-	//  else {
-	// 	node.(api.IRender).Draw(context)
-	// }
 
 	context.Restore()
 }
@@ -157,9 +154,11 @@ func (n *Node) RippleDirty(dirty bool) {
 func (n *Node) Update(dt float64) {
 }
 
-// Draw renders a node
+// Draw provides a default render--which is to draw nothing.
+// You should override this in your custom node if your node
+// needs to perform custom rendering.
 func (n *Node) Draw(context api.IRenderContext) {
-	// fmt.Println("Node: Draw")
+	// fmt.Println("Node: Draw ", n)
 }
 
 // GetBucket returns a buffer for capturing transformed vertices

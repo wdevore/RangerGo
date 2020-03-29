@@ -36,6 +36,11 @@ func (m *Mesh) AddVertex(x, y float64) {
 	m.vertices = append(m.vertices, NewPointUsing(x, y))
 }
 
+// SetVertex updates a vertex on the mesh
+func (m *Mesh) SetVertex(x, y float64, index int) {
+	m.vertices[index].SetByComp(x, y)
+}
+
 // Build sizes the transform bucket
 func (m *Mesh) Build() {
 	// bucket needs to be the same size as vertices

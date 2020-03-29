@@ -15,8 +15,6 @@ type gameLayer struct {
 	nodes.Node
 	world api.IWorld
 
-	api.IRender
-
 	textColor      api.IPalette
 	cursorPosition api.IPoint
 

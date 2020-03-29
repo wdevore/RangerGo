@@ -34,8 +34,8 @@ func (t *TransformFilter) Build(world api.IWorld) {
 	t.Node.Build(world)
 }
 
-// VisitFilter is special in that it they provide their own implementation
-func (t *TransformFilter) VisitFilter(context api.IRenderContext, interpolation float64) {
+// Visit is special in that it they provide their own implementation
+func (t *TransformFilter) Visit(context api.IRenderContext, interpolation float64) {
 	if !t.IsVisible() {
 		return
 	}

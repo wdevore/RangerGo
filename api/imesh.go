@@ -11,6 +11,8 @@ type IMesh interface {
 	// AddVertex appends the point to vertices
 	AddVertex(x, y float64)
 
+	SetVertex(x, y float64, index int)
+
 	// Build
 	Build()
 }

@@ -7,7 +7,8 @@
 * -- **Done** -- Zoom Node
 * -- **Done** -- Interpolation
 * -- **Done** -- Simple motion animations
-* **Working** More custom nodes: Circle, AnchorNode, AABB
+* -- **Done** -- Circle, AABB
+* **Working** AnchorNode
 * Particles
 * Animation (tweening)
 * Enhance raster fonts to allow transforms
@@ -18,3 +19,9 @@
 * Joysticks
 * Finish lower case Vector font characters.
 
+## Notes
+
+# Tracking
+Some **Nodes**/**Objects** may want to *Track* the properties of another **Node**.
+
+For example, an AABB object may wan't to track **Mesh** changes on a node such that it can *rebuild* its internal min/max properties.

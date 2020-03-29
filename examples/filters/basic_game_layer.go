@@ -17,8 +17,6 @@ import (
 type gameLayer struct {
 	nodes.Node
 
-	api.IRender
-
 	textColor      api.IPalette
 	cursorPosition api.IPoint
 
