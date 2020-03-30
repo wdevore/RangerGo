@@ -49,10 +49,12 @@ func (a *Activator360) Activate(particle api.IParticle, center api.IPoint) {
 	particle.Activate(true)
 }
 
+// SetMaxLifetime sets maximum life a particle live
 func (a *Activator360) SetMaxLifetime(duration float64) {
 	a.maxLife = duration
 }
 
+// SetMaxSpeed set max magnitude
 func (a *Activator360) SetMaxSpeed(speed float64) {
 	a.maxSpeed = speed
 }
