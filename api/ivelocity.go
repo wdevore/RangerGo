@@ -17,11 +17,15 @@ type IVelocity interface {
 	// Range returns the min/max magnitude range
 	Range() (float64, float64)
 	// SetDirection set the direction vector component
-	SetDirection(IVector)
+	SetDirectionByVector(IVector)
+	SetDirectionByAngle(radians float64)
+
 	// Direction returns the current direction component
 	Direction() IVector
 
 	// ConstrainMagnitude enables/disables the limiting of magnitude
 	// to within the min/max range
 	ConstrainMagnitude(bool)
+
+	ApplyToPoint(point IPoint)
 }

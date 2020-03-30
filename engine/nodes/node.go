@@ -126,6 +126,11 @@ func (n *Node) IsVisible() bool {
 	return n.visible
 }
 
+// SetVisible changes the visibility of the node
+func (n *Node) SetVisible(visible bool) {
+	n.visible = visible
+}
+
 // Interpolate is used for blending time based properties.
 func (n *Node) Interpolate(interpolation float64) {
 	// fmt.Println("Node Interpolate on: ", n)

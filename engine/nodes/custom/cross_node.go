@@ -25,10 +25,11 @@ type CrossNode struct {
 }
 
 // NewCrossNode constructs a cross shaped node
-func NewCrossNode(name string, parent api.INode) *CrossNode {
+func NewCrossNode(name string, parent api.INode) api.INode {
 	o := new(CrossNode)
 	o.Initialize(name)
 	o.SetParent(parent)
+	parent.AddChild(o)
 	return o
 }
 

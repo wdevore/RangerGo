@@ -15,6 +15,8 @@ type IVector interface {
 	// SetByVector sets point using another vector
 	SetByVector(IVector)
 
+	SetByAngle(radians float64)
+
 	// Length returns the square root length
 	Length() float64
 	// LengthSqr return the squared length

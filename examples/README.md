@@ -283,3 +283,67 @@ If you where to print the tree of the **Splash** Scene you would see this:
 The Anchor has a motion object that is configured to rotate in the opposite direction and twice as fast. If it orbited as the same rate then it would appear to stay in place.
 
 -----------------------------------------------------------------
+
+## Particles
+
+In this example a simple **ParticleSystem** is added along with a **TriangleNode** particle visual.
+
+Particles have *Visual*s attached them. The visual is what is rendered not the particle itself.
+
+First we create a particle system and configure it:
+
+```Go
+// Particle system
+activator := particles.NewActivator360()
+g.particleSystem = particles.NewParticleSystem(activator)
+g.particleSystem.Activate(true)
+g.particleSystem.SetAutoTrigger(true)
+g.particleSystem.SetPosition(g.rectNode.Position().X(), g.rectNode.Position().Y())
+```
+
+Once created we can populate it:
+
+```Go
+// Now populate the system
+for i := 0; i < 50; i++ {
+   v := NewTriangleNode(fmt.Sprintf("Tri%d", i), g)
+   v.Build(world)
+   v.SetColor(rendering.NewPaletteInt64(rendering.Black))
+   v.SetVisible(false)
+   v.SetScale(10.0)
+   p := particles.NewParticle(v)
+   g.particleSystem.AddParticle(p)
+}
+```
+
+Note: That the parent of the **TriangleNode** is NOT the rectangle. We want the particles to be independent of the emitter icon (aka rectangle), otherwise the particles move with the emitter which looks odd.
+
+Next we update the particle system and then update the particle system's position based on the current position of the rectangle. This way when we drag the rectangle the particles emit from where the rectangle is currently located.
+
+```Go
+g.particleSystem.Update(dt)
+
+// Update position of particle system based on current position of rect
+g.particleSystem.SetPosition(g.rectNode.Position().X(), g.rectNode.Position().Y())
+```
+
+That's it. Also, I added a keypress event that triggers and explosion. ;-)
+
+If you where to print the tree of the **Splash** Scene you would see this (truncated):
+
+```
+---------- Tree ---------------
+|'Splash' (0)|
+   |'Game Layer' (1)|
+      |'HLine' (2)|
+      |'VLine' (3)|
+      |'Orange Rect' (4)|
+      |'Cross' (5)|
+      |'Tri0' (6)|
+      |'Tri1' (7)|
+      |'Tri2' (8)|
+      ...
+-------------------------------
+```
+
+-----------------------------------------------------------------

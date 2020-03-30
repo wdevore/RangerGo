@@ -8,6 +8,7 @@ import (
 	"github.com/wdevore/RangerGo/engine/geometry"
 	"github.com/wdevore/RangerGo/engine/maths"
 	"github.com/wdevore/RangerGo/engine/misc"
+	"github.com/wdevore/RangerGo/engine/misc/particles"
 	"github.com/wdevore/RangerGo/engine/nodes"
 	"github.com/wdevore/RangerGo/engine/nodes/custom"
 	"github.com/wdevore/RangerGo/engine/rendering"
@@ -32,6 +33,9 @@ type gameLayer struct {
 	// Dragging
 	drag   api.IDragging
 	mx, my int32
+
+	// Particles
+	particleSystem api.IParticleSystem
 }
 
 func newBasicGameLayer(name string, parent api.INode) api.INode {
@@ -71,7 +75,7 @@ func (g *gameLayer) Build(world api.IWorld) {
 	g.rectNode.Build(world)
 	rn := g.rectNode.(*custom.RectangleNode)
 	rn.SetColor(rendering.NewPaletteInt64(rendering.Orange))
-	g.rectNode.SetScale(100.0)
+	g.rectNode.SetScale(50.0)
 	// g.rectNode.SetRotation(maths.DegreeToRadians * 35.0)
 	g.rectNode.SetPosition(100.0, -150.0)
 
@@ -82,11 +86,33 @@ func (g *gameLayer) Build(world api.IWorld) {
 	g.crossNode = custom.NewCrossNode("Cross", g)
 	g.crossNode.Build(world)
 	g.crossNode.SetScale(30.0)
+
+	// Particle system
+	activator := particles.NewActivator360()
+	g.particleSystem = particles.NewParticleSystem(activator)
+	g.particleSystem.Activate(true)
+	g.particleSystem.SetAutoTrigger(true)
+	g.particleSystem.SetPosition(g.rectNode.Position().X(), g.rectNode.Position().Y())
+
+	// Now populate the system
+	for i := 0; i < 50; i++ {
+		v := NewTriangleNode(fmt.Sprintf("Tri%d", i), g)
+		v.Build(world)
+		v.SetColor(rendering.NewPaletteInt64(rendering.Black))
+		v.SetVisible(false)
+		v.SetScale(10.0)
+		p := particles.NewParticle(v)
+		g.particleSystem.AddParticle(p)
+	}
 }
 
 // Update updates the time properties of a node.
 func (g *gameLayer) Update(dt float64) {
 	g.angularMotion.Update(dt)
+	g.particleSystem.Update(dt)
+
+	// Update position of particle system based on current position of rect
+	g.particleSystem.SetPosition(g.rectNode.Position().X(), g.rectNode.Position().Y())
 }
 
 // Interpolate is used for blending time based properties.
@@ -151,6 +177,11 @@ func (g *gameLayer) Handle(event api.IEvent) bool {
 		mx, my := event.GetMousePosition()
 		// On mouse events if state = 1 then dragging
 		g.drag.SetButtonStateUsing(mx, my, event.GetButton(), event.GetState(), g.rectNode)
+	} else if event.GetType() == api.IOTypeKeyboard {
+		if event.GetState() == 1 {
+			// Button down
+			g.particleSystem.TriggerExplosion()
+		}
 	}
 
 	return false

@@ -25,6 +25,7 @@ type INode interface {
 	ExitNode(INodeManager)
 
 	IsVisible() bool
+	SetVisible(bool)
 
 	IsDirty() bool
 	SetDirty(dirty bool)

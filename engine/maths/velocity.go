@@ -29,7 +29,7 @@ func NewVelocityUsing(vel api.IVelocity) api.IVelocity {
 	o := NewVelocity()
 	o.SetMagnitude(vel.Magnitude())
 	o.SetMinMax(vel.Range())
-	o.SetDirection(vel.Direction())
+	o.SetDirectionByVector(vel.Direction())
 	return o
 }
 
@@ -58,7 +58,11 @@ func (v *velocity) Range() (float64, float64) {
 	return v.minMag, v.maxMag
 }
 
-func (v *velocity) SetDirection(dir api.IVector) {
+func (v *velocity) SetDirectionByAngle(radians float64) {
+	v.direction.SetByAngle(radians)
+}
+
+func (v *velocity) SetDirectionByVector(dir api.IVector) {
 	v.direction.SetByVector(dir)
 }
 
@@ -68,6 +72,14 @@ func (v *velocity) Direction() api.IVector {
 
 func (v *velocity) ConstrainMagnitude(con bool) {
 	v.limitMag = con
+}
+
+func (v *velocity) ApplyToPoint(point api.IPoint) {
+	// Get actual velocity
+	v1.SetByComp(v.direction.X()*v.magnitude, v.direction.Y()*v.magnitude)
+	v2.SetByPoint(point)
+	Add(v1, v2, v3)
+	point.SetByComp(v3.X(), v3.Y())
 }
 
 func (v velocity) String() string {

@@ -7,9 +7,6 @@ func Lerp(min, max, t float64) float64 {
 	return min*(1.0-t) + max*t
 }
 
-var v1 = NewVector()
-var v2 = NewVector()
-
 // LerpVectors lerps two vectors into the "out" vector.
 // As per:
 // https://gamedev.stackexchange.com/questions/18615/how-do-i-linearly-interpolate-between-two-vectors

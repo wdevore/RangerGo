@@ -47,6 +47,11 @@ func (v *vector) SetByPoint(ip api.IPoint) {
 	v.y = ip.Y()
 }
 
+func (v *vector) SetByAngle(radians float64) {
+	v.x = math.Cos(radians)
+	v.y = math.Sin(radians)
+}
+
 func (v *vector) SetByVector(ip api.IVector) {
 	v.x = ip.X()
 	v.y = ip.Y()
