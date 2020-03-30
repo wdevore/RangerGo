@@ -10,4 +10,7 @@ const (
 // IParticleActivator activates particles
 type IParticleActivator interface {
 	Activate(particle IParticle, center IPoint)
+
+	SetMaxLifetime(duration float64)
+	SetMaxSpeed(speed float64)
 }
