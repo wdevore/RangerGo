@@ -20,7 +20,8 @@ type sceneSplash struct {
 	backgroundMin   api.IPoint
 	backgroundMax   api.IPoint
 
-	text *custom.VectorTextNode
+	text     api.INode
+	alphabet api.INode
 }
 
 func newBasicSplashScene(name string, replacement api.INode) api.INode {
@@ -42,12 +43,19 @@ func (s *sceneSplash) Build(world api.IWorld) {
 
 	s.backgroundColor = rendering.NewPaletteInt64(rendering.LightGray)
 
-	s.text = custom.NewVectorTextNode(world)
+	s.text = custom.NewVectorTextNode(world, s)
 	s.text.Initialize("VectorTextNode")
-	s.text.SetText("RANGER IS A GO!")
+	t := s.text.(*custom.VectorTextNode)
+	t.SetText("RANGER IS A GO!")
 	s.text.SetScale(25.0)
 	s.text.SetRotation(maths.DegreeToRadians * 45.0)
-	s.AddChild(s.text)
+
+	s.alphabet = custom.NewVectorTextNode(world, s)
+	s.alphabet.Initialize("Alphabet")
+	t = s.alphabet.(*custom.VectorTextNode)
+	t.SetText("AaBbCcDdEeFfGgHhIiJjK-L-M-N-O-P-Q-R-S-T-U-V-W-X-Y-Z")
+	s.alphabet.SetScale(25.0)
+	s.alphabet.SetPosition(-800.0, -100.0)
 
 }
 

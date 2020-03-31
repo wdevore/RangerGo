@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/wdevore/RangerGo/api"
 	"github.com/wdevore/RangerGo/engine"
+	"github.com/wdevore/RangerGo/engine/nodes"
 	"github.com/wdevore/RangerGo/engine/nodes/custom"
 )
 
@@ -10,7 +11,7 @@ var ranger api.IEngine
 
 // This example shows Vector text on the splash screen
 
-func init() {
+func main() {
 	world := engine.NewWorld("Vector Text")
 
 	ranger = engine.New(world)
@@ -21,10 +22,10 @@ func init() {
 	// This example uses the super basic Boot scene that does absolutely nothing.
 	boot := custom.NewBasicBootScene("Boot", splash)
 
-	ranger.PushStart(boot)
-}
+	nodes.PrintTree(splash)
 
-func main() {
+	ranger.PushStart(boot)
+
 	ranger.Configure()
 
 	ranger.Start()

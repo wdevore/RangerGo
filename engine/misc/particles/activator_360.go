@@ -40,6 +40,7 @@ func (a *Activator360) Activate(particle api.IParticle, center api.IPoint) {
 
 	if isColorType {
 		// Change the Red color component if the visual supports the IColor type
+		// otherwise the color maintains its current color
 		shade := int(maths.Clamp(rand.Float64()*32.0*speed, 0, 255))
 		color.SetRed(shade)
 	}

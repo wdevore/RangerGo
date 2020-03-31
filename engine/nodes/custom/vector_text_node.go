@@ -22,9 +22,11 @@ type VectorTextNode struct {
 }
 
 // NewVectorTextNode constructs a text node
-func NewVectorTextNode(world api.IWorld) *VectorTextNode {
+func NewVectorTextNode(world api.IWorld, parent api.INode) *VectorTextNode {
 	o := new(VectorTextNode)
 	o.Build(world)
+	parent.AddChild(o)
+
 	o.textColor = rendering.NewPaletteInt64(rendering.White)
 	o.mesh = geometry.NewMesh()
 	o.world = world
