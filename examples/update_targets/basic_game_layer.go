@@ -21,9 +21,9 @@ type gameLayer struct {
 	o1 api.IPoint
 	o2 api.IPoint
 
-	crossNode *custom.CrossNode
+	crossNode api.INode
 
-	rectNode *custom.RectangleNode
+	rectNode api.INode
 
 	// Motion is for rotating cube
 	angularMotion api.IMotion
@@ -61,7 +61,8 @@ func (g *gameLayer) Build(world api.IWorld) {
 
 	g.rectNode = custom.NewRectangleNodeWithParent("Orange Rect", g)
 	g.rectNode.Build(world)
-	g.rectNode.SetColor(rendering.NewPaletteInt64(rendering.Orange))
+	gr := g.rectNode.(*custom.RectangleNode)
+	gr.SetColor(rendering.NewPaletteInt64(rendering.Orange))
 	g.rectNode.SetScale(100.0)
 	// g.rectNode.SetRotation(maths.DegreeToRadians * 35.0)
 	g.rectNode.SetPosition(100.0, -150.0)

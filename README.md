@@ -10,13 +10,13 @@
 * **Done** Circle, AABB
 * **Done** AnchorNode
 * **Done** Particles
-* **Working** Finish lower case Vector font characters.
-* Enhance raster fonts to allow transforms
-* Animation (tweening)
-* Sprite Textures
+* **Working** Animation (tweening)
 * Box2D physics
-* OpenGL Vulkan
 * Audio (SFXR 8bit sound)
+* OpenGL Vulkan
+* Sprite Textures
+* Finish lower case Vector font characters.
+* Enhance raster fonts to allow transforms
 * Joysticks
 
 ## Notes

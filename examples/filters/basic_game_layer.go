@@ -23,10 +23,10 @@ type gameLayer struct {
 	o1 api.IPoint
 	o2 api.IPoint
 
-	crossNode *custom.CrossNode
+	crossNode api.INode
 
-	orangeRectNode *custom.RectangleNode
-	greenRectNode  *custom.RectangleNode
+	orangeRectNode api.INode
+	greenRectNode  api.INode
 
 	// Motion is for rotating cube
 	angularMotion api.IMotion
@@ -79,7 +79,8 @@ func (g *gameLayer) Build(world api.IWorld) {
 
 	g.orangeRectNode = custom.NewRectangleNodeWithParent("Orange Rect", g.zoom)
 	g.orangeRectNode.Build(world)
-	g.orangeRectNode.SetColor(rendering.NewPaletteInt64(rendering.Orange))
+	gor := g.orangeRectNode.(*custom.RectangleNode)
+	gor.SetColor(rendering.NewPaletteInt64(rendering.Orange))
 	g.orangeRectNode.SetScale(rectScale)
 	// g.rectNode.SetRotation(maths.DegreeToRadians * 35.0)
 	g.orangeRectNode.SetPosition(100.0, -150.0)
@@ -92,7 +93,8 @@ func (g *gameLayer) Build(world api.IWorld) {
 
 	g.greenRectNode = custom.NewRectangleNodeWithParent("Green Rect", filter)
 	g.greenRectNode.Build(world)
-	g.greenRectNode.SetColor(rendering.NewPaletteInt64(rendering.Green))
+	grr := g.greenRectNode.(*custom.RectangleNode)
+	grr.SetColor(rendering.NewPaletteInt64(rendering.Green))
 	g.greenRectNode.SetScale(10.0)
 	g.greenRectNode.SetPosition(100.0, 0.0)
 	filter.AddChild(g.greenRectNode)
@@ -165,7 +167,8 @@ func (g *gameLayer) Handle(event api.IEvent) bool {
 		// However, to be explicit I pass "g.rectNode"
 		g.drag.SetMotionStateUsing(mx, my, event.GetState(), g.orangeRectNode)
 
-		if g.drag.IsDragging() && g.orangeRectNode.PointInside() {
+		gor := g.orangeRectNode.(*custom.RectangleNode)
+		if g.drag.IsDragging() && gor.PointInside() {
 			pos := g.orangeRectNode.Position()
 			g.orangeRectNode.SetPosition(pos.X()+g.drag.Delta().X(), pos.Y()+g.drag.Delta().Y())
 		}

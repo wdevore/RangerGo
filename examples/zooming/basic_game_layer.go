@@ -22,9 +22,9 @@ type gameLayer struct {
 	o1 api.IPoint
 	o2 api.IPoint
 
-	crossNode *custom.CrossNode
+	crossNode api.INode
 
-	rectNode *custom.RectangleNode
+	rectNode api.INode
 
 	// Motion is for rotating cube
 	angularMotion api.IMotion
@@ -74,7 +74,8 @@ func (g *gameLayer) Build(world api.IWorld) {
 
 	g.rectNode = custom.NewRectangleNodeWithParent("Orange Rect", g.zoom)
 	g.rectNode.Build(world)
-	g.rectNode.SetColor(rendering.NewPaletteInt64(rendering.Orange))
+	gr := g.rectNode.(*custom.RectangleNode)
+	gr.SetColor(rendering.NewPaletteInt64(rendering.Orange))
 	g.rectNode.SetScale(100.0)
 	// g.rectNode.SetRotation(maths.DegreeToRadians * 35.0)
 	g.rectNode.SetPosition(100.0, -150.0)
@@ -148,7 +149,8 @@ func (g *gameLayer) Handle(event api.IEvent) bool {
 		// However, to be explicit I pass "g.rectNode"
 		g.drag.SetMotionStateUsing(mx, my, event.GetState(), g.rectNode)
 
-		if g.drag.IsDragging() && g.rectNode.PointInside() {
+		gr := g.rectNode.(*custom.RectangleNode)
+		if g.drag.IsDragging() && gr.PointInside() {
 			pos := g.rectNode.Position()
 			g.rectNode.SetPosition(pos.X()+g.drag.Delta().X(), pos.Y()+g.drag.Delta().Y())
 		}
