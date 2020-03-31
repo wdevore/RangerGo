@@ -347,3 +347,32 @@ If you where to print the tree of the **Splash** Scene you would see this (trunc
 ```
 
 -----------------------------------------------------------------
+
+## Basic tweening
+
+This example shows a rotating rectangle being animated from right to left using the engine's basic *Tweening* package. One thing to keep in mind is that **Ranger**'s *Tweening* framework isn't a feature complete as [Tanema](https://github.com/tanema/gween)'s. My suggestion is that use that library instead of **Ranger**'s
+
+Anyway, if you do use it you simply create a **Tween** object:
+
+```Go
+g.tween = tweening.NewTween(g.rectNode.Position().X(), -600.0, 5.0, api.EquationExpo, api.EaseOut)
+```
+
+In the example above I create a *tween* that moves the rectangle from its default position to it ending position of ```-600.0```. The animation takes ```5.0``` seconds and uses the Exponential EaseOut *tween*. This means the rectangle will start out ***fast*** and slowdown as it reaches its final position, in otherwords, it will *ease **out*** of the animation--or into the *ending*.
+
+Finally you need to *Update* the tweening using the frame period which equals 1/ms-per-frame ~= 1/33.3333ms:
+
+```Go
+value, isFinished := g.tween.Update(1.0 / dt)
+if !isFinished {
+   g.rectNode.SetPosition(value, g.rectNode.Position().Y())
+} else {
+   g.tween.Reset()
+}
+```
+
+Above the animation will reset the rectangle back to it original position once the animation *finishes*.
+
+That's it!
+
+-----------------------------------------------------------------

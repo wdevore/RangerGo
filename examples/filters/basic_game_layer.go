@@ -77,27 +77,24 @@ func (g *gameLayer) Build(world api.IWorld) {
 	// Rectangle scale-space
 	rectScale := 100.0
 
-	g.orangeRectNode = custom.NewRectangleNodeWithParent("Orange Rect", g.zoom)
+	g.orangeRectNode = custom.NewRectangleNode("Orange Rect", g.zoom)
 	g.orangeRectNode.Build(world)
 	gor := g.orangeRectNode.(*custom.RectangleNode)
 	gor.SetColor(rendering.NewPaletteInt64(rendering.Orange))
 	g.orangeRectNode.SetScale(rectScale)
 	// g.rectNode.SetRotation(maths.DegreeToRadians * 35.0)
 	g.orangeRectNode.SetPosition(100.0, -150.0)
-	g.zoom.AddChild(g.orangeRectNode)
 
 	// Add Filter to remove parent's (aka Orange rectangle) Scale
 	filter := filters.NewTransformFilter("TransformFilter", g.orangeRectNode)
 	filter.Build(world)
-	g.orangeRectNode.AddChild(filter)
 
-	g.greenRectNode = custom.NewRectangleNodeWithParent("Green Rect", filter)
+	g.greenRectNode = custom.NewRectangleNode("Green Rect", filter)
 	g.greenRectNode.Build(world)
 	grr := g.greenRectNode.(*custom.RectangleNode)
 	grr.SetColor(rendering.NewPaletteInt64(rendering.Green))
 	g.greenRectNode.SetScale(10.0)
 	g.greenRectNode.SetPosition(100.0, 0.0)
-	filter.AddChild(g.greenRectNode)
 
 	g.angularMotion = animation.NewAngularMotion()
 	// amgle is measured in angular-velocity or "degrees/second"
@@ -106,7 +103,6 @@ func (g *gameLayer) Build(world api.IWorld) {
 	g.crossNode = custom.NewCrossNode("Cross", g)
 	g.crossNode.Build(world)
 	g.crossNode.SetScale(30.0)
-	g.AddChild(g.crossNode)
 
 	g.AddChild(g.zoom)
 }

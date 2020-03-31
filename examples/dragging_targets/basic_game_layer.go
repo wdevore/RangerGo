@@ -67,7 +67,7 @@ func (g *gameLayer) Build(world api.IWorld) {
 	n = vLine.(*custom.LineNode)
 	n.SetPoints(0.0, -y, 0.0, y)
 
-	g.rectNode = custom.NewRectangleNodeWithParent("Orange Rect", g)
+	g.rectNode = custom.NewRectangleNode("Orange Rect", g)
 	g.rectNode.Build(world)
 	rn := g.rectNode.(*custom.RectangleNode)
 	rn.SetColor(rendering.NewPaletteInt64(rendering.Orange))

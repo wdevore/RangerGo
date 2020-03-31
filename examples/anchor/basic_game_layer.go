@@ -76,7 +76,7 @@ func (g *gameLayer) Build(world api.IWorld) {
 	g.anchor.Build(world)
 
 	// Create green rectangle with the Anchor as parent
-	g.greenRectNode = custom.NewRectangleNodeWithParent("Green Rect", g.anchor)
+	g.greenRectNode = custom.NewRectangleNode("Green Rect", g.anchor)
 	g.greenRectNode.Build(world)
 	grn := g.greenRectNode.(*custom.RectangleNode)
 	grn.SetColor(rendering.NewPaletteInt64(rendering.Green))

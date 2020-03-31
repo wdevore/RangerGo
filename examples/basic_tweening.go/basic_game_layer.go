@@ -5,10 +5,9 @@ import (
 
 	"github.com/wdevore/RangerGo/api"
 	"github.com/wdevore/RangerGo/engine/animation"
+	"github.com/wdevore/RangerGo/engine/animation/tweening"
 	"github.com/wdevore/RangerGo/engine/geometry"
 	"github.com/wdevore/RangerGo/engine/maths"
-	"github.com/wdevore/RangerGo/engine/misc"
-	"github.com/wdevore/RangerGo/engine/misc/particles"
 	"github.com/wdevore/RangerGo/engine/nodes"
 	"github.com/wdevore/RangerGo/engine/nodes/custom"
 	"github.com/wdevore/RangerGo/engine/rendering"
@@ -30,26 +29,18 @@ type gameLayer struct {
 	// Motion is for rotating cube
 	angularMotion api.IMotion
 
-	// Dragging
-	drag   api.IDragging
-	mx, my int32
-
-	// Particles
-	particleSystem api.IParticleSystem
+	tween api.ITween
 }
 
 func newBasicGameLayer(name string, parent api.INode) api.INode {
 	o := new(gameLayer)
 	o.Initialize(name)
 	o.SetParent(parent)
-	parent.AddChild(o)
 	return o
 }
 
 func (g *gameLayer) Build(world api.IWorld) {
 	g.Node.Build(world)
-
-	g.drag = misc.NewDragState()
 
 	vw, vh := world.ViewSize().Components()
 	x := -vw / 2.0
@@ -73,46 +64,32 @@ func (g *gameLayer) Build(world api.IWorld) {
 
 	g.rectNode = custom.NewRectangleNode("Orange Rect", g)
 	g.rectNode.Build(world)
-	rn := g.rectNode.(*custom.RectangleNode)
-	rn.SetColor(rendering.NewPaletteInt64(rendering.Orange))
-	g.rectNode.SetScale(50.0)
-	// g.rectNode.SetRotation(maths.DegreeToRadians * 35.0)
+	gr := g.rectNode.(*custom.RectangleNode)
+	gr.SetColor(rendering.NewPaletteInt64(rendering.Orange))
+	g.rectNode.SetScale(100.0)
 	g.rectNode.SetPosition(100.0, -150.0)
 
-	g.angularMotion = animation.NewAngularMotion()
 	// amgle is measured in angular-velocity or "degrees/second"
+	g.angularMotion = animation.NewAngularMotion()
 	g.angularMotion.SetRate(maths.DegreeToRadians * 90.0)
 
 	g.crossNode = custom.NewCrossNode("Cross", g)
 	g.crossNode.Build(world)
 	g.crossNode.SetScale(30.0)
 
-	// Particle system
-	activator := particles.NewActivator360()
-	g.particleSystem = particles.NewParticleSystem(activator)
-	g.particleSystem.Activate(true)
-	g.particleSystem.SetAutoTrigger(true)
-	g.particleSystem.SetPosition(g.rectNode.Position().X(), g.rectNode.Position().Y())
-
-	// Now populate the system
-	for i := 0; i < 50; i++ {
-		v := NewTriangleNode(fmt.Sprintf("Tri%d", i), g)
-		v.Build(world)
-		v.SetColor(rendering.NewPaletteInt64(rendering.Black))
-		v.SetVisible(false)
-		v.SetScale(10.0)
-		p := particles.NewParticle(v)
-		g.particleSystem.AddParticle(p)
-	}
+	g.tween = tweening.NewTween(g.rectNode.Position().X(), -600.0, 5.0, api.EquationExpo, api.EaseOut)
 }
 
 // Update updates the time properties of a node.
 func (g *gameLayer) Update(dt float64) {
 	g.angularMotion.Update(dt)
-	g.particleSystem.Update(dt)
 
-	// Update position of particle system based on current position of rect
-	g.particleSystem.SetPosition(g.rectNode.Position().X(), g.rectNode.Position().Y())
+	value, isFinished := g.tween.Update(1.0 / dt)
+	if !isFinished {
+		g.rectNode.SetPosition(value, g.rectNode.Position().Y())
+	} else {
+		g.tween.Reset()
+	}
 }
 
 // Interpolate is used for blending time based properties.
@@ -128,7 +105,7 @@ func (g *gameLayer) Interpolate(interpolation float64) {
 // EnterNode called when a node is entering the stage
 func (g *gameLayer) EnterNode(man api.INodeManager) {
 	man.RegisterTarget(g)
-	// We want the mouse events so the node can track the mouse.
+	// We want the mouse events so the crossnode can track the mouse.
 	man.RegisterEventTarget(g)
 }
 
@@ -158,30 +135,6 @@ func (g *gameLayer) Handle(event api.IEvent) bool {
 		nodes.MapDeviceToView(g.World(), mx, my, g.cursorPosition)
 
 		g.crossNode.SetPosition(g.cursorPosition.X(), g.cursorPosition.Y())
-
-		// Because the Layer and parent Scene have no transformation between
-		// each other we could also pass "g" instead of "g.rectNode".
-		// Passing "g" would cause SetMotion...() to use g's parent which
-		// is SplashScene verses rectangle node's parent which is GameLayer.
-		// However, to be explicit I pass "g.rectNode"
-		g.drag.SetMotionStateUsing(mx, my, event.GetState(), g.rectNode)
-
-		rn := g.rectNode.(*custom.RectangleNode)
-
-		if g.drag.IsDragging() && rn.PointInside() {
-			pos := g.rectNode.Position()
-			g.rectNode.SetPosition(pos.X()+g.drag.Delta().X(), pos.Y()+g.drag.Delta().Y())
-		}
-
-	} else if event.GetType() == api.IOTypeMouseButtonDown || event.GetType() == api.IOTypeMouseButtonUp {
-		mx, my := event.GetMousePosition()
-		// On mouse events if state = 1 then dragging
-		g.drag.SetButtonStateUsing(mx, my, event.GetButton(), event.GetState(), g.rectNode)
-	} else if event.GetType() == api.IOTypeKeyboard {
-		if event.GetState() == 1 {
-			// Button down
-			g.particleSystem.TriggerExplosion()
-		}
 	}
 
 	return false

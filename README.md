@@ -10,10 +10,10 @@
 * **Done** Circle, AABB
 * **Done** AnchorNode
 * **Done** Particles
-* **Working** Animation (tweening)
-* Box2D physics
-* Audio (SFXR 8bit sound)
+* **Done** Animation (tweening) -- Using tanema's library
+* **Working** Box2D physics
 * OpenGL Vulkan
+* Audio (SFXR 8bit sound)
 * Sprite Textures
 * Finish lower case Vector font characters.
 * Enhance raster fonts to allow transforms
@@ -25,3 +25,10 @@
 Some **Nodes**/**Objects** may want to *Track* the properties of another **Node**.
 
 For example, an AABB object may wan't to track **Mesh** changes on a node such that it can *rebuild* its internal min/max properties.
+
+## Packages
+
+```
+go get github.com/tanema/gween
+go get -v github.com/veandco/go-sdl2/{sdl,img,mix,ttf}
+```
