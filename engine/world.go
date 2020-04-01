@@ -2,6 +2,8 @@ package engine
 
 import (
 	"fmt"
+	"log"
+	"path/filepath"
 
 	"github.com/veandco/go-sdl2/sdl"
 	"github.com/wdevore/RangerGo/api"
@@ -28,10 +30,12 @@ type world struct {
 
 	vectorFont api.IVectorFont
 	rasterFont api.IRasterFont
+
+	workingPath string
 }
 
 // NewWorld constructs an IWorld object
-func NewWorld(title string) api.IWorld {
+func NewWorld(title, relativePath string) api.IWorld {
 	o := new(world)
 	o.title = title
 
@@ -53,15 +57,28 @@ func NewWorld(title string) api.IWorld {
 	fmt.Println("Display dimensions: ", o.windowSize)
 	fmt.Println("View Dimensions: ", o.viewSize)
 
+	path, err := filepath.Abs(relativePath)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	o.workingPath = path
+	fmt.Println("Working path: ", path)
+
 	fmt.Println("Loading Vector font...")
 	o.vectorFont = rendering.NewVectorFont()
-	o.vectorFont.Initialize("vector_font.data", "../..")
+	o.vectorFont.Initialize("vector_font.data", relativePath)
 
 	fmt.Println("Loading Raster font...")
 	o.rasterFont = rendering.NewRasterFont()
-	o.rasterFont.Initialize("raster_font.data", "../..")
+	o.rasterFont.Initialize("raster_font.data", relativePath)
 
 	return o
+}
+
+func (w *world) WorkingPath() string {
+	return w.workingPath
 }
 
 func (w *world) SetRenderer(rend *sdl.Renderer) {

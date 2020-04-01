@@ -1,18 +1,15 @@
 package main
 
 import (
-	"github.com/wdevore/RangerGo/api"
 	"github.com/wdevore/RangerGo/engine"
 	"github.com/wdevore/RangerGo/engine/nodes"
 	"github.com/wdevore/RangerGo/engine/nodes/custom"
 )
 
-var ranger api.IEngine
+func main() {
+	world := engine.NewWorld("Game Layer Example", "../../..")
 
-func init() {
-	world := engine.NewWorld("Game Layer Example")
-
-	ranger = engine.New(world)
+	ranger := engine.New(world)
 
 	splash := newBasicSplashScene("Splash", nil)
 	splash.Build(world)
@@ -23,9 +20,7 @@ func init() {
 	nodes.PrintTree(splash)
 
 	ranger.PushStart(boot)
-}
 
-func main() {
 	ranger.Configure()
 
 	ranger.Start()

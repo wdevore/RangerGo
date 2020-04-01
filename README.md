@@ -11,8 +11,9 @@
 * **Done** AnchorNode
 * **Done** Particles
 * **Done** Animation (tweening) -- Using tanema's library
-* **Working** Box2D physics
+* **Working** Box2D physics (with space ships)
 * OpenGL Vulkan
+* Zones
 * Audio (SFXR 8bit sound)
 * Sprite Textures
 * Finish lower case Vector font characters.

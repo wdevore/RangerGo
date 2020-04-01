@@ -10,7 +10,7 @@ import (
 var ranger api.IEngine
 
 func main() {
-	world := engine.NewWorld("AABB")
+	world := engine.NewWorld("AABB", "../../..")
 
 	ranger = engine.New(world)
 

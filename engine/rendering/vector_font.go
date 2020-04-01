@@ -54,6 +54,7 @@ func NewVectorFont() api.IVectorFont {
 
 func (v *vectorFont) Initialize(dataFile string, relativePath string) {
 	dataPath, err := filepath.Abs(relativePath)
+
 	if err != nil {
 		log.Fatal(err)
 	}

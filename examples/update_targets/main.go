@@ -9,7 +9,7 @@ import (
 var ranger api.IEngine
 
 func init() {
-	world := engine.NewWorld("Update Targets")
+	world := engine.NewWorld("Update Targets", "../../..")
 
 	ranger = engine.New(world)
 

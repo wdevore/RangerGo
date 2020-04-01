@@ -39,4 +39,6 @@ type IWorld interface {
 
 	VectorFont() IVectorFont
 	RasterFont() IRasterFont
+
+	WorkingPath() string
 }

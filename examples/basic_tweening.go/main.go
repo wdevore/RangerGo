@@ -12,7 +12,7 @@ var ranger api.IEngine
 // It is suggested that you use github.com/tanema/gween
 
 func init() {
-	world := engine.NewWorld("Basic tweening")
+	world := engine.NewWorld("Basic tweening", "../../..")
 
 	ranger = engine.New(world)
 

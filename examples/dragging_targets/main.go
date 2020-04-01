@@ -12,7 +12,7 @@ func init() {
 }
 
 func main() {
-	world := engine.NewWorld("Dragging")
+	world := engine.NewWorld("Dragging", "../../..")
 
 	ranger = engine.New(world)
 
