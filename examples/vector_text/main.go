@@ -12,7 +12,7 @@ var ranger api.IEngine
 // This example shows Vector text on the splash screen
 
 func main() {
-	world := engine.NewWorld("Vector Text", "../../..")
+	world := engine.NewWorld("Vector Text", "..")
 
 	ranger = engine.New(world)
 

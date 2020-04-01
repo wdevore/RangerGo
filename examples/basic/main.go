@@ -11,7 +11,7 @@ import (
 var ranger api.IEngine
 
 func init() {
-	world := engine.NewWorld("RangerGo", "../../..")
+	world := engine.NewWorld("RangerGo", "..")
 
 	ranger = engine.New(world)
 }
