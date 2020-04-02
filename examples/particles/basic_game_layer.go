@@ -107,9 +107,9 @@ func (g *gameLayer) Build(world api.IWorld) {
 }
 
 // Update updates the time properties of a node.
-func (g *gameLayer) Update(dt float64) {
-	g.angularMotion.Update(dt)
-	g.particleSystem.Update(dt)
+func (g *gameLayer) Update(msPerUpdate, secPerUpdate float64) {
+	g.angularMotion.Update(msPerUpdate)
+	g.particleSystem.Update(msPerUpdate)
 
 	// Update position of particle system based on current position of rect
 	g.particleSystem.SetPosition(g.rectNode.Position().X(), g.rectNode.Position().Y())

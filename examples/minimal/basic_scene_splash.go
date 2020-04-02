@@ -58,8 +58,8 @@ func (s *sceneSplash) Build(world api.IWorld) {
 // Timing
 // --------------------------------------------------------
 
-func (s *sceneSplash) Update(dt float64) {
-	s.Transition.UpdateTransition(dt)
+func (s *sceneSplash) Update(msPerUpdate, secPerUpdate float64) {
+	s.Transition.UpdateTransition(msPerUpdate)
 }
 
 // --------------------------------------------------------

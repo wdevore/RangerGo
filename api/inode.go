@@ -42,5 +42,5 @@ type INode interface {
 
 	GetBucket() []IPoint
 
-	Update(dt float64)
+	Update(msPerUpdate, secPerUpdate float64)
 }

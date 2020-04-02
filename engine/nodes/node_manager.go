@@ -120,9 +120,9 @@ func (m *nodeManager) ReplaceNode(node api.INode) {
 // Timing
 // --------------------------------------------------------------------------
 
-func (m *nodeManager) Update(dt float64) {
+func (m *nodeManager) Update(msPerUpdate, secPerUpdate float64) {
 	for _, target := range m.timingTargets {
-		target.Update(dt)
+		target.Update(msPerUpdate, secPerUpdate)
 	}
 }
 

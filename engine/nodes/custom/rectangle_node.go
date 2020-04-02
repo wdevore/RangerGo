@@ -68,7 +68,7 @@ func (r *RectangleNode) SetBounds(minx, miny, maxx, maxy float64) {
 // --------------------------------------------------------
 
 // Update is for timing
-func (r *RectangleNode) Update(dt float64) {
+func (r *RectangleNode) Update(msPerUpdate, secPerUpdate float64) {
 	// This node rotates itself.
 }
 

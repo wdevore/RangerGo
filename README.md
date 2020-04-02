@@ -32,4 +32,5 @@ For example, an AABB object may wan't to track **Mesh** changes on a node such t
 ```
 go get github.com/tanema/gween
 go get -v github.com/veandco/go-sdl2/{sdl,img,mix,ttf}
+go get github.com/ByteArena/box2d
 ```

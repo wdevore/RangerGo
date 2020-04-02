@@ -3,9 +3,10 @@ package main
 import (
 	"fmt"
 
+	"github.com/tanema/gween"
+	"github.com/tanema/gween/ease"
 	"github.com/wdevore/RangerGo/api"
 	"github.com/wdevore/RangerGo/engine/animation"
-	"github.com/wdevore/RangerGo/engine/animation/tweening"
 	"github.com/wdevore/RangerGo/engine/geometry"
 	"github.com/wdevore/RangerGo/engine/maths"
 	"github.com/wdevore/RangerGo/engine/nodes"
@@ -29,7 +30,11 @@ type gameLayer struct {
 	// Motion is for rotating cube
 	angularMotion api.IMotion
 
-	tween api.ITween
+	// Ranger's tweening framework
+	// tween api.ITween
+
+	// Tanema's framework
+	tween *gween.Tween
 }
 
 func newBasicGameLayer(name string, parent api.INode) api.INode {
@@ -77,16 +82,21 @@ func (g *gameLayer) Build(world api.IWorld) {
 	g.crossNode.Build(world)
 	g.crossNode.SetScale(30.0)
 
-	g.tween = tweening.NewTween(g.rectNode.Position().X(), -600.0, 5.0, api.EquationExpo, api.EaseOut)
+	// 5s = 5000ms
+	g.tween = gween.New(float32(g.rectNode.Position().X()), -600.0, 5000, ease.OutExpo)
+
+	// g.tween = tweening.NewTween(g.rectNode.Position().X(), -600.0, 5000, api.EquationExpo, api.EaseOut)
 }
 
 // Update updates the time properties of a node.
-func (g *gameLayer) Update(dt float64) {
-	g.angularMotion.Update(dt)
+func (g *gameLayer) Update(msPerUpdate, secPerUpdate float64) {
+	g.angularMotion.Update(msPerUpdate)
 
-	value, isFinished := g.tween.Update(1.0 / dt)
+	value, isFinished := g.tween.Update(float32(msPerUpdate))
+	// value, isFinished := g.tween.Update(msPerUpdate)
+
 	if !isFinished {
-		g.rectNode.SetPosition(value, g.rectNode.Position().Y())
+		g.rectNode.SetPosition(float64(value), g.rectNode.Position().Y())
 	} else {
 		g.tween.Reset()
 	}

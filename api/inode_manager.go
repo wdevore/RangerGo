@@ -8,7 +8,7 @@ type INodeManager interface {
 	Visit(interpolation float64) bool
 	PostVisit()
 
-	Update(dt float64)
+	Update(msPerUpdate, secPerUpdate float64)
 
 	PushNode(INode)
 	PopNode()

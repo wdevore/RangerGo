@@ -156,7 +156,7 @@ func (n *Node) RippleDirty(dirty bool) {
 }
 
 // Update updates the time properties of a node.
-func (n *Node) Update(dt float64) {
+func (n *Node) Update(msPerUpdate, secPerUpdate float64) {
 }
 
 // Draw provides a default render--which is to draw nothing.

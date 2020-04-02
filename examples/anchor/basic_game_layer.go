@@ -92,9 +92,9 @@ func (g *gameLayer) Build(world api.IWorld) {
 }
 
 // Update updates the time properties of a node.
-func (g *gameLayer) Update(dt float64) {
-	g.triangleMotion.Update(dt)
-	g.anchorMotion.Update(dt)
+func (g *gameLayer) Update(msPerUpdate, secPerUpdate float64) {
+	g.triangleMotion.Update(msPerUpdate)
+	g.anchorMotion.Update(msPerUpdate)
 }
 
 // Interpolate is used for blending time based properties.

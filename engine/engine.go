@@ -14,11 +14,13 @@ import (
 )
 
 const (
-	second          = 1000000000
-	framesPerSec    = 60.0
-	framePeriod     = 1.0 / framesPerSec * 1000.0
-	updatePerSecond = 30
-	updatePeriod    = float64(second) / float64(updatePerSecond)
+	second             = 1000000000
+	framesPerSec       = 60.0
+	framePeriod        = 1.0 / framesPerSec * 1000.0
+	updatePerSecond    = 30
+	updatePeriod       = float64(second) / float64(updatePerSecond)
+	frameToUpdateRatio = framesPerSec / updatePerSecond
+	frameScaler        = frameToUpdateRatio / 1000000000.0
 
 	// The "present" call is impacted by this flag, by an order of magnitude.
 	enabledVSync = true
@@ -155,7 +157,7 @@ func (e *engine) Start() {
 	// ***************************
 	lag := int64(0)
 	nsPerUpdate := int64(math.Round(updatePeriod))
-	frameDt := float64(nsPerUpdate) / 1000000.0
+	msPerUpdate := float64(nsPerUpdate) / 1000000.0 // <-- milliseconds, Ex: 33.33333 or 16.6666666
 	upsCnt := 0
 	ups := 0
 	fpsCnt := 0
@@ -192,7 +194,7 @@ func (e *engine) Start() {
 			lagging := true
 			for lagging {
 				if lag >= nsPerUpdate {
-					e.sceneGraph.Update(frameDt)
+					e.sceneGraph.Update(msPerUpdate, float64(elapsedNano)*frameScaler)
 					lag -= nsPerUpdate
 					upsCnt++
 				} else {

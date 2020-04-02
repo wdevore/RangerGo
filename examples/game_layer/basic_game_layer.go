@@ -35,27 +35,6 @@ func (g *gameLayer) Build(world api.IWorld) {
 	g.textColor = rendering.NewPaletteInt64(rendering.LightNavyBlue)
 }
 
-// --------------------------------------------------------
-// Timing
-// --------------------------------------------------------
-
-func (g *gameLayer) Update(dt float64) {
-}
-
-// -----------------------------------------------------
-// Node lifecycles
-// -----------------------------------------------------
-
-// EnterNode called when a node is entering the stage
-func (g *gameLayer) EnterNode(man api.INodeManager) {
-	man.RegisterTarget(g)
-}
-
-// ExitNode called when a node is exiting stage
-func (g *gameLayer) ExitNode(man api.INodeManager) {
-	man.UnRegisterTarget(g)
-}
-
 // -----------------------------------------------------
 // Visuals
 // -----------------------------------------------------
