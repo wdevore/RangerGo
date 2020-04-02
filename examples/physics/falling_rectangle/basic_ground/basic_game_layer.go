@@ -3,7 +3,6 @@ package main
 import (
 	"github.com/ByteArena/box2d"
 	"github.com/wdevore/RangerGo/api"
-	"github.com/wdevore/RangerGo/engine/geometry"
 	"github.com/wdevore/RangerGo/engine/nodes"
 	"github.com/wdevore/RangerGo/engine/nodes/custom"
 	"github.com/wdevore/RangerGo/engine/rendering"
@@ -12,12 +11,7 @@ import (
 type gameLayer struct {
 	nodes.Node
 
-	mesh api.IMesh
-
 	textColor api.IPalette
-
-	oddColor  api.IPalette
-	evenColor api.IPalette
 
 	circleNode api.INode
 
@@ -38,22 +32,11 @@ func (g *gameLayer) Build(world api.IWorld) {
 	vw, vh := world.ViewSize().Components()
 	x := -vw / 2.0
 	y := -vh / 2.0
-	w := 100.0
 
-	g.mesh = geometry.NewMesh()
+	g.textColor = rendering.NewPaletteInt64(rendering.LightNavyBlue)
 
-	// Construct grid of rectangles
-	for y <= vh {
-		x := -vw / 2.0
-		for x <= vw {
-			g.mesh.AddVertex(x, y) // top-left
-			g.mesh.AddVertex(x+w, y+w)
-			x += w
-		}
-		y += w
-	}
-
-	g.mesh.Build()
+	cb := custom.NewCheckBoardNode("CheckerBoard", g)
+	cb.Build(world)
 
 	hLine := custom.NewLineNode("HLine", g)
 	hLine.Build(world)
@@ -67,16 +50,13 @@ func (g *gameLayer) Build(world api.IWorld) {
 	n.SetColor(rendering.NewPaletteInt64(rendering.LightPurple))
 	n.SetPoints(0.0, -y, 0.0, y)
 
+	// Visual for Box2D
 	g.circleNode = custom.NewCircleNode("Orange Circle", g)
 	g.circleNode.Build(world)
 	gr := g.circleNode.(*custom.CircleNode)
 	gr.SetColor(rendering.NewPaletteInt64(rendering.Orange))
 	g.circleNode.SetScale(0.1 * api.PTM)
 	g.circleNode.SetPosition(0.0, -200.0)
-
-	g.textColor = rendering.NewPaletteInt64(rendering.LightNavyBlue)
-	g.oddColor = rendering.NewPaletteInt64(rendering.DarkGray)
-	g.evenColor = rendering.NewPaletteInt64(rendering.LightGray)
 
 	// --------------------------------------------
 	// Box 2d configuration
@@ -152,15 +132,8 @@ func (g *gameLayer) ExitNode(man api.INodeManager) {
 // Visuals
 // -----------------------------------------------------
 
-func (g *gameLayer) Draw(context api.IRenderContext) {
-	// Transform vertices if anything has changed.
-	if g.IsDirty() {
-		// Transform this node's vertices using the context
-		context.TransformMesh(g.mesh)
-		g.SetDirty(false) // Node is no longer dirty
-	}
-
-	// Draw background first. The background is a grid of squares.
-	context.RenderCheckerBoard(g.mesh, g.oddColor, g.evenColor)
-
-}
+// func (g *gameLayer) Draw(context api.IRenderContext) {
+// 	if g.IsDirty() {
+// 		g.SetDirty(false)
+// 	}
+// }

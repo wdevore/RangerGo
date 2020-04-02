@@ -33,7 +33,7 @@ func newBasicSplashScene(name string, replacement api.INode) api.INode {
 func (s *sceneSplash) Build(world api.IWorld) {
 	vw, vh := world.ViewSize().Components()
 	y := -vh / 2.0
-	w := 320.0
+	w := 100.0
 
 	// Construct grid of rectangles
 	for y <= vh {

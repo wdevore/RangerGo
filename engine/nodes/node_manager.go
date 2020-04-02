@@ -169,7 +169,10 @@ func findFirstElement(node api.INode, slice []api.INode) int {
 }
 
 func (m *nodeManager) RouteEvents(event api.IEvent) {
-	// fmt.Println("NodeManager: RouteEvents ", event)
+	if m.eventTargets == nil {
+		return
+	}
+
 	for _, target := range m.eventTargets {
 		handled := target.Handle(event)
 
@@ -180,7 +183,7 @@ func (m *nodeManager) RouteEvents(event api.IEvent) {
 }
 
 func deleteAt(i int, slice []api.INode) {
-	// Remove the element at index i from a.
+	// Remove the element at index i from slice.
 	copy(slice[i:], slice[i+1:]) // Shift a[i+1:] left one index.
 	slice[len(slice)-1] = nil    // Erase last element (write zero value).
 	slice = slice[:len(slice)-1] // Truncate slice.
@@ -199,7 +202,10 @@ func (m *nodeManager) setNextNode() {
 	m.enterNodes(m.stack.runningNode)
 }
 
+// End cleans up NodeManager by clearing the stack and calling all Exits
 func (m *nodeManager) End() {
+	m.eventTargets = nil
+
 	// Dump the stack
 
 	n := m.PopNode()

@@ -15,7 +15,7 @@ type AnchorNode struct {
 }
 
 // NewAnchorNode constructs a axis aligned bounding box node
-func NewAnchorNode(name string, parent api.INode) *AnchorNode {
+func NewAnchorNode(name string, parent api.INode) api.INode {
 	o := new(AnchorNode)
 	o.Initialize(name)
 	o.SetParent(parent)

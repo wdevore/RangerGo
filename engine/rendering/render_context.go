@@ -273,6 +273,9 @@ func (rc *renderContext) RenderAARectangle(min, max api.IPoint, fillStyle int) {
 
 func (rc *renderContext) RenderCheckerBoard(mesh api.IMesh, oddColor api.IPalette, evenColor api.IPalette) {
 	flip := false
+	pFlip := false
+	pX := 0.0
+
 	vertices := mesh.Bucket()
 	build := true
 	renderer := rc.world.Renderer()
@@ -281,6 +284,13 @@ func (rc *renderContext) RenderCheckerBoard(mesh api.IMesh, oddColor api.IPalett
 		if build {
 			v1.SetByPoint(vertex)
 			build = false
+			// We have reached the end of the row when the next
+			// X value is suddenly less than the current X value.
+			if v1.X() < pX {
+				flip = !pFlip
+				pFlip = flip
+			}
+			pX = v1.X()
 			continue
 		} else {
 			v2.SetByPoint(vertex)
@@ -307,7 +317,6 @@ func (rc *renderContext) RenderCheckerBoard(mesh api.IMesh, oddColor api.IPalett
 		sdlRect.H = maxy - miny
 
 		renderer.FillRect(sdlRect)
-
 		flip = !flip
 	}
 }
