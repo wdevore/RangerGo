@@ -103,8 +103,8 @@ func (m *nodeManager) PostVisit() {
 	m.world.Context().Post()
 }
 
-func (m *nodeManager) PopNode() {
-	m.stack.pop()
+func (m *nodeManager) PopNode() api.INode {
+	return m.stack.pop()
 }
 
 func (m *nodeManager) PushNode(node api.INode) {
@@ -197,6 +197,17 @@ func (m *nodeManager) setNextNode() {
 	// fmt.Println("NodeManager: new running node ", m.stack.runningNode)
 
 	m.enterNodes(m.stack.runningNode)
+}
+
+func (m *nodeManager) End() {
+	// Dump the stack
+
+	n := m.PopNode()
+
+	for n != nil {
+		m.exitNodes(n)
+		n = m.PopNode()
+	}
 }
 
 // -----------------------------------------------------

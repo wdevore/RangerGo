@@ -25,6 +25,7 @@ func NewCircleNode(name string, parent api.INode) *CircleNode {
 	o := new(CircleNode)
 	o.Initialize(name)
 	o.SetParent(parent)
+	parent.AddChild(o)
 	return o
 }
 

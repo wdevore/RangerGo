@@ -17,7 +17,7 @@ const (
 	second             = 1000000000
 	framesPerSec       = 60.0
 	framePeriod        = 1.0 / framesPerSec * 1000.0
-	updatePerSecond    = 30
+	updatePerSecond    = 60
 	updatePeriod       = float64(second) / float64(updatePerSecond)
 	frameToUpdateRatio = framesPerSec / updatePerSecond
 	frameScaler        = frameToUpdateRatio / 1000000000.0
@@ -264,6 +264,8 @@ func (e *engine) Start() {
 
 func (e *engine) End() {
 	fmt.Println("Engine shutting down...")
+
+	e.sceneGraph.End()
 
 	// fmt.Println("Disposing texture...")
 	// e.texture.Destroy()

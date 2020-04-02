@@ -12,11 +12,6 @@ import (
 	"github.com/wdevore/RangerGo/engine/rendering"
 )
 
-const (
-	// MKSToGameUnit are Box2D MKS(meters/kilograms/seconds) to Game Units (GU)
-	MKSToGameUnit = 100.0 // 1 MKS = 100 GUs
-)
-
 type world struct {
 	title string
 

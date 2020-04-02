@@ -11,7 +11,7 @@ type INodeManager interface {
 	Update(msPerUpdate, secPerUpdate float64)
 
 	PushNode(INode)
-	PopNode()
+	PopNode() INode
 	ReplaceNode(INode)
 
 	RouteEvents(IEvent)
@@ -21,6 +21,8 @@ type INodeManager interface {
 
 	RegisterEventTarget(target INode)
 	UnRegisterEventTarget(target INode)
+
+	End()
 
 	Debug()
 }
