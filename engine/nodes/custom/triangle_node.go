@@ -17,10 +17,12 @@ type TriangleNode struct {
 }
 
 // NewTriangleNode constructs a triangle shaped node
-func NewTriangleNode(name string, parent api.INode) *TriangleNode {
+func NewTriangleNode(name string, world api.IWorld, parent api.INode) *TriangleNode {
 	o := new(TriangleNode)
 	o.Initialize(name)
 	o.SetParent(parent)
+	parent.AddChild(o)
+	o.Build(world)
 	return o
 }
 

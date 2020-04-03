@@ -21,11 +21,12 @@ type CircleNode struct {
 }
 
 // NewCircleNode constructs a circle shaped node
-func NewCircleNode(name string, parent api.INode) *CircleNode {
+func NewCircleNode(name string, world api.IWorld, parent api.INode) *CircleNode {
 	o := new(CircleNode)
 	o.Initialize(name)
 	o.SetParent(parent)
 	parent.AddChild(o)
+	o.Build(world)
 	return o
 }
 

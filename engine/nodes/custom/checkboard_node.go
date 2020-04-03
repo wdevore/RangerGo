@@ -17,11 +17,12 @@ type CheckerBoardNode struct {
 }
 
 // NewCheckBoardNode constructs an axis aligned checker board
-func NewCheckBoardNode(name string, parent api.INode) api.INode {
+func NewCheckBoardNode(name string, world api.IWorld, parent api.INode) api.INode {
 	o := new(CheckerBoardNode)
 	o.Initialize(name)
 	o.SetParent(parent)
 	parent.AddChild(o)
+	o.Build(world)
 	return o
 }
 

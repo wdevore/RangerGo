@@ -27,11 +27,12 @@ type RectangleNode struct {
 }
 
 // NewRectangleNode constructs a rectangle shaped node
-func NewRectangleNode(name string, parent api.INode) api.INode {
+func NewRectangleNode(name string, world api.IWorld, parent api.INode) api.INode {
 	o := new(RectangleNode)
 	o.Initialize(name)
 	o.SetParent(parent)
 	parent.AddChild(o)
+	o.Build(world)
 	return o
 }
 

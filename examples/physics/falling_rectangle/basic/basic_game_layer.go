@@ -55,20 +55,17 @@ func (g *gameLayer) Build(world api.IWorld) {
 
 	g.mesh.Build()
 
-	hLine := custom.NewLineNode("HLine", g)
-	hLine.Build(world)
+	hLine := custom.NewLineNode("HLine", world, g)
 	n := hLine.(*custom.LineNode)
 	n.SetColor(rendering.NewPaletteInt64(rendering.LightPurple))
 	n.SetPoints(x, 0.0, -x, 0.0)
 
-	vLine := custom.NewLineNode("VLine", g)
-	vLine.Build(world)
+	vLine := custom.NewLineNode("VLine", world, g)
 	n = vLine.(*custom.LineNode)
 	n.SetColor(rendering.NewPaletteInt64(rendering.LightPurple))
 	n.SetPoints(0.0, -y, 0.0, y)
 
-	g.circleNode = custom.NewCircleNode("Orange Circle", g)
-	g.circleNode.Build(world)
+	g.circleNode = custom.NewCircleNode("Orange Circle", world, g)
 	gr := g.circleNode.(*custom.CircleNode)
 	gr.SetColor(rendering.NewPaletteInt64(rendering.Orange))
 	g.circleNode.SetScale(0.1 * api.PTM)

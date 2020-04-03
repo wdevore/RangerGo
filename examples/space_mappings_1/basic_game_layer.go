@@ -48,13 +48,11 @@ func (g *gameLayer) Build(world api.IWorld) {
 	g.o2 = geometry.NewPoint()
 	g.viewPoint = geometry.NewPoint()
 
-	hLine := custom.NewLineNode("HLine", g)
-	hLine.Build(world)
+	hLine := custom.NewLineNode("HLine", world, g)
 	n := hLine.(*custom.LineNode)
 	n.SetPoints(x, 0.0, -x, 0.0)
 
-	vLine := custom.NewLineNode("VLine", g)
-	vLine.Build(world)
+	vLine := custom.NewLineNode("VLine", world, g)
 	n = vLine.(*custom.LineNode)
 	n.SetPoints(0.0, -y, 0.0, y)
 }

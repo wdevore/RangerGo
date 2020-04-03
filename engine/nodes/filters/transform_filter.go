@@ -20,13 +20,14 @@ type TransformFilter struct {
 
 // NewTransformFilter constructs a default transform filter. Default
 // is to inherit both Rotation and Translation.
-func NewTransformFilter(name string, parent api.INode) api.INode {
+func NewTransformFilter(name string, world api.IWorld, parent api.INode) api.INode {
 	o := new(TransformFilter)
 	o.Initialize(name)
 	o.SetParent(parent)
 	o.initializeFilter()
 	o.InheritRotationAndTranslation()
 	parent.AddChild(o)
+	o.Build(world)
 	return o
 }
 

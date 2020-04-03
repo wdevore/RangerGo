@@ -49,18 +49,15 @@ func (g *gameLayer) Build(world api.IWorld) {
 	g.o2 = geometry.NewPoint()
 	g.cursorPosition = geometry.NewPoint()
 
-	hLine := custom.NewLineNode("HLine", g)
-	hLine.Build(world)
+	hLine := custom.NewLineNode("HLine", world, g)
 	n := hLine.(*custom.LineNode)
 	n.SetPoints(x, 0.0, -x, 0.0)
 
-	vLine := custom.NewLineNode("VLine", g)
-	vLine.Build(world)
+	vLine := custom.NewLineNode("VLine", world, g)
 	n = vLine.(*custom.LineNode)
 	n.SetPoints(0.0, -y, 0.0, y)
 
-	g.rectNode = custom.NewRectangleNode("Orange Rect", g)
-	g.rectNode.Build(world)
+	g.rectNode = custom.NewRectangleNode("Orange Rect", world, g)
 	gr := g.rectNode.(*custom.RectangleNode)
 	gr.SetColor(rendering.NewPaletteInt64(rendering.Orange))
 	g.rectNode.SetScale(100.0)
@@ -71,8 +68,7 @@ func (g *gameLayer) Build(world api.IWorld) {
 	// amgle is measured in angular-velocity or "degrees/second"
 	g.angularMotion.SetRate(maths.DegreeToRadians * 90.0)
 
-	g.crossNode = custom.NewCrossNode("Cross", g)
-	g.crossNode.Build(world)
+	g.crossNode = custom.NewCrossNode("Cross", world, g)
 	g.crossNode.SetScale(30.0)
 }
 

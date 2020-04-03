@@ -21,11 +21,12 @@ type LineNode struct {
 }
 
 // NewLineNode constructs a cross shaped node
-func NewLineNode(name string, parent api.INode) api.INode {
+func NewLineNode(name string, world api.IWorld, parent api.INode) api.INode {
 	o := new(LineNode)
 	o.Initialize(name)
 	o.SetParent(parent)
 	parent.AddChild(o)
+	o.Build(world)
 	return o
 }
 

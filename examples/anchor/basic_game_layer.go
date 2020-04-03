@@ -51,33 +51,27 @@ func (g *gameLayer) Build(world api.IWorld) {
 	g.o2 = geometry.NewPoint()
 	g.cursorPosition = geometry.NewPoint()
 
-	hLine := custom.NewLineNode("HLine", g)
-	hLine.Build(world)
+	hLine := custom.NewLineNode("HLine", world, g)
 	n := hLine.(*custom.LineNode)
 	n.SetPoints(x, 0.0, -x, 0.0)
 
-	vLine := custom.NewLineNode("VLine", g)
-	vLine.Build(world)
+	vLine := custom.NewLineNode("VLine", world, g)
 	n = vLine.(*custom.LineNode)
 	n.SetPoints(0.0, -y, 0.0, y)
 
-	g.triangle = NewTriangleNode("Triangle", g)
-	g.triangle.Build(world)
+	g.triangle = NewTriangleNode("Triangle", world, g)
 	g.triangle.SetScale(100.0)
 	g.triangle.SetPosition(-100.0, -100.0)
 	g.triangle.SetRotation(maths.DegreeToRadians * 20.0)
 
 	// Create Filter and set Triangle as parent
-	filter := filters.NewTransformFilter("Filter", g.triangle)
-	filter.Build(world)
+	filter := filters.NewTransformFilter("Filter", world, g.triangle)
 
 	// Create an Anchor with the Filter as parent
-	g.anchor = custom.NewAnchorNode("Anchor", filter)
-	g.anchor.Build(world)
+	g.anchor = custom.NewAnchorNode("Anchor", world, filter)
 
 	// Create green rectangle with the Anchor as parent
-	g.greenRectNode = custom.NewRectangleNode("Green Rect", g.anchor)
-	g.greenRectNode.Build(world)
+	g.greenRectNode = custom.NewRectangleNode("Green Rect", world, g.anchor)
 	grn := g.greenRectNode.(*custom.RectangleNode)
 	grn.SetColor(rendering.NewPaletteInt64(rendering.Green))
 	g.greenRectNode.SetScale(10.0)
