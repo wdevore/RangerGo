@@ -200,8 +200,6 @@ func (m *nodeManager) setNextNode() {
 
 // End cleans up NodeManager by clearing the stack and calling all Exits
 func (m *nodeManager) End() {
-	m.eventTargets = nil
-
 	// Dump the stack
 
 	n := m.PopNode()
@@ -210,6 +208,8 @@ func (m *nodeManager) End() {
 		m.exitNodes(n)
 		n = m.PopNode()
 	}
+
+	m.eventTargets = nil
 }
 
 // -----------------------------------------------------
