@@ -68,10 +68,6 @@ func (m *nodeManager) Visit(interpolation float64) bool {
 	// This saves view-space matrix
 	context.Save()
 
-	// DEBUG
-	// If mouse coords changed then update view coords.
-	// self.global_data.update_view_coords(&mut self.context);
-
 	runningScene := m.stack.runningNode.(api.IScene)
 
 	action := runningScene.TransitionAction()

@@ -53,6 +53,21 @@ func (l *LineNode) SetPoints(x1, y1, x2, y2 float64) {
 	l.p2.SetByComp(x2, y2)
 }
 
+// Points returns the start and end points of the line.
+func (l *LineNode) Points() (p1, p2 api.IPoint) {
+	return l.p1, l.p2
+}
+
+// P1 returns the start point
+func (l *LineNode) P1() api.IPoint {
+	return l.p1
+}
+
+// P2 returns the end point
+func (l *LineNode) P2() api.IPoint {
+	return l.p2
+}
+
 // Draw renders shape
 func (l *LineNode) Draw(context api.IRenderContext) {
 	if l.IsDirty() {

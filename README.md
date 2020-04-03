@@ -15,10 +15,17 @@
 * OpenGL Vulkan
 * Zones
 * Audio (SFXR 8bit sound)
+* Simple Widget GUI framework
+  * Buttons
+  * Checkboxes
+  * Text input
+  * Text
+  * Dialog
+  * Grouping (i.e. Radio buttons)
 * Sprite Textures
 * Finish lower case Vector font characters.
 * Enhance raster fonts to allow transforms
-* Joysticks
+* Joysticks and Gamepads
 
 ## Notes
 

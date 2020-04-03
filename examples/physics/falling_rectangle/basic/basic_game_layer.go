@@ -67,6 +67,7 @@ func (g *gameLayer) Build(world api.IWorld) {
 
 	g.circleNode = custom.NewCircleNode("Orange Circle", world, g)
 	gr := g.circleNode.(*custom.CircleNode)
+	gr.Configure(12, 1.0)
 	gr.SetColor(rendering.NewPaletteInt64(rendering.Orange))
 	g.circleNode.SetScale(0.1 * api.PTM)
 	g.circleNode.SetPosition(0.0, -200.0)

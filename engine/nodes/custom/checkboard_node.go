@@ -30,12 +30,15 @@ func NewCheckBoardNode(name string, world api.IWorld, parent api.INode) api.INod
 func (c *CheckerBoardNode) Build(world api.IWorld) {
 	c.Node.Build(world)
 
-	vw, vh := world.ViewSize().Components()
-	y := -vh / 2.0
-	w := 100.0
-
 	c.oddColor = rendering.NewPaletteInt64(rendering.DarkGray)
 	c.evenColor = rendering.NewPaletteInt64(rendering.LightGray)
+}
+
+// Configure constructs the board tiles
+func (c *CheckerBoardNode) Configure(tileSize float64) {
+	vw, vh := c.World().ViewSize().Components()
+	y := -vh / 2.0
+	w := tileSize
 
 	// Construct grid of rectangles
 
@@ -51,7 +54,7 @@ func (c *CheckerBoardNode) Build(world api.IWorld) {
 		x := -vw / 2.0
 		for x <= vw {
 			r := NewBasicRectangleNode(fmt.Sprintf("::(%d,%d)", int(x), int(y)), c)
-			r.Build(world)
+			r.Build(c.World())
 			r.SetPosition(x, y)
 			r.SetScale(w)
 			cr := r.(*BasicRectangleNode)

@@ -1,4 +1,4 @@
-package custom
+package main
 
 import (
 	"math"
@@ -18,6 +18,14 @@ type CircleNode struct {
 	segments int
 	radius   float64
 	polygon  api.IPolygon
+
+	// Rotation marker
+	lineColor api.IPalette
+
+	p1 api.IPoint
+	p2 api.IPoint
+	o1 api.IPoint
+	o2 api.IPoint
 }
 
 // NewCircleNode constructs a circle shaped node
@@ -34,11 +42,17 @@ func NewCircleNode(name string, world api.IWorld, parent api.INode) api.INode {
 func (c *CircleNode) Build(world api.IWorld) {
 	c.Node.Build(world)
 
+	c.lineColor = rendering.NewPaletteInt64(rendering.White)
 	c.color = rendering.NewPaletteInt64(rendering.White)
 }
 
 // Configure circle, if radius is 1 then diameter is 2
 func (c *CircleNode) Configure(segments int, radius float64) {
+	c.p1 = geometry.NewPointUsing(0.5, 0.0)
+	c.p2 = geometry.NewPointUsing(1.0, 0.0)
+	c.o1 = geometry.NewPoint()
+	c.o2 = geometry.NewPoint()
+
 	c.segments = segments // typically 12
 	c.radius = radius     // typicall 1.0
 
@@ -73,12 +87,17 @@ func (c *CircleNode) SetColor(color api.IPalette) {
 // Draw renders shape
 func (c *CircleNode) Draw(context api.IRenderContext) {
 	if c.IsDirty() {
-		// Transform this node's vertices using the context
+		context.TransformPoint(c.p1, c.o1)
+		context.TransformPoint(c.p2, c.o2)
+
 		context.TransformPolygon(c.polygon)
-		c.SetDirty(false) // Node is no longer dirty
+		c.SetDirty(false)
 	}
 
+	context.SetDrawColor(c.lineColor)
+	context.DrawLine(int32(c.o1.X()), int32(c.o1.Y()), int32(c.o2.X()), int32(c.o2.Y()))
+
 	context.SetDrawColor(c.color)
-	context.RenderPolygon(c.polygon, api.OPEN)
+	context.RenderPolygon(c.polygon, api.CLOSED)
 
 }
