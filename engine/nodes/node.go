@@ -85,7 +85,6 @@ func Visit(node api.INode, context api.IRenderContext, interpolation float64) {
 
 	nodeRender, isRenderType := node.(api.IRender)
 	if isRenderType {
-		// fmt.Println("Visit draw: ", nodeRender)
 		nodeRender.Draw(context)
 	} else {
 		log.Fatalf("Node: oops, %s doesn't implement IRender.Draw method", node)

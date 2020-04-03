@@ -7,14 +7,13 @@ import (
 )
 
 func main() {
-	world := engine.NewWorld("Basic falling rectangle", "../..")
+	world := engine.NewWorld("Basic Slope", "../../..")
 
 	ranger := engine.New(world)
 
 	splash := newBasicSplashScene("Splash", nil)
 	splash.Build(world)
 
-	// This example uses the super basic Boot scene that does absolutely nothing.
 	boot := custom.NewBasicBootScene("Boot", splash)
 
 	nodes.PrintTree(splash)
