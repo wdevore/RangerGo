@@ -38,7 +38,7 @@ func (g *gameLayer) Build(world api.IWorld) {
 	vw, vh := world.ViewSize().Components()
 	x := -vw / 2.0
 	y := -vh / 2.0
-	w := 100.0
+	w := 50.0
 
 	g.mesh = geometry.NewMesh()
 
@@ -66,11 +66,11 @@ func (g *gameLayer) Build(world api.IWorld) {
 	n.SetPoints(0.0, -y, 0.0, y)
 
 	g.circleNode = custom.NewCircleNode("Orange Circle", world, g)
+	g.circleNode.SetScale(5.0)
+	g.circleNode.SetPosition(0.0, -100.0)
 	gr := g.circleNode.(*custom.CircleNode)
 	gr.Configure(12, 1.0)
 	gr.SetColor(rendering.NewPaletteInt64(rendering.Orange))
-	g.circleNode.SetScale(0.1 * api.PTM)
-	g.circleNode.SetPosition(0.0, -200.0)
 
 	g.textColor = rendering.NewPaletteInt64(rendering.LightNavyBlue)
 	g.oddColor = rendering.NewPaletteInt64(rendering.DarkGray)
@@ -104,7 +104,7 @@ func (g *gameLayer) Build(world api.IWorld) {
 	// Every Fixture has a shape
 	circleShape := box2d.MakeB2CircleShape()
 	circleShape.M_p.Set(0.0, 0.0) // Relative to body position
-	circleShape.M_radius = 0.1
+	circleShape.M_radius = 5
 
 	fd := box2d.MakeB2FixtureDef()
 	fd.Shape = &circleShape
