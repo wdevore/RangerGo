@@ -50,9 +50,8 @@ func (c *CheckerBoardNode) Build(world api.IWorld) {
 		pFlip = flip
 		x := -vw / 2.0
 		for x <= vw {
-			r := NewBasicRectangleNode(fmt.Sprintf("B%d:%d", int(x), int(y)), c)
+			r := NewBasicRectangleNode(fmt.Sprintf("::(%d,%d)", int(x), int(y)), c)
 			r.Build(world)
-			fmt.Println(x, " ", y)
 			r.SetPosition(x, y)
 			r.SetScale(w)
 			cr := r.(*BasicRectangleNode)

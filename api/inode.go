@@ -3,6 +3,7 @@ package api
 // INode is an abstract object that represents SceneGraph nodes
 type INode interface {
 	ID() int
+	Name() string
 
 	// Initialize configures default properties.
 	Initialize(name string)

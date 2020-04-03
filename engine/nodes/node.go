@@ -245,6 +245,11 @@ func (n *Node) SetScale(scale float64) {
 	n.RippleDirty(true)
 }
 
+// Name returns the node's string name
+func (n *Node) Name() string {
+	return n.name
+}
+
 // -------------------------------------------------------------------
 // INodeGroup implementations
 // -------------------------------------------------------------------
@@ -279,9 +284,17 @@ func printSubTree(children []api.INode, level int) {
 const indent = "   "
 
 func printBranch(level int, node api.INode) {
+	// If a node's name begins with "::" then don't print it.
+	// This is handy for particle systems or parent nodes with
+	// lots of cloned children.
+	if node.Name()[0:2] == "::" {
+		return
+	}
+
 	for i := 0; i < level; i++ {
 		fmt.Print(indent)
 	}
+
 	fmt.Println(node)
 }
 
