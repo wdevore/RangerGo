@@ -79,7 +79,7 @@ func (c *CircleNode) SetSegments(segments int) {
 	c.segments = segments
 }
 
-// SetColor sets rectangle color (default = white)
+// SetColor sets circle's color (default = white)
 func (c *CircleNode) SetColor(color api.IPalette) {
 	c.color = color
 }

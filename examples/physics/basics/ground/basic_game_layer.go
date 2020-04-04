@@ -97,11 +97,6 @@ func (g *gameLayer) Update(msPerUpdate, secPerUpdate float64) {
 		rot := g.b2CircleBody.GetAngle()
 		g.circleNode.SetRotation(rot)
 	}
-
-	if g.b2GroundBody.IsActive() {
-		pos := g.b2GroundBody.GetPosition()
-		g.groundLineNode.SetPosition(pos.X, pos.Y)
-	}
 }
 
 // -----------------------------------------------------

@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/ByteArena/box2d"
 	"github.com/wdevore/RangerGo/api"
+	"github.com/wdevore/RangerGo/engine/maths"
 	"github.com/wdevore/RangerGo/engine/nodes"
 	"github.com/wdevore/RangerGo/engine/nodes/custom"
 	"github.com/wdevore/RangerGo/engine/rendering"
@@ -11,17 +12,15 @@ import (
 type gameLayer struct {
 	nodes.Node
 
-	textColor api.IPalette
-
-	circleNode     api.INode
-	groundLineNode api.INode
-
 	// Box 2D system
 	b2Gravity box2d.B2Vec2
 	b2World   box2d.B2World
 
-	b2CircleBody *box2d.B2Body
-	b2GroundBody *box2d.B2Body
+	circleComp   *CircleComponent
+	slopeCWComp  *GroundComponent
+	slopeCCWComp *GroundComponent
+	slopeCWComp2 *GroundComponent
+	flatComp     *GroundComponent
 }
 
 func newBasicGameLayer(name string) api.INode {
@@ -31,51 +30,50 @@ func newBasicGameLayer(name string) api.INode {
 }
 
 func (g *gameLayer) Build(world api.IWorld) {
-	vw, vh := world.ViewSize().Components()
-	x := -vw / 2.0
-	y := -vh / 2.0
+	initializePhysics(g)
 
-	g.textColor = rendering.NewPaletteInt64(rendering.White)
+	buildBackground(g, world)
 
-	cb := custom.NewCheckBoardNode("CheckerBoard", world, g)
-	cbr := cb.(*custom.CheckerBoardNode)
-	cbr.Configure(25.0)
+	g.circleComp = NewCircleComponent("CircleComp", g)
+	g.circleComp.Configure(6, &g.b2World)
+	g.circleComp.SetColor(rendering.NewPaletteInt64(rendering.Orange))
+	g.circleComp.SetPosition(50.0, -100.0)
+	g.circleComp.SetRadius(3.0)
 
-	hLine := custom.NewLineNode("HLine", world, g)
-	n := hLine.(*custom.LineNode)
-	n.SetColor(rendering.NewPaletteInt64(rendering.LightPurple))
-	n.SetPoints(x, 0.0, -x, 0.0)
+	g.slopeCWComp = NewGroundComponent("SlopeCWComp", g)
+	g.slopeCWComp.Configure(&g.b2World)
+	g.slopeCWComp.SetColor(rendering.NewPaletteInt64(rendering.White))
+	g.slopeCWComp.SetPosition(50.0, -50.0)
+	g.slopeCWComp.SetRotation(maths.DegreeToRadians * 45.0)
+	g.slopeCWComp.SetScale(25.0)
 
-	vLine := custom.NewLineNode("VLine", world, g)
-	n = vLine.(*custom.LineNode)
-	n.SetColor(rendering.NewPaletteInt64(rendering.LightPurple))
-	n.SetPoints(0.0, -y, 0.0, y)
+	g.slopeCCWComp = NewGroundComponent("SlopeCCWComp", g)
+	g.slopeCCWComp.Configure(&g.b2World)
+	g.slopeCCWComp.SetColor(rendering.NewPaletteInt64(rendering.White))
+	g.slopeCCWComp.SetPosition(100.0, 0.0)
+	g.slopeCCWComp.SetRotation(maths.DegreeToRadians * -45.0)
+	g.slopeCCWComp.SetScale(25.0)
 
-	// -------------------------------------------
-	// Visuals for Box2D
-	g.circleNode = NewCircleNode("Orange Circle", world, g)
-	gr := g.circleNode.(*CircleNode)
-	gr.Configure(6, 1.0)
-	gr.SetColor(rendering.NewPaletteInt64(rendering.Orange))
-	gr.SetScale(3.0)
-	gr.SetPosition(100.0, -100.0)
+	g.slopeCWComp2 = NewGroundComponent("SlopeCWComp2", g)
+	g.slopeCWComp2.Configure(&g.b2World)
+	g.slopeCWComp2.SetColor(rendering.NewPaletteInt64(rendering.White))
+	g.slopeCWComp2.SetPosition(50.0, 50.0)
+	g.slopeCWComp2.SetRotation(maths.DegreeToRadians * 45.0)
+	g.slopeCWComp2.SetScale(25.0)
 
-	g.groundLineNode = custom.NewLineNode("Ground", world, g)
-	gln := g.groundLineNode.(*custom.LineNode)
-	gln.SetColor(rendering.NewPaletteInt64(rendering.White))
-	gln.SetPoints(-1.0, 0.0, 1.0, 0.0) // Set by unit coordinates
-	gln.SetPosition(76.0+50.0, 0.0)
-	gln.SetScale(25.0)
+	g.flatComp = NewGroundComponent("FlatComp", g)
+	g.flatComp.Configure(&g.b2World)
+	g.flatComp.SetColor(rendering.NewPaletteInt64(rendering.White))
+	g.flatComp.SetPosition(75.0, 75.0)
+	g.flatComp.SetScale(25.0)
 
-	t := custom.NewRasterTextNode("RasterText", world, g)
+	t := custom.NewRasterTextNode("RasterText", g.World(), g)
 	tr := t.(*custom.RasterTextNode)
 	tr.SetFontScale(2)
 	tr.SetFill(2)
-	tr.SetText("Press key to reset.")
-	tr.SetPosition(50.0, 50.0)
+	tr.SetText("Press a key to reset.")
+	tr.SetPosition(50.0, 50.0) // Note these coords are in device-space
 	tr.SetColor(rendering.NewPaletteInt64(rendering.White))
-
-	buildPhysicsWorld(g)
 }
 
 // --------------------------------------------------------
@@ -90,18 +88,7 @@ func (g *gameLayer) Update(msPerUpdate, secPerUpdate float64) {
 	// It is generally best to keep the time step and iterations fixed.
 	g.b2World.Step(secPerUpdate, api.VelocityIterations, api.PositionIterations)
 
-	if g.b2CircleBody.IsActive() {
-		pos := g.b2CircleBody.GetPosition()
-		g.circleNode.SetPosition(pos.X, pos.Y)
-
-		rot := g.b2CircleBody.GetAngle()
-		g.circleNode.SetRotation(rot)
-	}
-
-	if g.b2GroundBody.IsActive() {
-		pos := g.b2GroundBody.GetPosition()
-		g.groundLineNode.SetPosition(pos.X, pos.Y)
-	}
+	g.circleComp.Update()
 }
 
 // -----------------------------------------------------
@@ -131,12 +118,7 @@ func (g *gameLayer) Handle(event api.IEvent) bool {
 	if event.GetType() == api.IOTypeKeyboard {
 		if event.GetState() == 1 {
 			// Reset node and body properties
-			x := 100.0
-			y := -100.0
-			g.circleNode.SetPosition(x, y)
-			g.b2CircleBody.SetTransform(box2d.MakeB2Vec2(x, y), 0.0)
-			g.b2CircleBody.SetLinearVelocity(box2d.MakeB2Vec2(0.0, 0.0))
-			g.b2CircleBody.SetAngularVelocity(0.0)
+			g.circleComp.Reset()
 		}
 	}
 
@@ -147,11 +129,7 @@ func (g *gameLayer) Handle(event api.IEvent) bool {
 // Misc private
 // -----------------------------------------------------
 
-func buildPhysicsWorld(g *gameLayer) {
-	// --------------------------------------------
-	// Box 2d configuration
-	// --------------------------------------------
-
+func initializePhysics(g *gameLayer) {
 	// Define the gravity vector.
 	// Ranger's coordinate space is defined as:
 	// .--------> +X
@@ -164,38 +142,24 @@ func buildPhysicsWorld(g *gameLayer) {
 
 	// Construct a world object, which will hold and simulate the rigid bodies.
 	g.b2World = box2d.MakeB2World(g.b2Gravity)
+}
 
-	// -------------------------------------------
-	// A body def used to create bodies
-	bDef := box2d.MakeB2BodyDef()
-	bDef.Type = box2d.B2BodyType.B2_dynamicBody
-	bDef.Position.Set(g.circleNode.Position().X(), g.circleNode.Position().Y())
+func buildBackground(g *gameLayer, world api.IWorld) {
+	vw, vh := world.ViewSize().Components()
+	x := -vw / 2.0
+	y := -vh / 2.0
 
-	// An instance of a body to contain Fixtures
-	g.b2CircleBody = g.b2World.CreateBody(&bDef)
+	cb := custom.NewCheckBoardNode("CheckerBoard", world, g)
+	cbr := cb.(*custom.CheckerBoardNode)
+	cbr.Configure(25.0)
 
-	// Every Fixture has a shape
-	circleShape := box2d.MakeB2CircleShape()
-	circleShape.M_p.Set(0.0, 0.0) // Relative to body position
-	circleShape.M_radius = g.circleNode.Scale()
+	hLine := custom.NewLineNode("HLine", world, g)
+	n := hLine.(*custom.LineNode)
+	n.SetColor(rendering.NewPaletteInt64(rendering.LightPurple))
+	n.SetPoints(x, 0.0, -x, 0.0)
 
-	fd := box2d.MakeB2FixtureDef()
-	fd.Shape = &circleShape
-	fd.Density = 1.0
-	g.b2CircleBody.CreateFixtureFromDef(&fd) // attach Fixture to body
-
-	// -------------------------------------------
-	// The Ground = body + fixture + shape
-	bDef.Type = box2d.B2BodyType.B2_staticBody
-	bDef.Position.Set(g.groundLineNode.Position().X(), g.groundLineNode.Position().Y())
-
-	g.b2GroundBody = g.b2World.CreateBody(&bDef)
-
-	groundShape := box2d.MakeB2EdgeShape()
-	groundShape.Set(box2d.MakeB2Vec2(-g.groundLineNode.Scale(), 0.0), box2d.MakeB2Vec2(g.groundLineNode.Scale(), 0.0))
-
-	fDef := box2d.MakeB2FixtureDef()
-	fDef.Shape = &groundShape
-	fDef.Density = 1.0
-	g.b2GroundBody.CreateFixtureFromDef(&fDef) // attach Fixture to body
+	vLine := custom.NewLineNode("VLine", world, g)
+	n = vLine.(*custom.LineNode)
+	n.SetColor(rendering.NewPaletteInt64(rendering.LightPurple))
+	n.SetPoints(0.0, -y, 0.0, y)
 }

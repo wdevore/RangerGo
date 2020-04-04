@@ -14,7 +14,7 @@
 * **Working** Box2D physics (with space ships)
 * OpenGL Vulkan
 * Zones
-* Audio (SFXR 8bit sound)
+* Audio (SFXR 8bit sound) : May build GUI using imGui, May use: https://github.com/faiface/beep
 * Simple Widget GUI framework
   * Buttons
   * Checkboxes
@@ -22,7 +22,7 @@
   * Text
   * Dialog
   * Grouping (i.e. Radio buttons)
-* Sprite Textures
+* Sprite Textures (Vulkan)
 * Finish lower case Vector font characters.
 * Enhance raster fonts to allow transforms
 * Joysticks and Gamepads
