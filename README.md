@@ -13,7 +13,8 @@
 * **Done** Animation (tweening) -- Using tanema's library
 * **Working** Box2D physics (with space ships)
 * OpenGL Vulkan
-* Zones
+* Zones (Circle and Rectangle)
+* QuadTree for view-space culling
 * Audio (SFXR 8bit sound) : May build GUI using imGui, May use: https://github.com/faiface/beep
 * Simple Widget GUI framework
   * Buttons
