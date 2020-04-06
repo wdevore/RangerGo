@@ -13,8 +13,6 @@ import (
 	"github.com/wdevore/RangerGo/engine/rendering"
 )
 
-// In this example we have a parent node "SeaSaw" that has three
-// children: circle, box and polygon.
 type gameLayer struct {
 	nodes.Node
 
