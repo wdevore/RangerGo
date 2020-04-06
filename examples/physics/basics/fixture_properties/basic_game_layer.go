@@ -114,7 +114,7 @@ func (g *gameLayer) ExitNode(man api.INodeManager) {
 
 func (g *gameLayer) Handle(event api.IEvent) bool {
 	if event.GetType() == api.IOTypeKeyboard {
-		fmt.Println(event.GetKeyCode())
+		// fmt.Println(event.GetKeyCode())
 		if event.GetState() == 1 {
 			switch event.GetKeyCode() {
 			case 100: // d = density
