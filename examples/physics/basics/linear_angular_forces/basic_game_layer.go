@@ -49,26 +49,26 @@ func (g *gameLayer) Build(world api.IWorld) {
 	boxSize := 2.0
 	groundSize := 100.0
 
-	g.orangeBoxComp = NewBoxComponent("LeftBoxComp", g)
+	g.orangeBoxComp = NewBoxComponent("OrangeBoxComp", g)
 	g.orangeBoxComp.Configure(boxSize, &g.b2World)
 	g.orangeBoxComp.SetPosition(-20.0, -5.0)
 
-	g.blueBoxComp = NewBoxComponent("MiddleBoxComp", g)
+	g.blueBoxComp = NewBoxComponent("BlueBoxComp", g)
 	g.blueBoxComp.Configure(boxSize, &g.b2World)
 	g.blueBoxComp.SetColor(rendering.NewPaletteInt64(rendering.SoftBlue))
 	g.blueBoxComp.SetPosition(0.0, -5.0)
 
-	g.limeBoxComp = NewBoxComponent("RightBoxComp", g)
+	g.limeBoxComp = NewBoxComponent("LimeBoxComp", g)
 	g.limeBoxComp.Configure(boxSize, &g.b2World)
 	g.limeBoxComp.SetColor(rendering.NewPaletteInt64(rendering.Lime))
 	g.limeBoxComp.SetPosition(20.0, -5.0)
 
-	g.purpleBoxComp = NewBoxComponent("NearRightBoxComp", g)
+	g.purpleBoxComp = NewBoxComponent("PurpleBoxComp", g)
 	g.purpleBoxComp.Configure(boxSize, &g.b2World)
 	g.purpleBoxComp.SetColor(rendering.NewPaletteInt64(rendering.LightPurple))
 	g.purpleBoxComp.SetPosition(40.0, -5.0)
 
-	g.yellowBoxComp = NewBoxComponent("FarRightBoxComp", g)
+	g.yellowBoxComp = NewBoxComponent("YellowBoxComp", g)
 	g.yellowBoxComp.Configure(boxSize, &g.b2World)
 	g.yellowBoxComp.SetColor(rendering.NewPaletteInt64(rendering.Yellow))
 	g.yellowBoxComp.SetPosition(60.0, -5.0)
