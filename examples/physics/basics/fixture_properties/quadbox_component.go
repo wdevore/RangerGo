@@ -14,7 +14,6 @@ import (
 // QuadBoxComponent is a bunch of boxes.
 type QuadBoxComponent struct {
 	anchor api.INode // The parent
-	// boxVisual api.INode // The parent of the component
 
 	b2Body *box2d.B2Body
 
