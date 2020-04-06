@@ -47,9 +47,6 @@ func (q *QuadBoxComponent) Reset(x, y float64) {
 	q.b2Body.SetTransform(box2d.MakeB2Vec2(x, y), 0.0)
 	q.b2Body.SetLinearVelocity(box2d.MakeB2Vec2(0.0, 0.0))
 	q.b2Body.SetAngularVelocity(0.0)
-	// If you waited until the topple completed then the body went to sleep.
-	// Thus we need to wake it back up otherwise it would just hang in
-	// mid air.
 	q.b2Body.SetAwake(true)
 }
 
