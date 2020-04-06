@@ -41,6 +41,15 @@ func (b *BoxComponent) SetPosition(x, y float64) {
 	b.b2Body.SetTransform(box2d.MakeB2Vec2(x, y), b.b2Body.GetAngle())
 }
 
+// EnableGravity enables/disables gravity for this component
+func (b *BoxComponent) EnableGravity(enable bool) {
+	if enable {
+		b.b2Body.SetGravityScale(-9.8)
+	} else {
+		b.b2Body.SetGravityScale(0.0)
+	}
+}
+
 // Reset configures the component back to defaults
 func (b *BoxComponent) Reset(x, y float64) {
 	b.visual.SetPosition(x, y)

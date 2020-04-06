@@ -65,11 +65,13 @@ func (g *gameLayer) Build(world api.IWorld) {
 
 	g.purpleBoxComp = NewBoxComponent("PurpleBoxComp", g)
 	g.purpleBoxComp.Configure(boxSize, &g.b2World)
+	g.purpleBoxComp.EnableGravity(false)
 	g.purpleBoxComp.SetColor(rendering.NewPaletteInt64(rendering.LightPurple))
 	g.purpleBoxComp.SetPosition(40.0, -5.0)
 
 	g.yellowBoxComp = NewBoxComponent("YellowBoxComp", g)
 	g.yellowBoxComp.Configure(boxSize, &g.b2World)
+	g.yellowBoxComp.EnableGravity(false)
 	g.yellowBoxComp.SetColor(rendering.NewPaletteInt64(rendering.Yellow))
 	g.yellowBoxComp.SetPosition(60.0, -5.0)
 
@@ -142,14 +144,8 @@ func (g *gameLayer) Handle(event api.IEvent) bool {
 			case 122: // z
 				g.limeBoxComp.ApplyImpulseToCorner(0.0, -200.0)
 			case 97: // a
-				// First lift it off the ground so torques don't fight the ground
-				g.purpleBoxComp.ApplyImpulse(0.0, -25.0)
-				// Now apply forces
 				g.purpleBoxComp.ApplyTorque(150.0)
 			case 115: // s
-				// First lift it off the ground so torques don't fight the ground
-				g.yellowBoxComp.ApplyImpulse(0.0, -50.0)
-				// Now apply forces
 				g.yellowBoxComp.ApplyAngularImpulse(50.0)
 			case 114: // r
 				// Reset node and body properties
