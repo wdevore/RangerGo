@@ -18,7 +18,7 @@ var ranger api.IEngine
 // ##################################################################
 
 func init() {
-	world := engine.NewWorld("Space mappings #1", "..")
+	world := engine.NewWorld("Space mappings #1", 1.5, "..")
 
 	ranger = engine.New(world)
 

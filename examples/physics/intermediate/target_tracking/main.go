@@ -11,13 +11,15 @@ import (
 func main() {
 	fmt.Println("-----------------------------------------------------------")
 	fmt.Println("Keys:")
-	fmt.Println("d increases the density by 1.0")
-	fmt.Println("f increases friction by 0.1 to a max of 1.0")
-	fmt.Println("r increases restitution by 0.1 to a max of 1.0")
-	fmt.Println("z resets density, friction, restitution to: 1.0, 0.0, 0.0")
+	fmt.Println("w,a,s,d apply linear velocity")
+	fmt.Println("1,2,3 changes the velocity algorithm")
+	fmt.Println("4,5,6,7,8,9 changes tracking algorithm")
+	fmt.Println("y,u,i,o changes targeting rate from: 10(fast), 20, 40, 60(slow)")
+	// fmt.Println("s apply immediate torge to yellow box")
+	fmt.Println("r resets everything")
 	fmt.Println("-----------------------------------------------------------")
 
-	world := engine.NewWorld("Fixture properties", 0.25, "../../..")
+	world := engine.NewWorld("Target tracking", 0.25, "../../..")
 
 	ranger := engine.New(world)
 

@@ -7,7 +7,7 @@ import (
 )
 
 func main() {
-	world := engine.NewWorld("Game Layer Example", "..")
+	world := engine.NewWorld("Game Layer Example", 1.5, "..")
 
 	ranger := engine.New(world)
 

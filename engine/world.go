@@ -35,7 +35,7 @@ type world struct {
 }
 
 // NewWorld constructs an IWorld object
-func NewWorld(title, relativePath string) api.IWorld {
+func NewWorld(title string, viewScale float64, relativePath string) api.IWorld {
 	o := new(world)
 	o.title = title
 
@@ -43,7 +43,7 @@ func NewWorld(title, relativePath string) api.IWorld {
 	o.windowSize = geometry.NewPointUsing(api.Width, api.Width/api.DisplayRatio)
 	o.windowCentered = true
 
-	o.viewSize = geometry.NewPointUsing(o.windowSize.X()*api.ViewScale, o.windowSize.Y()*api.ViewScale)
+	o.viewSize = geometry.NewPointUsing(o.windowSize.X()*viewScale, o.windowSize.Y()*viewScale)
 	o.viewCentered = true
 
 	o.viewSpace = maths.NewTransform()

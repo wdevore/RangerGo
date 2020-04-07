@@ -51,6 +51,7 @@ func (l *LineNode) SetColor(color api.IPalette) {
 func (l *LineNode) SetPoints(x1, y1, x2, y2 float64) {
 	l.p1.SetByComp(x1, y1)
 	l.p2.SetByComp(x2, y2)
+	l.SetDirty(true)
 }
 
 // Points returns the start and end points of the line.

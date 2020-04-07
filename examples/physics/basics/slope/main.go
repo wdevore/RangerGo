@@ -7,7 +7,7 @@ import (
 )
 
 func main() {
-	world := engine.NewWorld("Basic Slope", "../../..")
+	world := engine.NewWorld("Basic Slope", 0.25, "../../..")
 
 	ranger := engine.New(world)
 

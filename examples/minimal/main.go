@@ -13,7 +13,7 @@ var ranger api.IEngine
 // Each scene pauses for a few seconds.
 
 func init() {
-	world := engine.NewWorld("RangerGo", "..")
+	world := engine.NewWorld("RangerGo", 1.5, "..")
 
 	ranger = engine.New(world)
 

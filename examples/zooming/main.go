@@ -9,7 +9,7 @@ import (
 var ranger api.IEngine
 
 func init() {
-	world := engine.NewWorld("Zooming", "..")
+	world := engine.NewWorld("Zooming", 1.5, "..")
 
 	ranger = engine.New(world)
 

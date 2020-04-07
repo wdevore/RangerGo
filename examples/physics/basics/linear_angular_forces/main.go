@@ -19,7 +19,7 @@ func main() {
 	fmt.Println("r resets everything")
 	fmt.Println("-----------------------------------------------------------")
 
-	world := engine.NewWorld("Linear/Angular forces", "../../..")
+	world := engine.NewWorld("Linear/Angular forces", 0.25, "../../..")
 
 	ranger := engine.New(world)
 

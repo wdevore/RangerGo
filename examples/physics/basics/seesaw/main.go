@@ -7,7 +7,7 @@ import (
 )
 
 func main() {
-	world := engine.NewWorld("Seesaw", "../../..")
+	world := engine.NewWorld("Seesaw", 0.25, "../../..")
 
 	ranger := engine.New(world)
 

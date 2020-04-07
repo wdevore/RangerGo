@@ -9,7 +9,7 @@ import (
 var ranger api.IEngine
 
 func init() {
-	world := engine.NewWorld("Space mappings #2", "..")
+	world := engine.NewWorld("Space mappings #2", 1.5, "..")
 
 	ranger = engine.New(world)
 
