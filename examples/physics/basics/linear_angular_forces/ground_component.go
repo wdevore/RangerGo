@@ -75,8 +75,3 @@ func (c *GroundComponent) SetPosition(x, y float64) {
 	c.visual.SetPosition(x, y)
 	c.b2Body.SetTransform(box2d.MakeB2Vec2(x, y), c.b2Body.GetAngle())
 }
-
-// Update component
-// func (c *GroundComponent) Update() {
-// 	// Static objects rarely have any "dynamics" so update required
-// }
