@@ -164,6 +164,19 @@ func (rc *renderContext) DrawPoint(x, y int32) {
 	renderer.DrawPoint(x, y)
 }
 
+func (rc *renderContext) DrawBigPoint(x, y int32) {
+	renderer := rc.world.Renderer()
+	renderer.DrawPoint(x-1, y-1)
+	renderer.DrawPoint(x, y-1)
+	renderer.DrawPoint(x+1, y-1)
+	renderer.DrawPoint(x+1, y)
+	renderer.DrawPoint(x+1, y+1)
+	renderer.DrawPoint(x, y+1)
+	renderer.DrawPoint(x-1, y+1)
+	renderer.DrawPoint(x-1, y)
+	renderer.DrawPoint(x, y)
+}
+
 func (rc *renderContext) DrawLine(x1, y1, x2, y2 int32) {
 	renderer := rc.world.Renderer()
 	renderer.DrawLine(x1, y1, x2, y2)
