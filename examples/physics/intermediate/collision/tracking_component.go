@@ -8,7 +8,6 @@ import (
 	"github.com/wdevore/RangerGo/api"
 	"github.com/wdevore/RangerGo/engine/geometry"
 	"github.com/wdevore/RangerGo/engine/maths"
-	"github.com/wdevore/RangerGo/engine/nodes/custom"
 	"github.com/wdevore/RangerGo/engine/rendering"
 )
 
@@ -24,15 +23,24 @@ type TrackingComponent struct {
 	stopping          bool
 	targetingRate     float64
 	targetPosition    api.IPoint
+
+	thrustEnabled  bool
+	thrustStrength float64
 }
 
 // NewTrackingComponent constructs a component
 func NewTrackingComponent(name string, parent api.INode) *TrackingComponent {
 	o := new(TrackingComponent)
+
 	o.visual = NewTriangleNode(name, parent.World(), parent)
+	o.visual.SetID(1001)
+
 	o.algorithm = 1
-	o.trackingAlgorithm = 1
-	o.targetingRate = 60.0 // default is slow
+	o.trackingAlgorithm = 5
+	o.targetingRate = 10.0 // default is medium
+	o.thrustEnabled = false
+	o.thrustStrength = 5.0
+
 	return o
 }
 
@@ -47,7 +55,7 @@ func (b *TrackingComponent) Configure(scale float64, b2World *box2d.B2World) {
 
 // SetColor sets the visual's color
 func (b *TrackingComponent) SetColor(color api.IPalette) {
-	gr := b.visual.(*custom.RectangleNode)
+	gr := b.visual.(*TriangleNode)
 	gr.SetColor(color)
 }
 
@@ -55,15 +63,6 @@ func (b *TrackingComponent) SetColor(color api.IPalette) {
 // view-space.
 func (b *TrackingComponent) SetTargetPosition(p api.IPoint) {
 	b.targetPosition.SetByPoint(p)
-
-	// angle := b.b2Body.GetAngle()
-	// ray := box2d.MakeB2Vec2(b.targetPosition.X(), b.targetPosition.Y())
-
-	// Subtract 90 if Triangle defaults to pointing at +X
-	// desiredAngle := math.Atan2(-ray.X, ray.Y) - maths.DegreeToRadians*-90.0
-
-	// desiredAngle := math.Atan2(-ray.X, ray.Y)
-	// b.b2Body.SetTransform(b.b2Body.GetPosition(), desiredAngle)
 }
 
 // SetPosition sets component's location.
@@ -164,6 +163,11 @@ func (b *TrackingComponent) MoveDown(dy float64) {
 		velocity.Y = math.Max(velocity.Y+0.1, 5.0)
 	}
 	b.b2Body.SetLinearVelocity(velocity)
+}
+
+// Thrust applies force in the direction of the ray
+func (b *TrackingComponent) Thrust() {
+	b.thrustEnabled = !b.thrustEnabled
 }
 
 // ApplyForce applies linear force to box center
@@ -297,18 +301,41 @@ func (b *TrackingComponent) Update() {
 		b.b2Body.ApplyAngularImpulse(impulse, true)
 	}
 
-	if b.stopping {
-		velocity := b.b2Body.GetLinearVelocity()
-		switch b.algorithm {
-		case 1: // hard
-			velocity.X = 0
-			velocity.Y = 0
-		case 2: // soft
-			velocity.X *= 0.98
-			velocity.Y *= 0.98
-		}
-		b.b2Body.SetLinearVelocity(velocity)
+	if b.thrustEnabled {
+		bodyPos := b.b2Body.GetPosition()
+		ray := box2d.MakeB2Vec2(b.targetPosition.X()-bodyPos.X, b.targetPosition.Y()-bodyPos.Y)
+		b.ApplyForce(ray.X*b.thrustStrength, ray.Y*b.thrustStrength)
 	}
+}
+
+// HandleBeginContact processes BeginContact events
+func (b *TrackingComponent) HandleBeginContact(nodeA, nodeB api.INode) bool {
+	n, ok := nodeA.(*TriangleNode)
+
+	if !ok {
+		n, ok = nodeB.(*TriangleNode)
+	}
+
+	if ok {
+		n.SetColor(rendering.NewPaletteInt64(rendering.White))
+	}
+
+	return false
+}
+
+// HandleEndContact processes EndContact events
+func (b *TrackingComponent) HandleEndContact(nodeA, nodeB api.INode) bool {
+	n, ok := nodeA.(*TriangleNode)
+
+	if !ok {
+		n, ok = nodeB.(*TriangleNode)
+	}
+
+	if ok {
+		n.SetColor(rendering.NewPaletteInt64(rendering.Orange))
+	}
+
+	return false
 }
 
 func buildComp(b *TrackingComponent, b2World *box2d.B2World) {
@@ -318,9 +345,14 @@ func buildComp(b *TrackingComponent, b2World *box2d.B2World) {
 
 	// Note: +Y points down in Ranger verses Upward in Box2D's GUI.
 	vertices := []box2d.B2Vec2{}
-	vertices = append(vertices, box2d.B2Vec2{X: -0.5 * b.scale, Y: -0.5 * b.scale})
-	vertices = append(vertices, box2d.B2Vec2{X: 0.0 * b.scale, Y: 0.5 * b.scale})
-	vertices = append(vertices, box2d.B2Vec2{X: 0.5 * b.scale, Y: -0.5 * b.scale})
+
+	// Sync the visual's vertices to this physic object
+	tr := b.visual.(*TriangleNode)
+	verts := tr.Polygon().Mesh().Vertices()
+
+	for _, v := range verts {
+		vertices = append(vertices, box2d.B2Vec2{X: v.X() * b.scale, Y: v.Y() * b.scale})
+	}
 
 	// An instance of a body to contain Fixture
 	b.b2Body = b2World.CreateBody(&bDef)
@@ -331,10 +363,11 @@ func buildComp(b *TrackingComponent, b2World *box2d.B2World) {
 
 	// Every Fixture has a shape
 	b2Shape := box2d.MakeB2PolygonShape()
-	b2Shape.Set(vertices, 3)
+	b2Shape.Set(vertices, len(verts))
 
 	fd := box2d.MakeB2FixtureDef()
 	fd.Shape = &b2Shape
 	fd.Density = 1.0
+	fd.UserData = b.visual
 	b.b2Body.CreateFixtureFromDef(&fd) // attach Fixture to body
 }

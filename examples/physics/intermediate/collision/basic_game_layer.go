@@ -21,10 +21,17 @@ type gameLayer struct {
 	initialPosition api.IPoint
 
 	trackerComp *TrackingComponent
+	boxComp     *BoxComponent
 
 	targetNode     api.INode
 	targetPosition api.IPoint
 	rayNode        api.INode
+
+	contactPointsNode []api.INode
+	normalsNode       []api.INode
+	normalLength      float64
+
+	impactNode api.INode
 
 	fenceComp *FenceComponent
 
@@ -33,6 +40,8 @@ type gameLayer struct {
 	density     float64
 	friction    float64
 	restitution float64
+
+	debug int
 }
 
 func newBasicGameLayer(name string, world api.IWorld, parent api.INode) api.INode {
@@ -53,6 +62,7 @@ func (g *gameLayer) Build(world api.IWorld) {
 
 	targetSize := 5.0
 	groundSize := 50.0
+	g.normalLength = 2.0
 
 	g.targetNode = custom.NewCrossNode("Target", world, g)
 	g.targetNode.SetScale(5.0)
@@ -62,9 +72,37 @@ func (g *gameLayer) Build(world api.IWorld) {
 	gl := g.rayNode.(*custom.LineNode)
 	gl.SetColor(rendering.NewPaletteInt64(rendering.Lime))
 
-	g.trackerComp = NewTrackingComponent("TrackerComp", g)
+	g.contactPointsNode = append(g.contactPointsNode, custom.NewBigPointNode("Big1", world, g))
+	gc := g.contactPointsNode[0].(*custom.BigPointNode)
+	gc.SetColor(rendering.NewPaletteInt64(rendering.White))
+	g.contactPointsNode = append(g.contactPointsNode, custom.NewBigPointNode("Big2", world, g))
+	gc = g.contactPointsNode[1].(*custom.BigPointNode)
+	gc.SetColor(rendering.NewPaletteInt64(rendering.Lime))
+	g.contactPointsNode = append(g.contactPointsNode, custom.NewBigPointNode("Big3", world, g))
+	gc = g.contactPointsNode[2].(*custom.BigPointNode)
+	gc.SetColor(rendering.NewPaletteInt64(rendering.LightPurple))
+	g.contactPointsNode = append(g.contactPointsNode, custom.NewBigPointNode("Big4", world, g))
+	gc = g.contactPointsNode[3].(*custom.BigPointNode)
+	gc.SetColor(rendering.NewPaletteInt64(rendering.Olive))
+
+	g.normalsNode = append(g.normalsNode, custom.NewLineNode("Norm1", world, g))
+	gn := g.normalsNode[0].(*custom.LineNode)
+	gn.SetColor(rendering.NewPaletteInt64(rendering.Peach))
+	g.normalsNode = append(g.normalsNode, custom.NewLineNode("Norm2", world, g))
+	gn = g.normalsNode[1].(*custom.LineNode)
+	gn.SetColor(rendering.NewPaletteInt64(rendering.Yellow))
+
+	g.impactNode = custom.NewLineNode("Impact", world, g)
+	gl = g.impactNode.(*custom.LineNode)
+	gl.SetColor(rendering.NewPaletteInt64(rendering.Teal))
+
+	g.trackerComp = NewTrackingComponent("TriTrackerComp", g)
 	g.trackerComp.Configure(targetSize, &g.b2World)
 	g.trackerComp.SetPosition(0.0, 0.0)
+
+	g.boxComp = NewBoxComponent("BoxComp", g)
+	g.boxComp.Configure(targetSize/2.0, &g.b2World)
+	g.boxComp.SetPosition(10.0, 0.0)
 
 	// Because I am using edges instead of boxes for bounding
 	// AND because I am applying velocities explicitly, the triangle
@@ -81,6 +119,73 @@ func (g *gameLayer) Build(world api.IWorld) {
 	tr.SetText("See console for keys")
 	tr.SetPosition(25.0, 40.0) // Note these coords are in device-space
 	tr.SetColor(rendering.NewPaletteInt64(rendering.White))
+
+	// Contacts
+	listener := newContactListener()
+	lr := listener.(*contactListener)
+	lr.addListener(g.trackerComp)
+	lr.addListener(g.boxComp)
+
+	g.b2World.SetContactListener(listener)
+}
+
+// ContactListener
+type contactListener struct {
+	components []api.IContactListener
+}
+
+func newContactListener() box2d.B2ContactListenerInterface {
+	o := new(contactListener)
+	o.components = []api.IContactListener{}
+	return o
+}
+
+func (c *contactListener) addListener(component api.IContactListener) {
+	c.components = append(c.components, component)
+}
+
+func (c *contactListener) BeginContact(contact box2d.B2ContactInterface) {
+	fixA := contact.GetFixtureA()
+	fixB := contact.GetFixtureB()
+
+	dataA := fixA.GetUserData()
+	dataB := fixB.GetUserData()
+
+	if dataA != nil && dataB != nil {
+		for _, l := range c.components {
+			handled := l.HandleBeginContact(dataA.(api.INode), dataB.(api.INode))
+			if handled {
+				break
+			}
+		}
+	}
+}
+
+func (c *contactListener) EndContact(contact box2d.B2ContactInterface) {
+	fixA := contact.GetFixtureA()
+	fixB := contact.GetFixtureB()
+
+	dataA := fixA.GetUserData()
+	dataB := fixB.GetUserData()
+
+	if dataA != nil && dataB != nil {
+		for _, l := range c.components {
+			handled := l.HandleEndContact(dataA.(api.INode), dataB.(api.INode))
+			if handled {
+				break
+			}
+		}
+	}
+}
+
+func (c *contactListener) PreSolve(contact box2d.B2ContactInterface, oldManifold box2d.B2Manifold) {
+	// fmt.Println("PreSolve")
+
+}
+
+func (c *contactListener) PostSolve(contact box2d.B2ContactInterface, impulse *box2d.B2ContactImpulse) {
+	// fmt.Println("PostSolve")
+
 }
 
 // --------------------------------------------------------
@@ -96,10 +201,62 @@ func (g *gameLayer) Update(msPerUpdate, secPerUpdate float64) {
 	g.b2World.Step(secPerUpdate, api.VelocityIterations, api.PositionIterations)
 
 	g.trackerComp.Update()
+	g.boxComp.Update()
+
+	//scanContactList(g)
 
 	gl := g.rayNode.(*custom.LineNode)
 	bodyPos := g.trackerComp.GetPosition()
 	gl.SetPoints(bodyPos.X, bodyPos.Y, g.targetPosition.X(), g.targetPosition.Y())
+}
+
+// This an example of Activity checking for contacts. It is useful in some
+// cases.
+func scanContactList(g *gameLayer) {
+	for contact := g.b2World.GetContactList(); contact != nil; contact = contact.GetNext() {
+		if contact.IsTouching() {
+			fixA := contact.GetFixtureA()
+			fixB := contact.GetFixtureB()
+
+			dataA := fixA.GetUserData()
+			dataB := fixB.GetUserData()
+
+			if dataA != nil && dataB != nil {
+				if dataA.(api.INode).ID() == 1001 && dataB.(api.INode).ID() == 1000 {
+					manA := contact.GetManifold()
+					worldMan := box2d.B2WorldManifold{}
+					contact.GetWorldManifold(&worldMan)
+
+					pointCnt := manA.PointCount
+					for i := 0; i < pointCnt; i++ {
+						gc := g.contactPointsNode[i].(*custom.BigPointNode)
+						gc.SetPoint(worldMan.Points[i].X, worldMan.Points[i].Y)
+
+						// Normals that show the direction for separation not collision normal.
+						gn := g.normalsNode[i].(*custom.LineNode)
+						gn.SetPoints(
+							worldMan.Points[i].X-g.normalLength*worldMan.Normal.X,
+							worldMan.Points[i].Y-g.normalLength*worldMan.Normal.Y,
+							worldMan.Points[i].X+g.normalLength*worldMan.Normal.X,
+							worldMan.Points[i].Y+g.normalLength*worldMan.Normal.Y)
+
+						vel1 := fixA.GetBody().GetLinearVelocityFromWorldPoint(worldMan.Points[i])
+						vel2 := fixB.GetBody().GetLinearVelocityFromWorldPoint(worldMan.Points[i])
+
+						impactVelocity := box2d.B2Vec2{X: vel1.X - vel2.X, Y: vel1.Y - vel2.Y}
+
+						gi := g.impactNode.(*custom.LineNode)
+						gi.SetPoints(
+							worldMan.Points[i].X+g.normalLength*impactVelocity.X,
+							worldMan.Points[i].Y+g.normalLength*impactVelocity.Y,
+							worldMan.Points[i].X-g.normalLength*impactVelocity.X,
+							worldMan.Points[i].Y-g.normalLength*impactVelocity.Y)
+					}
+
+				}
+			}
+		}
+	}
 }
 
 // -----------------------------------------------------
@@ -117,7 +274,6 @@ func (g *gameLayer) EnterNode(man api.INodeManager) {
 func (g *gameLayer) ExitNode(man api.INodeManager) {
 	man.UnRegisterTarget(g)
 	man.UnRegisterEventTarget(g)
-
 	g.b2World.Destroy()
 }
 
@@ -126,7 +282,7 @@ func (g *gameLayer) ExitNode(man api.INodeManager) {
 // -----------------------------------------------------
 
 func (g *gameLayer) Handle(event api.IEvent) bool {
-	if event.GetType() == api.IOTypeMouseButtonDown {
+	if event.GetType() == api.IOTypeMouseMotion {
 		mx, my := event.GetMousePosition()
 		nodes.MapDeviceToView(g.World(), mx, my, g.targetPosition)
 
@@ -148,6 +304,8 @@ func (g *gameLayer) Handle(event api.IEvent) bool {
 				g.trackerComp.MoveDown(5.0)
 			case 119: // w = up
 				g.trackerComp.MoveUp(5.0)
+			case 102: // f = thrust impulse
+				g.trackerComp.Thrust()
 			case 120: // x = stop
 				g.trackerComp.Stop()
 			case 49: // 1
@@ -177,8 +335,11 @@ func (g *gameLayer) Handle(event api.IEvent) bool {
 			case 57: // 9
 				fmt.Println("Set tracking algorithm to: 6")
 				g.trackerComp.SetTrackingAlgo(6)
+			case 116: // t
+				fmt.Println("Set targeting rate to: 5(fast)")
+				g.trackerComp.SetTargetingRate(5)
 			case 121: // y
-				fmt.Println("Set targeting rate to: 10(fast)")
+				fmt.Println("Set targeting rate to: 10")
 				g.trackerComp.SetTargetingRate(10)
 			case 117: // u
 				fmt.Println("Set targeting rate to: 20")
