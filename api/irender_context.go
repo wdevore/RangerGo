@@ -54,6 +54,7 @@ type IRenderContext interface {
 	SetDrawColor(color IPalette)
 
 	DrawPoint(x, y int32)
+	DrawBigPoint(x, y int32)
 
 	DrawLine(x1, y1, x2, y2 int32)
 	DrawLineUsing(p1, p2 IPoint)
