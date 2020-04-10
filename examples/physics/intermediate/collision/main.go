@@ -15,7 +15,6 @@ func main() {
 	fmt.Println("1,2,3 changes the velocity algorithm")
 	fmt.Println("4,5,6,7,8,9 changes tracking algorithm")
 	fmt.Println("t,y,u,i,o changes targeting rate from: 5(fast), 10, 20, 40, 60(slow)")
-	// fmt.Println("s apply immediate torge to yellow box")
 	fmt.Println("r resets everything")
 	fmt.Println("-----------------------------------------------------------")
 
