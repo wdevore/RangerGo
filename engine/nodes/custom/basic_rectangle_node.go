@@ -18,11 +18,12 @@ type BasicRectangleNode struct {
 }
 
 // NewBasicRectangleNode constructs a rectangle shaped node
-func NewBasicRectangleNode(name string, parent api.INode) api.INode {
+func NewBasicRectangleNode(name string, world api.IWorld, parent api.INode) api.INode {
 	o := new(BasicRectangleNode)
 	o.Initialize(name)
 	o.SetParent(parent)
 	parent.AddChild(o)
+	o.Build(world)
 	return o
 }
 
@@ -37,6 +38,13 @@ func (r *BasicRectangleNode) Build(world api.IWorld) {
 	r.o2 = geometry.NewPoint()
 
 	r.color = rendering.NewPaletteInt64(rendering.White)
+}
+
+// SetBoundsUsingComps sets the min/max corners
+func (r *BasicRectangleNode) SetBoundsUsingComps(minx, miny, maxx, maxy float64) {
+	r.min.SetByComp(minx, miny)
+	r.max.SetByComp(maxx, maxy)
+	r.SetDirty(true)
 }
 
 // SetColor sets rectangle color

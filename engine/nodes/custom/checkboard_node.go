@@ -53,7 +53,7 @@ func (c *CheckerBoardNode) Configure(tileSize float64) {
 		pFlip = flip
 		x := -vw / 2.0
 		for x <= vw {
-			r := NewBasicRectangleNode(fmt.Sprintf("::(%d,%d)", int(x), int(y)), c)
+			r := NewBasicRectangleNode(fmt.Sprintf("::(%d,%d)", int(x), int(y)), c.World(), c)
 			r.Build(c.World())
 			r.SetPosition(x, y)
 			r.SetScale(w)
