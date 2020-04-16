@@ -11,10 +11,10 @@
 * **Done** AnchorNode
 * **Done** Particles
 * **Done** Animation (tweening) -- Using tanema's library
-* **Working** Box2D physics (with space ships)
-* OpenGL Vulkan
-* Zones (Circle and Rectangle)
+* **Working Draft #1 done** Box2D physics (with space ships)
+* **Working** Zones (Circle and Rectangle) combined with Zoom
 * QuadTree for view-space culling
+* OpenGL Vulkan
 * Audio (SFXR 8bit sound) : May build GUI using imGui, May use: https://github.com/faiface/beep
 * Simple Widget GUI framework
   * Buttons
