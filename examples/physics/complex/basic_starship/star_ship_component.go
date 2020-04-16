@@ -183,7 +183,7 @@ func (s *StarShipComponent) ToggleThrust() {
 // ApplyYaw calculates the next angle to rotate towards
 func (s *StarShipComponent) ApplyYaw(dAngle float64) {
 	// Take current angle and inc/dec angle to find new angle
-	s.targetAngle = s.b2BodyHull.GetAngle() + dAngle
+	s.targetAngle = math.Mod(s.b2BodyHull.GetAngle()+dAngle, math.Pi*2.0)
 }
 
 // ApplyImpulseThrust applies linear impulse opposite of the ship heading
