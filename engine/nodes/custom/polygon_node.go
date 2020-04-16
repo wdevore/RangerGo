@@ -20,6 +20,9 @@ type PolygonNode struct {
 
 	localPosition api.IPoint
 	pointInside   bool
+	hitEnabled    bool
+
+	isOpen bool
 }
 
 // NewPolygonNode constructs a node
@@ -29,6 +32,10 @@ func NewPolygonNode(name string, world api.IWorld, parent api.INode) api.INode {
 	o.SetParent(parent)
 	parent.AddChild(o)
 	o.Build(world)
+
+	o.isOpen = false
+	o.hitEnabled = true
+
 	return o
 }
 
@@ -44,9 +51,24 @@ func (r *PolygonNode) Build(world api.IWorld) {
 	r.insideColor = rendering.NewPaletteInt64(rendering.Red)
 }
 
+// Polygon returns the internal polygon mesh
+func (r *PolygonNode) Polygon() api.IPolygon {
+	return r.polygon
+}
+
 // SetColor sets rectangle color
 func (r *PolygonNode) SetColor(color api.IPalette) {
 	r.color = color
+}
+
+// SetOpen opens or closed the polygon during rendering
+func (r *PolygonNode) SetOpen(open bool) {
+	r.isOpen = open
+}
+
+// EnableHitDetection enables/disables hit detection
+func (r *PolygonNode) EnableHitDetection(enable bool) {
+	r.hitEnabled = enable
 }
 
 // AddVertex add a vertex.
@@ -81,16 +103,25 @@ func (r *PolygonNode) Draw(context api.IRenderContext) {
 		r.SetDirty(false) // Node is no longer dirty
 	}
 
-	// This get the local-space coords of the rectangle node.
-	nodes.MapDeviceToNode(r.mx, r.my, r, r.localPosition)
-	r.pointInside = r.polygon.PointInside(r.localPosition)
+	if r.hitEnabled {
+		// This get the local-space coords of the rectangle node.
+		nodes.MapDeviceToNode(r.mx, r.my, r, r.localPosition)
+		r.pointInside = r.polygon.PointInside(r.localPosition)
 
-	if r.pointInside {
-		context.SetDrawColor(r.insideColor)
+		if r.pointInside {
+			context.SetDrawColor(r.insideColor)
+		} else {
+			context.SetDrawColor(r.color)
+		}
 	} else {
 		context.SetDrawColor(r.color)
 	}
-	context.RenderPolygon(r.polygon, api.CLOSED)
+
+	if r.isOpen {
+		context.RenderPolygon(r.polygon, api.OPEN)
+	} else {
+		context.RenderPolygon(r.polygon, api.CLOSED)
+	}
 }
 
 // PointInside returns status
