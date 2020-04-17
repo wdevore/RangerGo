@@ -49,8 +49,7 @@ func (g *gameLayer) Build(world api.IWorld) {
 
 	g.drag = misc.NewDragState()
 
-	g.zoom = custom.NewZoomNode("ZoomNode", g)
-	g.zoom.Build(world)
+	g.zoom = custom.NewZoomNode("ZoomNode", world, g)
 
 	vw, vh := world.ViewSize().Components()
 	x := -vw / 2.0
@@ -83,8 +82,6 @@ func (g *gameLayer) Build(world api.IWorld) {
 
 	g.crossNode = custom.NewCrossNode("Cross", world, g)
 	g.crossNode.SetScale(30.0)
-
-	g.AddChild(g.zoom)
 }
 
 // Update updates the time properties of a node.
