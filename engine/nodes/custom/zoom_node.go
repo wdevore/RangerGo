@@ -12,24 +12,28 @@ type ZoomNode struct {
 	nodes.Node
 	zoom api.IZoomTransform
 
+	zoomStepSize float64
+
 	// State management
 	mx, my    int32
 	zoomPoint api.IPoint
-	// wheelDirection int // 0 = not active, 1 = zoom-in, -1 = zoom-out
-
 }
 
 // NewZoomNode constructs a zooming node
-func NewZoomNode(name string, parent api.INode) api.INode {
+func NewZoomNode(name string, world api.IWorld, parent api.INode) api.INode {
 	o := new(ZoomNode)
 	o.Initialize(name)
 	o.SetParent(parent)
+	parent.AddChild(o)
+	o.Build(world)
 	return o
 }
 
 // Build configures the node
 func (z *ZoomNode) Build(world api.IWorld) {
 	z.Node.Build(world)
+
+	z.zoomStepSize = 0.1
 
 	z.zoom = maths.NewZoomTransform()
 	z.zoomPoint = geometry.NewPoint()
@@ -50,6 +54,13 @@ func (z *ZoomNode) ExitNode(man api.INodeManager) {
 // Zooming
 // --------------------------------------------------------
 
+// SetStepSize sets the sensitivity of the zoom. If the view area
+// is very tight then you want smaller values so that zooming
+// doesn't jump by "glides"
+func (z *ZoomNode) SetStepSize(size float64) {
+	z.zoomStepSize = size
+}
+
 // SetPosition sets the zooms position and ripples to children
 // mouse is located.
 func (z *ZoomNode) SetPosition(x, y float64) {
@@ -60,6 +71,12 @@ func (z *ZoomNode) SetPosition(x, y float64) {
 // SetFocalPoint sets the epi center of zoom
 func (z *ZoomNode) SetFocalPoint(x, y float64) {
 	z.zoom.SetAt(x, y)
+	z.RippleDirty(true)
+}
+
+// ScaleTo sets the scale absolutely
+func (z *ZoomNode) ScaleTo(s float64) {
+	z.zoom.SetScale(s)
 	z.RippleDirty(true)
 }
 
@@ -77,13 +94,13 @@ func (z *ZoomNode) TranslateBy(dx, dy float64) {
 
 // ZoomIn zooms inward making things bigger
 func (z *ZoomNode) ZoomIn() {
-	z.zoom.ZoomBy(0.1, 0.1)
+	z.zoom.ZoomBy(z.zoomStepSize, z.zoomStepSize)
 	z.RippleDirty(true)
 }
 
 // ZoomOut zooms outward making things smaller
 func (z *ZoomNode) ZoomOut() {
-	z.zoom.ZoomBy(-0.1, -0.1)
+	z.zoom.ZoomBy(-z.zoomStepSize, -z.zoomStepSize)
 	z.RippleDirty(true)
 }
 
