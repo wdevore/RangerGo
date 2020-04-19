@@ -14,8 +14,8 @@ type nodeManager struct {
 	// Stack of node
 	stack *nodeStack
 
-	timingTargets []api.INode
-	eventTargets  []api.INode
+	timingTargets api.INodeList
+	eventTargets  api.INodeList
 }
 
 // NewNodeManager constructs a manager for node.
@@ -31,8 +31,8 @@ func NewNodeManager(world api.IWorld) api.INodeManager {
 
 	o.stack = newNodeStack()
 
-	o.timingTargets = []api.INode{}
-	o.eventTargets = []api.INode{}
+	o.timingTargets = NewNodeList()
+	o.eventTargets = NewNodeList()
 
 	return o
 }
@@ -117,23 +117,17 @@ func (m *nodeManager) ReplaceNode(node api.INode) {
 // --------------------------------------------------------------------------
 
 func (m *nodeManager) Update(msPerUpdate, secPerUpdate float64) {
-	for _, target := range m.timingTargets {
+	for _, target := range m.timingTargets.Items() {
 		target.Update(msPerUpdate, secPerUpdate)
 	}
 }
 
 func (m *nodeManager) RegisterTarget(target api.INode) {
-	m.timingTargets = append(m.timingTargets, target)
+	m.timingTargets.Add(target)
 }
 
 func (m *nodeManager) UnRegisterTarget(target api.INode) {
-	idx := findFirstElement(target, m.timingTargets)
-
-	if idx >= 0 {
-		deleteAt(idx, m.timingTargets)
-	} else {
-		fmt.Println("NodeManager: Unable to UnRegister ", target, " target")
-	}
+	m.timingTargets.Remove(target)
 }
 
 // --------------------------------------------------------------------------
@@ -141,27 +135,11 @@ func (m *nodeManager) UnRegisterTarget(target api.INode) {
 // --------------------------------------------------------------------------
 
 func (m *nodeManager) RegisterEventTarget(target api.INode) {
-	m.eventTargets = append(m.eventTargets, target)
+	m.eventTargets.Add(target)
 }
 
 func (m *nodeManager) UnRegisterEventTarget(target api.INode) {
-	idx := findFirstElement(target, m.eventTargets)
-
-	if idx >= 0 {
-		deleteAt(idx, m.eventTargets)
-	} else {
-		fmt.Println("NodeManager: Unable to UnRegister event ", target, " target")
-	}
-}
-
-func findFirstElement(node api.INode, slice []api.INode) int {
-	for idx, item := range slice {
-		if item.ID() == node.ID() {
-			return idx
-		}
-	}
-
-	return -1
+	m.eventTargets.Remove(target)
 }
 
 func (m *nodeManager) RouteEvents(event api.IEvent) {
@@ -169,20 +147,13 @@ func (m *nodeManager) RouteEvents(event api.IEvent) {
 		return
 	}
 
-	for _, target := range m.eventTargets {
+	for _, target := range m.eventTargets.Items() {
 		handled := target.Handle(event)
 
 		if handled {
 			break
 		}
 	}
-}
-
-func deleteAt(i int, slice []api.INode) {
-	// Remove the element at index i from slice.
-	copy(slice[i:], slice[i+1:]) // Shift a[i+1:] left one index.
-	slice[len(slice)-1] = nil    // Erase last element (write zero value).
-	slice = slice[:len(slice)-1] // Truncate slice.
 }
 
 func (m *nodeManager) setNextNode() {
@@ -241,4 +212,23 @@ func (m *nodeManager) Debug() {
 
 func (m nodeManager) String() string {
 	return fmt.Sprintf("%s", m.stack)
+}
+
+// DeleteAt removes an item from the slice
+func DeleteAt(i int, slice []api.INode) {
+	// Remove the element at index i from slice.
+	copy(slice[i:], slice[i+1:]) // Shift a[i+1:] left one index.
+	slice[len(slice)-1] = nil    // Erase last element (write zero value).
+	slice = slice[:len(slice)-1] // Truncate slice.
+}
+
+// FindFirstElement finds the first item in the slice
+func FindFirstElement(node api.INode, slice []api.INode) int {
+	for idx, item := range slice {
+		if item.ID() == node.ID() {
+			return idx
+		}
+	}
+
+	return -1
 }
