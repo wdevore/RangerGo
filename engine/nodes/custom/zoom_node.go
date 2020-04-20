@@ -80,6 +80,11 @@ func (z *ZoomNode) ScaleTo(s float64) {
 	z.RippleDirty(true)
 }
 
+// ZoomScale returns the zoom's current scale value
+func (z *ZoomNode) ZoomScale() float64 {
+	return z.zoom.Scale()
+}
+
 // ZoomBy is relative zooming using deltas
 func (z *ZoomNode) ZoomBy(dx, dy float64) {
 	z.zoom.ZoomBy(dx, dy)
