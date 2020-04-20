@@ -11,6 +11,9 @@ type IZoomTransform interface {
 	// SetPosition is an absolute position. Typically you would use TranslateBy.
 	SetPosition(x, y float64)
 
+	// Scale returns the current scale factor
+	Scale() float64
+
 	// SetScale sets the scale based on the current scale value making
 	// this a relative scale.
 	SetScale(scale float64)
