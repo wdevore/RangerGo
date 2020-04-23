@@ -51,8 +51,7 @@ func (g *gameLayer) Build(world api.IWorld) {
 
 	g.drag = misc.NewDragState()
 
-	g.zoom = custom.NewZoomNode("ZoomNode", g)
-	g.zoom.Build(world)
+	g.zoom = custom.NewZoomNode("ZoomNode", world, g)
 
 	vw, vh := world.ViewSize().Components()
 	x := -vw / 2.0

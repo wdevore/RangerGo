@@ -82,7 +82,7 @@ func (z *ZoomNode) ScaleTo(s float64) {
 
 // ZoomScale returns the zoom's current scale value
 func (z *ZoomNode) ZoomScale() float64 {
-	return z.zoom.Scale()
+	return z.zoom.PsuedoScale()
 }
 
 // ZoomBy is relative zooming using deltas
