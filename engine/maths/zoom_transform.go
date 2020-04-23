@@ -72,6 +72,14 @@ func (zt *zoomTransform) TranslateBy(dx, dy float64) {
 	zt.position.Add(dx, dy)
 }
 
+func (zt *zoomTransform) Scale() float64 {
+	return zt.scale.X()
+}
+
+func (zt *zoomTransform) PsuedoScale() float64 {
+	return zt.accTransform.GetPsuedoScale()
+}
+
 func (zt *zoomTransform) SetScale(scale float64) {
 	zt.Update()
 
