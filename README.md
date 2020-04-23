@@ -14,7 +14,7 @@
 * **Working Draft #1 done** Box2D physics (with space ships)
 * **Working** Zones (Circle and Rectangle) combined with Zoom
 * QuadTree for view-space culling
-* OpenGL Vulkan
+* OpenGL
 * Audio (SFXR 8bit sound) : May build GUI using imGui, May use: https://github.com/faiface/beep
 * Simple Widget GUI framework
   * Buttons
@@ -29,6 +29,8 @@
 * Joysticks and Gamepads
 
 ## Notes
+Zooming. We need a global zoom value between zones such that each zone starts
+from the global value. This value could be either "from" or "to".
 
 # Tracking (Optional)
 Some **Nodes**/**Objects** may want to *Track* the properties of another **Node**.
