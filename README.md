@@ -1,5 +1,8 @@
 # RangerGo
-**RangerGo** A variation of the [Ranger Dart](https://github.com/wdevore/Ranger-Dart) game engine but written in [Go](https://golang.org/) and [SDL](https://www.libsdl.org/download-2.0.php), and possibly [Vulkan](https://www.khronos.org/vulkan/).
+**RangerGo** is a variation of the [Ranger Dart](https://github.com/wdevore/Ranger-Dart) game engine but written in [Go](https://golang.org/) and [SDL](https://www.libsdl.org/download-2.0.php)
+
+# **Update**
+This version of Ranger has served its purpose and that was to refine the engine core while using a simple rendering backend (aka SDL). Now that that has been completed work has shifted over to [Ranger-Go-IGE](https://github.com/wdevore/Ranger-Go-IGE) whos goal is to switch out SDL in favor of OpenGL.
 
 # Current Tasks and Goals
 * **Done** Node Dragging
@@ -11,26 +14,10 @@
 * **Done** AnchorNode
 * **Done** Particles
 * **Done** Animation (tweening) -- Using tanema's library
-* **Working Draft #1 done** Box2D physics (with space ships)
-* **Working** Zones (Circle and Rectangle) combined with Zoom
-* QuadTree for view-space culling
-* OpenGL
-* Audio (SFXR 8bit sound) : May build GUI using imGui, May use: https://github.com/faiface/beep
-* Simple Widget GUI framework
-  * Buttons
-  * Checkboxes
-  * Text input
-  * Text
-  * Dialog
-  * Grouping (i.e. Radio buttons)
-* Sprite Textures (Vulkan)
-* Finish lower case Vector font characters.
-* Enhance raster fonts to allow transforms
-* Joysticks and Gamepads
+* **done** Box2D physics (with space ship)
+* **Done** Zones combined with Zoom
 
 ## Notes
-Zooming. We need a global zoom value between zones such that each zone starts
-from the global value. This value could be either "from" or "to".
 
 # Tracking (Optional)
 Some **Nodes**/**Objects** may want to *Track* the properties of another **Node**.
