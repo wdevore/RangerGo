@@ -70,6 +70,21 @@ func (v *vector) Add(x, y float64) {
 	v.y += y
 }
 
+func (v *vector) Sub(x, y float64) {
+	v.x -= x
+	v.y -= y
+}
+
+func (v *vector) AddV(iv api.IVector) {
+	v.x += iv.X()
+	v.y += iv.Y()
+}
+
+func (v *vector) SubV(iv api.IVector) {
+	v.x -= iv.X()
+	v.y -= iv.Y()
+}
+
 // Add performs: out = v1 + v2
 func Add(v1, v2, out api.IVector) {
 	out.SetByComp(v1.X()+v2.X(), v1.Y()+v2.Y())
