@@ -27,6 +27,11 @@ type IVector interface {
 
 	// Add offsets a this vector
 	Add(x, y float64)
+	// Sub offsets a this vector
+	Sub(x, y float64)
+
+	AddV(IVector)
+	SubV(IVector)
 
 	// Div vector by d
 	Div(d float64)
